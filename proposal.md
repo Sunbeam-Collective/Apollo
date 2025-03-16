@@ -10,22 +10,30 @@ Our application, Apollo is for music enthusiasts who love to tweak their favorit
 
 This application will use the API. Below are the documentation and specific endpoints we intend to use and the front-end pages that will use them.
 
-API - The Null Pointer [https://0x0.st/]
-
-1. Upload API - [POST] https://0x0.st/
-
-- This endpoint allows users to upload any data to the hosting service.
-- { file: data to host, secret: (ignored/nullable), expires: sets expiration time on hosted data }
-
-2. Manage API - [POST] https://0x0.st/{fileIdentifier}
-
-- This endpoint allows for managing hosted data (delete or update expiration).
-- { token: access token to authorize deletes, delete: (ignored/nullable), expires: sets expiration time on hosted data }
-
-3. Single Fetch API - [GET] https://0x0.st/{fileIdentifier}
-
-- This endpoint allows for accessing data saved on the hosting service.
-- NONE
+API - [DEEZER API](https://api.deezer.com/)
+1. Multiple Fetch API - [GET] https://api.deezer.com/chart
+  - This endpoint fetches the charts for five categories:
+    1. tracks
+    2. albums
+    3. artists
+    4. playlists
+    5. podcasts
+  - { NO PARAMS }
+2. Single Fetch API - [GET] https://api.deezer.com/track/{ trackId }
+  - This endpoint fetches the data for a specified track.
+  - Parameters: {
+      trackId: int
+    }
+3. Search API - [GET] https://api.deezer.com/search?q={ searchTerm }{ opts }
+  - This endpoint returns all tracks that match the query.
+  - Parameters: {
+    searchTerm: string,
+  }
+  - Opts: {
+    artist: string,
+    album: string,
+    track: string,
+  }
 
 ## 👩‍💻 MVP User Stories & Frontend Routes
 
