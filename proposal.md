@@ -31,7 +31,7 @@ API - The Null Pointer [https://0x0.st/]
 
 The application will feature the following frontend routes and core features:
 
-- On the `/` page, users will be a landing page which handles redirections on whether the user is logged in or ont
+- The `/` page is a landing page which handles redirections on whether the user is logged in or not
 - On the `/home` page, users will be able to view/import/export their projects
 - The `/mixer/:id` endpoint serves as an audio editor, allowing users to adjust the pitch and speed of the audio within their workspace.
 - On the `/profile` page, users can view and edit their profile
@@ -83,6 +83,4 @@ To ensure that we can complete all core features of the application in 1 week, w
 
 Below, you can find wireframes for our project. Each wireframe shows a different page of our application as well as the key components of the application. Details such as specific text values or images are intentionally not included:
 
-[Wireframe for page 1]
-
-[Wireframe for page 2]
+- **Figma:** https://www.figma.com/design/55M9F778PTRRyvWlMFl0QL/Cutframe.in--(wireframe-kit)-(Community)?node-id=603-21955&t=fdg904W1kmhjEzBP-1
