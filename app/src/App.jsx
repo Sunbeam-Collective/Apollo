@@ -3,41 +3,28 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 
-import useSound from 'use-sound';
-// import testAudio from './assets/summer-storm.mp3'
-// import testAudio from './assets/tune-from-diamond.mp3'
-import testAudio from './assets/c.wav'
-
+import {
+  Playground,
+  NotFoundPage,
+  Auth,
+  Home,
+  Mixer,
+  Player,
+  Redirect
+} from './pages'
 function App() {
-  const [playbackRate, setPlaybackRate] = useState(1);
-  // const [timestamp, setTimestamp] = useState();
-
-  const [play, control] = useSound(testAudio, {
-    playbackRate,
-    volume: 0.5
-  });
-
-  const pause = () => {
-    control.pause();
-  }
-
-
-  const speedUp = () => {
-    setPlaybackRate(() => playbackRate + 0.1);
-  }
-
-  const speedDown = () => {
-    setPlaybackRate(() => playbackRate - 0.1);
-  }
-
   return (
     <>
       <div>
-        <h1>{control.duration}</h1>
-        <button onClick={play}>Play</button>
-        <button onClick={speedUp}>Speed Up</button>
-        <button onClick={speedDown}>Speed Down</button>
-        <button onClick={pause}>Pause</button>
+        <Routes>
+          <Route path='/playground' element={<Playground />} />
+          <Route path='/' element={<Redirect />} />
+          <Route path='/auth' element={<Auth />} />
+          <Route path='/home' element={<Home />} />
+          <Route path='/mixer/:id' element={<Mixer />} />
+          <Route path='/player/:id' element={<Player />} />
+          <Route path='*' element={<NotFoundPage />} />
+        </Routes>
       </div>
     </>
   )
