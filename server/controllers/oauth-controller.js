@@ -3,6 +3,11 @@ const crypto = require('crypto');
 const express = require('express');
 const session = require('express-session');
 
+const dotenv = require('dotenv');
+dotenv.config();
+
+const fetchData = require('../utils/fetchData')
+
 const loginUser = async (req, res) => {
   /*
    * To use OAuth2 authentication, we need access to a CLIENT_ID, CLIENT_SECRET, AND REDIRECT_URI
@@ -10,12 +15,12 @@ const loginUser = async (req, res) => {
    * https://console.cloud.google.com/apis/credentials.
    */
   const oauth2Client = new google.auth.OAuth2(
-    YOUR_CLIENT_ID,
-    YOUR_CLIENT_SECRET,
-    YOUR_REDIRECT_URI // why is this i ?
+    process.env.YOUR_CLIENT_ID,
+    process.env.YOUR_CLIENT_SECRET,
+    process.env.YOUR_REDIRECT_URI // why is this i ?
   );
 
-  // Access scopes for two non-Sign-In scopes: Read-only Drive activity and Google Calendar.
+  // Access scopes: this app only needs to access the email address.
   const scopes = [
     'https://www.googleapis.com/auth/userinfo.email',
   ];
@@ -39,9 +44,10 @@ const loginUser = async (req, res) => {
     state: state
   });
 
+  console.log(authorizationUrl);
+
   // redirect to app
   res.redirect(authorizationUrl); // do i have to return this?
-
 }
 
 // should i handle errors here?
@@ -63,11 +69,55 @@ const handleResponse = async (req, res) => {
 
     let { tokens } = await oauth2Client.getToken(q.code);
     oauth2Client.setCredentials(tokens);
+
+    // use data here...
+    /* {
+      "picture": "https://lh3.googleusercontent.com/a-/ALV-UjUBEAUhQn5lAmSezyiljmk9FK7gUOkwN_eQyzjH4kKvkRbcpA=s96-c",
+      "verified_email": true,
+      "id": "103784176212698410543",
+      "email": "raffycastlee@gmail.com"
+    } */
+
+    const data = await fetchData('https://www.googleapis.com/userinfo/v2/me');
+
+    console.log('login complete!')
+    console.log(`details:\nemail: ${data.email}\npfp: ${data.picture}`)
+
   }
 }
 
+const logoutUser = async (req, res) => {
+  try {
+  // clear session
+  req.session.destroy((err) => {
+    if (err) {
+      throw new Error('Failed to destroy session');
+    }
+  });
+
+  // clear cookies
+  res.clearCookies('session');
+
+  // success!
+  return res.status(200).json({
+    success: true,
+    message: 'Logged out successfully'
+  })
+
+  } catch (error) {
+    console.error('Logout error: ', error);
+    return res.status(500).json({
+      success: false,
+      error: 'Logout failed'
+    })
+  }
+}
+
+
+
 module.exports = {
   loginUser,
+  logoutUser,
   handleResponse
   // getLoggedIn,
   // registerUser,
