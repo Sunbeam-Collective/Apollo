@@ -1,6 +1,6 @@
 // IGNORE FOR NOW, template/reference file
 
-const Fellow = require('../model/Fellow');
+const Fellow = require('../models/Fellow');
 
 /*
 These controllers take incoming requests and utilize the
