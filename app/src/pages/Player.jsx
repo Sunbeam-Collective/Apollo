@@ -3,7 +3,18 @@ import { useState, useEffect } from "react";
 
 import { getDeezerTrack } from "../services/deezerService";
 
+import {
+  TrackDetails,
+  MediaControls,
+} from '../components'
+
+import {
+  useScrollLock
+} from '../adapters'
+
 function Player() {
+  useScrollLock();
+
   const { id } = useParams();
   const [error, setError] = useState(null);
   const [track, setTrack] = useState(null);
@@ -32,24 +43,17 @@ function Player() {
   return (
     <>
       <div className='player-container'>
-        <div className='player-details'>
-          <p>{track.title}</p>
-          <p>{track.artist}</p>
-        </div>
+        <TrackDetails
+          title={track.title}
+          artist={track.artist}
+        />
         <div className='player-cover'>
           <img src={track.coverSrc} alt={track.title} />
         </div>
         <div className='player-timeline'>
           {/* ??? */}
         </div>
-        <div className='player-media-controls'>
-          {/* five icons here probably just as svg so we can export the figma vectors directly and call it a day
-          <svg />
-          <svg />
-          <svg />
-          <svg />
-          <svg /> */}
-        </div>
+        <MediaControls />
         <div className='player-edit'>
           <div className='edit-button-div'>
             {/* same approach as media controls
