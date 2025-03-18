@@ -2,8 +2,8 @@
 function TrackDetails({ title, artist }) {
   return (
     <div className='player-details'>
-      <p>{title}</p>
-      <p>{artist}</p>
+      <p className='track-title'>{title}</p>
+      <p className='track-artist'>{artist}</p>
     </div>
   )
 }
