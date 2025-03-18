@@ -5,6 +5,7 @@ import MixerTimeline from "./MixerTimeline";
 import SoundTest from "./SoundTest";
 import TrackDetails from "./TrackDetails";
 import TrendingItem from "./TrendingItem";
+import SecondaryNav from "./SecondaryNav";
 
 export {
   AuthTest,
@@ -14,4 +15,5 @@ export {
   SoundTest,
   TrackDetails,
   TrendingItem,
+  SecondaryNav,
 }

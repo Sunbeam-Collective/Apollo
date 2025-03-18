@@ -3,6 +3,7 @@ import {
   TrackDetails,
   MixerTimeline,
   ControlKnobs,
+  SecondaryNav
 } from '../components'
 
 import {
@@ -12,9 +13,9 @@ import {
 function Mixer() {
   useScrollLock();
 
-  const [title, artist] = ['placeholder', 'placeholder']
   return (
     <>
+      <SecondaryNav />
       <div className='mixer-container'>
         <TrackDetails
           title={title}
