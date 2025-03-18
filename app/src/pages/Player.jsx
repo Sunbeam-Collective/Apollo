@@ -49,8 +49,6 @@ function Player() {
   return (
     <>
       <div className='player-container'>
-        {/* should secondary nav be outside player container? */}
-        <SecondaryNav />
         <TrackDetails
           title={track.title}
           artist={track.artist}
@@ -60,6 +58,7 @@ function Player() {
         </div>
         {/* timeline is scrubbable... hopefully */}
         <div className='player-timeline'>
+          {/* ??? */}
         </div>
         <MediaControls />
         <div className='player-edit'>

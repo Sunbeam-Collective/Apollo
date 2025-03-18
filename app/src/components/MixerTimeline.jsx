@@ -2,6 +2,7 @@
 function MixerTimeline() {
   return (
     <>
+      <h1>Mixer Timeline</h1>
     </>
   )
 }

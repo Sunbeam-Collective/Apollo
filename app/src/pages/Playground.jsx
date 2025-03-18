@@ -1,8 +1,10 @@
-// import SoundTest from "../components/SoundTest"
-import AuthTest from "../components/AuthTest";
+import {
+  // SoundTest,
+  AuthTest,
+  TrendingItem,
+} from '../components';
 
 import { useEffect, useState } from "react";
-import TrendingItem from "../components/TrendingItem";
 
 import {
   getDeezerTrack,
