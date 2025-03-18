@@ -1,9 +1,26 @@
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
+import '../App.css';
 
 import { getDeezerTrack } from "../services/deezerService";
 
+import {
+  TrackDetails,
+  MediaControls,
+  SecondaryNav,
+} from '../components'
+
+import {
+  edit_icon
+} from '../assets';
+
+import {
+  useScrollLock
+} from '../adapters'
+
 function Player() {
+  useScrollLock();
+
   const { id } = useParams();
   const [error, setError] = useState(null);
   const [track, setTrack] = useState(null);
@@ -32,28 +49,22 @@ function Player() {
   return (
     <>
       <div className='player-container'>
-        <div className='player-details'>
-          <p>{track.title}</p>
-          <p>{track.artist}</p>
-        </div>
+        {/* should secondary nav be outside player container? */}
+        <SecondaryNav />
+        <TrackDetails
+          title={track.title}
+          artist={track.artist}
+        />
         <div className='player-cover'>
-          <img src={track.coverSrc} alt={track.title} />
+          <img id='player-cover' src={track.coverSrc} alt={track.title} />
         </div>
+        {/* timeline is scrubbable... hopefully */}
         <div className='player-timeline'>
-          {/* ??? */}
         </div>
-        <div className='player-media-controls'>
-          {/* five icons here probably just as svg so we can export the figma vectors directly and call it a day
-          <svg />
-          <svg />
-          <svg />
-          <svg />
-          <svg /> */}
-        </div>
+        <MediaControls />
         <div className='player-edit'>
           <div className='edit-button-div'>
-            {/* same approach as media controls
-            <svg /> */}
+            <img src={edit_icon} />
             <p>Edit</p>
           </div>
         </div>
