@@ -2,7 +2,7 @@ const express = require('express');
 const path = require('path');
 const dotenv = require('dotenv');
 // if ever i need these
-// const cors = require('cors');
+const cors = require('cors');
 // const cookieParser = require('cookie-parser');
 
 
@@ -17,10 +17,10 @@ const PORT = process.env.PORT || 4000;
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 // if i need to setup cors
-// app.use(cors({
-//   origin: ["http://localhost:3000"],
-//   credentials: true,
-// }))
+app.use(cors({
+  origin: [`${process.env.CLIENT_URL}`],
+  credentials: true,
+}))
 // if i need to setup cookie parser
 // app.use(cookieParser());
 
