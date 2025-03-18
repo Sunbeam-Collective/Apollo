@@ -33,8 +33,8 @@ const appRouter = require('./routes/app-router');
 app.use('/api', appRouter);
 
 // initializing db object
-const db = require('./db');
-db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+// const db = require('./db');
+// db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 // open the server (listening mode)
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

@@ -1,11 +1,65 @@
 // import SoundTest from "../components/SoundTest"
 import AuthTest from "../components/AuthTest";
 
+import { useEffect, useState } from "react";
+import TrendingItem from "../components/TrendingItem";
+
+import {
+  getDeezerTrack,
+  getDeezerChart
+} from "../services/deezerService";
+import { useNavigate } from "react-router-dom";
+
+
 function Playground() {
+  const [error, setError] = useState(null);
+  const [tracks, setTracks] = useState(null);
+  const navigate = useNavigate();
+
+  const handleTrendingClick = async (e) => {
+    if (!e.target.closest('li')) return;
+    const id = e.target.closest('li').dataset.id;
+    navigate(`/player/${id}`);
+  }
+
+
+  useEffect(() => {
+    const fetchTracks = async () => {
+      try {
+        const { data } = await getDeezerChart();
+        const tracks = data.data;
+        setTracks(tracks);
+      } catch (error) {
+        console.error('Error fetching deezer charts:',error);
+        setError(error);
+      }
+    }
+    fetchTracks();
+  }, []);
+
+  if (error !== null) return <h1>{error.message}</h1>;
+  if (tracks === null) return <h1>null tracks</h1>;
   return (
     <>
       {/* <SoundTest /> */}
-      <AuthTest />
+      {/* <AuthTest /> */}
+      {/* <h1>{test.title}</h1> */}
+      <ul onClick={handleTrendingClick}>
+        {
+          tracks.map((item) => {
+            return (
+              <TrendingItem
+                key={crypto.randomUUID()}
+                position={item.position}
+                id={item.id}
+                title={item.title}
+                artist={item.artist.name}
+                coverSrc={item.album.cover}
+              />
+            )
+          })
+        }
+      </ul>
     </>
   )
 }

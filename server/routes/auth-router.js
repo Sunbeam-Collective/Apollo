@@ -12,11 +12,11 @@ const OAuthController = require('../controllers/oauth-controller')
 
 
 // Receive the callback from Google's OAuth 2.0 server.
-router.use(session({
-  secret: process.env.SECRET,
-  resave: false,
-  saveUninitialized: false,
-}))
+// router.use(session({
+//   secret: process.env.SECRET,
+//   resave: false,
+//   saveUninitialized: false,
+// }))
 router.get('/login', OAuthController.loginUser)
 router.get('/oauth2callback', OAuthController.handleResponse);
 
