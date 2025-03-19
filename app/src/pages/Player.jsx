@@ -1,5 +1,5 @@
-import { useParams } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useParams, useNavigate  } from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
 import '../App.css';
 
 import { getDeezerTrack } from "../services/deezerService";
@@ -8,6 +8,7 @@ import {
   TrackDetails,
   MediaControls,
   SecondaryNav,
+  Loading
 } from '../components'
 
 import {
@@ -19,33 +20,49 @@ import {
 } from '../adapters'
 
 function Player() {
+  // no scrolling while on player!
   useScrollLock();
 
+  // fetching states
   const { id } = useParams();
+  const navigate = useNavigate();
   const [error, setError] = useState(null);
   const [track, setTrack] = useState(null);
 
   useEffect(() => {
-    const fetchTrack = async (id) => {
-      try {
-        const { data } = await getDeezerTrack(id);
-        const track = {
-          title: data.data.title,
-          artist: data.data.artist.name,
-          coverSrc: data.data.album.cover,
-          previewSrc: data.data.preview,
+    // fetching
+    const fetchTrack = async () => {
+      const minDelay = new Promise(resolve => setTimeout(resolve, 500));
+      let [track, error] = [null, null];
+      const loadingTask = async () => {
+        try {
+          const { data } = await getDeezerTrack(id);
+          track = {
+            title: data.data.title,
+            artist: data.data.artist.name,
+            coverSrc: data.data.album.cover,
+            previewSrc: data.data.preview,
+          }
+        } catch (err) {
+          error = err
         }
+      }
+      await Promise.all([minDelay, loadingTask(id)]);
+      if (track !== null) {
+        // set audio here as well and handlers for music!!!
+        // maybe we can disable the buttons if there's no audio initialized!
         setTrack(track);
-      } catch (error) {
+      }
+      else {
         console.error('Error fetching deezer charts:',error);
         setError(error);
       }
     }
-    fetchTrack(id);
-  }, []);
+    fetchTrack();
+  }, [id]);
 
   if (error !== null) return <h1>{error.message}</h1>;
-  if (track === null) return <h1>loading buhhh</h1>;
+  if (track === null) return <Loading />;
   return (
     <>
       <div className='player-container'>
@@ -58,15 +75,14 @@ function Player() {
           <img id='player-cover' src={track.coverSrc} alt={track.title} />
         </div>
         {/* timeline is scrubbable... hopefully */}
-        <div className='player-timeline'>
-          {/* ??? */}
-        </div>
-        <MediaControls />
+        <MediaControls
+          previewSrc={track.previewSrc}
+        />
         <div className='player-edit'>
-          <div className='edit-button-div'>
+          <button className='edit-button' onClick={() => navigate(`/mixer/${id}`)}>
             <img src={edit_icon} />
             <p>Edit</p>
-          </div>
+          </button>
         </div>
       </div>
     </>

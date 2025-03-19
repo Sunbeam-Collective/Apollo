@@ -13,5 +13,5 @@ export {
   Home,
   Mixer,
   Player,
-  Redirect
+  Redirect,
 }

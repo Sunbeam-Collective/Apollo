@@ -84,35 +84,6 @@ div.player-container {
   flex-direction: column;
 }
 
-/* for reference: Player.jsx
-full frame 375x812
-secondary nav 375x73
-track details 375x84
-player cover 375x316
-player timeline 375x67
-media controls 375x74
-player edit 375x198 */
-
-/* SecondaryNav component */
-div.secondary-nav {
-  width: 100%;
-  flex: calc(100% * 73/812);
-  display: flex;
-}
-div.back-button {
-  flex: calc(100% * 57/375);
-}
-button#back-button {
-  background-color: black;
-}
-div.secondary-nav-padding {
-  flex: calc(100% * 318/375);
-}
-
-/* TrackDetails component */
-div.player-details {
-  flex: calc(100% * 84/812);
-}
 p.track-title {
   font: var(--font-h1);
 }
@@ -120,44 +91,137 @@ p.track-artist {
   font: var(--font-p);
 }
 
-/* PlayerCover portion */
-div.player-cover {
-  flex: calc(100% * 316/812);
-  display: flex;
-  padding-top: 0.625rem;
-  align-items: center;
-  justify-content: center;
-}
-img#player-cover {
-  height: calc(100% * 300/316);
-  width: calc(100% * 300/375);
+/*
+  styles for Player.jsx
+*/
+
+div.player-container {
+  /* SecondaryNav component */
+  div.secondary-nav {
+    width: 100%;
+    flex: calc(100% * 73/812);
+    display: flex;
+
+    div.back-button {
+      flex: calc(100% * 57/375);
+    }
+    button#back-button {
+      background-color: black;
+    }
+    div.secondary-nav-padding {
+      flex: calc(100% * 318/375);
+    }
+  }
+
+  /* TrackDetails component */
+  div.player-details {
+    flex: calc(100% * 84/812);
+  }
+
+  /* PlayerCover portion */
+  div.player-cover {
+    flex: calc(100% * 316/812);
+    display: flex;
+    padding-top: 0.625rem;
+    align-items: center;
+    justify-content: center;
+  }
+  img#player-cover {
+    height: calc(100% * 300/316);
+    width: calc(100% * 300/375);
+  }
+
+  /* PlayerTimeline portion */
+  div.player-timeline {
+    flex: calc(100% * 67/812);
+  }
+
+  /* MediaControls component */
+  div.player-media-controls {
+    flex: calc(100% * 74/812);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+  div.player-media-controls>button {
+    height: calc(100% * 72/74);
+    width: calc(100% * 72/378);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* PlayerEdit portion */
+  div.player-edit {
+    flex: calc(100% * 198/812);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
 
-/* PlayerTimeline portion */
-div.player-timeline {
-  flex: calc(100% * 67/812);
+/*
+  styles for Mixer.jsx
+*/
+
+div.mixer-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  /* Secondary Nav */
+  div.secondary-nav {
+    flex: calc(100% * 73/812);
+    display: flex;
+
+    div.back-button {
+      flex: calc(100% * 57/375);
+    }
+    button#back-button {
+      background-color: black;
+    }
+    div.secondary-nav-padding {
+      flex: calc(100% * 318/375);
+    }
+  }
+  div.player-details {
+    flex: calc(100% * 94 / 812);
+  }
+  div.mixer-timeline-container {
+    flex: calc(100% * 226/812);
+  }
+  div.duration-container {
+    flex: calc(100% * 48/812);
+  }
+  div.mixer-controls-container {
+    flex: calc(100% * 79/812);
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+  div.control-knobs-container {
+    flex: calc(100% * 174/812);
+  }
+  div.save-container-mixer {
+    flex: calc(100% * 118/812);
+  }
 }
 
-/* MediaControls component */
-div.player-media-controls {
-  flex: calc(100% * 74/812);
+/* styles for Loading.jsx */
+div.loading-container {
+  height: 100%;
+  width: 100%;
   display: flex;
-  align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-}
-div.player-media-controls>button {
-  height: calc(100% * 72/74);
-  width: calc(100% * 72/378);
-  display: flex;
   align-items: center;
-  justify-content: center;
 }
 
-/* PlayerEdit portion */
-div.player-edit {
-  flex: calc(100% * 198/812);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* Animations */
+@keyframes spin {
+  from {
+    transform: rotate(var(--start-degree, 0deg));
+  }
+  to {
+    transform: rotate(calc(var(--start-degree, 0deg) + 360deg));
+  }
 }
