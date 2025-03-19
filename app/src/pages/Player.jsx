@@ -11,13 +11,9 @@ import {
   Loading
 } from '../components'
 
-import {
-  edit_icon
-} from '../assets';
+import { edit_icon } from "../assets";
 
-import {
-  useScrollLock
-} from '../adapters'
+import { useScrollLock } from "../adapters";
 
 function Player() {
   // no scrolling while on player!
@@ -65,14 +61,11 @@ function Player() {
   if (track === null) return <Loading />;
   return (
     <>
-      <div className='player-container'>
+      <div className="player-container">
         <SecondaryNav />
-        <TrackDetails
-          title={track.title}
-          artist={track.artist}
-        />
-        <div className='player-cover'>
-          <img id='player-cover' src={track.coverSrc} alt={track.title} />
+        <TrackDetails title={track.title} artist={track.artist} />
+        <div className="player-cover">
+          <img id="player-cover" src={track.coverSrc} alt={track.title} />
         </div>
         {/* timeline is scrubbable... hopefully */}
         <MediaControls
@@ -86,7 +79,7 @@ function Player() {
         </div>
       </div>
     </>
-  )
+  );
 }
 
 export default Player;

@@ -1,10 +1,9 @@
-const express = require('express');
-const path = require('path');
-const dotenv = require('dotenv');
+const express = require("express");
+const path = require("path");
+const dotenv = require("dotenv");
 // if ever i need these
-const cors = require('cors');
+const cors = require("cors");
 // const cookieParser = require('cookie-parser');
-
 
 // creating a server
 dotenv.config();
@@ -17,20 +16,26 @@ const PORT = process.env.PORT || 4000;
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 // if i need to setup cors
-app.use(cors({
-  origin: [`${process.env.CLIENT_URL}`],
-  credentials: true,
-}))
+app.use(
+  cors({
+    origin: [
+      `${process.env.CLIENT_URL}`,
+      `http://localhost:5174`,
+      `http://localhost:5173`,
+    ],
+    credentials: true,
+  })
+);
 // if i need to setup cookie parser
 // app.use(cookieParser());
 
 // routers as middleware (for file organization)
 // oauth routes
-const authRouter = require('./routes/auth-router');
-app.use('/auth', authRouter);
+const authRouter = require("./routes/auth-router");
+app.use("/auth", authRouter);
 
-const appRouter = require('./routes/app-router');
-app.use('/api', appRouter);
+const appRouter = require("./routes/app-router");
+app.use("/api", appRouter);
 
 // initializing db object
 // const db = require('./db');
@@ -38,7 +43,6 @@ app.use('/api', appRouter);
 
 // open the server (listening mode)
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
 
 /* MARCY PATTERN */
 
@@ -79,7 +83,6 @@ app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 // // calling endpoints as middleware
 
-
 // // app.get('/api/fellows', serveFellows);
 // // app.get('/api/fellows/:id', serveFellow);
 // // app.post('/api/fellows', createFellow);
@@ -90,6 +93,5 @@ app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 // //   if (req.originalUrl.startsWith('/api')) return next();
 // //   res.sendFile(pathToFrontendDist);
 // // });
-
 
 // app.listen(PORT, () => console.log(`listening at http://localhost:${PORT}`));
