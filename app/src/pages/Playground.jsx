@@ -41,6 +41,17 @@ function Playground() {
 
   if (error !== null) return <h1>{error.message}</h1>;
   if (tracks === null) return <h1>null tracks</h1>;
+
+  const processed = tracks.map((track) => {
+    return {
+      id: track.id,
+      songTitle: track.title,
+      songArtist: track.artist.name,
+      coverArt: track.album.cover,
+      previewSrc: track.preview
+    }
+  })
+  console.log(processed);
   return (
     <>
       {/* <SoundTest /> */}
