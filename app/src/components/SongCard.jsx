@@ -2,7 +2,7 @@ import save_icon from "../assets/save.svg";
 
 const SongCard = ({ songTitle, songArtist, coverArt, id }) => {
   return (
-    <li song-id={id} className="song-card">
+    <li data-song-id={id} className="song-card">
       <div className="song-image-wrapper">
         <img
           style={{ height: "126px", width: "126px" }}

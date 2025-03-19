@@ -1,5 +1,6 @@
 import SongCard from "./SongCard";
 import Alert from "./Alert";
+import { useNavigate } from "react-router-dom";
 
 const savedData = [
   {
@@ -79,6 +80,14 @@ const savedData = [
 const SongList = ({ prop }) => {
   const { currentTab, songData } = prop;
 
+  const navigate = useNavigate();
+
+  const handleTrendingClick = async (e) => {
+    if (!e.target.closest("li")) return;
+    const id = e.target.closest("li").dataset.songId;
+    navigate(`/player/${id}`);
+  };
+
   // Handle No Song Data
   if (!songData) return <Alert message="Loading..." />;
 
@@ -88,7 +97,7 @@ const SongList = ({ prop }) => {
   return (
     <>
       {currentTab === "trending" ? (
-        <ul id="song-list">
+        <ul id="song-list" onClick={handleTrendingClick}>
           {songData.map((song) => {
             return (
               <SongCard
@@ -96,14 +105,14 @@ const SongList = ({ prop }) => {
                 id={song.id}
                 songTitle={song.title}
                 songArtist={song.artist.name}
-                coverArt={song.album.cover}
+                coverArt={song.album.cover_xl}
                 previewSrc={song.preview}
               />
             );
           })}
         </ul>
       ) : (
-        <ul id="song-list">
+        <ul id="song-list" onClick={handleTrendingClick}>
           {savedData.map((song) => {
             return (
               <SongCard

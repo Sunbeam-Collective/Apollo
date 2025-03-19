@@ -1,22 +1,14 @@
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
-import '../App.css';
+import "../App.css";
 
 import { getDeezerTrack } from "../services/deezerService";
 
-import {
-  TrackDetails,
-  MediaControls,
-  SecondaryNav,
-} from '../components'
+import { TrackDetails, MediaControls, SecondaryNav } from "../components";
 
-import {
-  edit_icon
-} from '../assets';
+import { edit_icon } from "../assets";
 
-import {
-  useScrollLock
-} from '../adapters'
+import { useScrollLock } from "../adapters";
 
 function Player() {
   useScrollLock();
@@ -32,15 +24,15 @@ function Player() {
         const track = {
           title: data.data.title,
           artist: data.data.artist.name,
-          coverSrc: data.data.album.cover,
+          coverSrc: data.data.album.cover_xl,
           previewSrc: data.data.preview,
-        }
+        };
         setTrack(track);
       } catch (error) {
-        console.error('Error fetching deezer charts:',error);
+        console.error("Error fetching deezer charts:", error);
         setError(error);
       }
-    }
+    };
     fetchTrack(id);
   }, []);
 
@@ -48,29 +40,24 @@ function Player() {
   if (track === null) return <h1>loading buhhh</h1>;
   return (
     <>
-      <div className='player-container'>
+      <div className="player-container">
         <SecondaryNav />
-        <TrackDetails
-          title={track.title}
-          artist={track.artist}
-        />
-        <div className='player-cover'>
-          <img id='player-cover' src={track.coverSrc} alt={track.title} />
+        <TrackDetails title={track.title} artist={track.artist} />
+        <div className="player-cover">
+          <img id="player-cover" src={track.coverSrc} alt={track.title} />
         </div>
         {/* timeline is scrubbable... hopefully */}
-        <div className='player-timeline'>
-          {/* ??? */}
-        </div>
+        <div className="player-timeline">{/* ??? */}</div>
         <MediaControls />
-        <div className='player-edit'>
-          <div className='edit-button-div'>
+        <div className="player-edit">
+          <div className="edit-button-div">
             <img src={edit_icon} />
             <p>Edit</p>
           </div>
         </div>
       </div>
     </>
-  )
+  );
 }
 
 export default Player;
