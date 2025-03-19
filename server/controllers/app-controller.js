@@ -1,4 +1,4 @@
-const fetchData = require('../utils/fetchData');
+const fetchData = require("../utils/fetchData");
 
 // 1. Multiple Fetch API - [GET] https://api.deezer.com/chart
 //   - This endpoint fetches the charts for five categories:
@@ -12,21 +12,36 @@ const fetchData = require('../utils/fetchData');
 const getDeezerChart = async (req, res) => {
   const [data, error] = await fetchData(`https://api.deezer.com/chart`);
   if (error) {
-    return res
-      .status(400)
-      .json({
-        success: false,
-        error: 'Something went wrong',
-      })
+    return res.status(400).json({
+      success: false,
+      error: "Something went wrong",
+    });
   }
   console.log(data);
-  return res
-    .status(200)
-    .json({
-      success: true,
-      data: data.tracks.data
+  return res.status(200).json({
+    success: true,
+    data: data.tracks.data,
+  });
+};
+
+const getDeezerSearch = async (req, res) => {
+  const [data, error] = await fetchData(
+    `https://api.deezer.com/search?q=${req.query.q}`
+  );
+  console.log(data);
+  if (error) {
+    return res.status(400).json({
+      success: false,
+      error: "Something went wrong",
     });
-}
+  }
+  console.log(data);
+  return res.status(200).json({
+    success: true,
+    data: data.data,
+    nextpage: data.next,
+  });
+};
 
 // 2. Single Fetch API - [GET] https://api.deezer.com/track/{ trackId }
 //   - This endpoint fetches the data for a specified track.
@@ -35,23 +50,21 @@ const getDeezerChart = async (req, res) => {
 //     }
 
 const getDeezerTrack = async (req, res) => {
-  const [data, error] = await fetchData(`https://api.deezer.com/track/${req.params.id}`);
+  const [data, error] = await fetchData(
+    `https://api.deezer.com/track/${req.params.id}`
+  );
   if (error) {
-    return res
-      .status(400)
-      .json({
-        success: false,
-        error: 'Something went wrong',
-      })
+    return res.status(400).json({
+      success: false,
+      error: "Something went wrong",
+    });
   }
   console.log(data);
-  return res
-    .status(200)
-    .json({
-      success: true,
-      data: data
-    });
-}
+  return res.status(200).json({
+    success: true,
+    data: data,
+  });
+};
 
 // // IGNORE FOR NOW, template/reference file
 
@@ -106,6 +119,7 @@ const getDeezerTrack = async (req, res) => {
 module.exports = {
   getDeezerChart,
   getDeezerTrack,
+  getDeezerSearch,
   // serveFellows,
   // serveFellow,
   // createFellow,
