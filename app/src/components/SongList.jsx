@@ -96,37 +96,39 @@ const SongList = ({ prop }) => {
 
   return (
     <>
-      {currentTab === "trending" ? (
-        <ul id="song-list" onClick={handleTrendingClick}>
-          {songData.map((song) => {
-            return (
-              <SongCard
-                key={song.id}
-                id={song.id}
-                songTitle={song.title}
-                songArtist={song.artist.name}
-                coverArt={song.album.cover_xl}
-                previewSrc={song.preview}
-              />
-            );
-          })}
-        </ul>
-      ) : (
-        <ul id="song-list" onClick={handleTrendingClick}>
-          {savedData.map((song) => {
-            return (
-              <SongCard
-                key={song.id}
-                id={song.id}
-                songTitle={song.songTitle}
-                songArtist={song.songArtist}
-                coverArt={song.coverArt}
-                previewSrc={song.previewSrc}
-              />
-            );
-          })}
-        </ul>
-      )}
+      <div id="song-list-wrapper">
+        {currentTab === "trending" ? (
+          <ul id="song-list" onClick={handleTrendingClick}>
+            {songData.map((song) => {
+              return (
+                <SongCard
+                  key={song.id}
+                  id={song.id}
+                  songTitle={song.title}
+                  songArtist={song.artist.name}
+                  coverArt={song.album.cover_xl}
+                  previewSrc={song.preview}
+                />
+              );
+            })}
+          </ul>
+        ) : (
+          <ul id="song-list" onClick={handleTrendingClick}>
+            {savedData.map((song) => {
+              return (
+                <SongCard
+                  key={song.id}
+                  id={song.id}
+                  songTitle={song.songTitle}
+                  songArtist={song.songArtist}
+                  coverArt={song.coverArt}
+                  previewSrc={song.previewSrc}
+                />
+              );
+            })}
+          </ul>
+        )}
+      </div>
     </>
   );
 };

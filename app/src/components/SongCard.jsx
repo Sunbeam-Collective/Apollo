@@ -14,7 +14,7 @@ const SongCard = ({ songTitle, songArtist, coverArt, id }) => {
         <h3>{songTitle}</h3>
         <p>{songArtist}</p>
       </div>
-      <div style={{ width: "25%" }}>
+      <div id="save-icon-wrapper" style={{ width: "25%" }}>
         <img style={{ width: "30px" }} src={save_icon} alt="Save Icon" />
       </div>
     </li>
