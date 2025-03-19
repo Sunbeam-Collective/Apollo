@@ -1,12 +1,18 @@
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
+import '../App.css';
 
 import { getDeezerTrack } from "../services/deezerService";
 
 import {
   TrackDetails,
   MediaControls,
+  SecondaryNav,
 } from '../components'
+
+import {
+  edit_icon
+} from '../assets';
 
 import {
   useScrollLock
@@ -43,21 +49,22 @@ function Player() {
   return (
     <>
       <div className='player-container'>
+        <SecondaryNav />
         <TrackDetails
           title={track.title}
           artist={track.artist}
         />
         <div className='player-cover'>
-          <img src={track.coverSrc} alt={track.title} />
+          <img id='player-cover' src={track.coverSrc} alt={track.title} />
         </div>
+        {/* timeline is scrubbable... hopefully */}
         <div className='player-timeline'>
           {/* ??? */}
         </div>
         <MediaControls />
         <div className='player-edit'>
           <div className='edit-button-div'>
-            {/* same approach as media controls
-            <svg /> */}
+            <img src={edit_icon} />
             <p>Edit</p>
           </div>
         </div>

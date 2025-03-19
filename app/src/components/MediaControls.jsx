@@ -1,14 +1,45 @@
 
+import {
+  prev_icon,
+  play_icon,
+  pause_icon,
+  next_icon,
+  shuffle_icon,
+  repeat_icon
+} from '../assets';
+
+import {
+  useState
+} from 'react';
+
 function MediaControls({}) {
+  const [isPlaying, setIsPlaying] = useState(true);
+
   return (
     <div className='player-media-controls'>
-      {/* five icons here probably just as svg so we can export the figma vectors directly and call it a day
-          should we make it three btw? just leave out shuffle and repeat functions for now
-      <svg />
-      <svg />
-      <svg />
-      <svg />
-      <svg /> */}
+      <button id='shuffle-button' onClick={() => {}}>
+        <img src={shuffle_icon} />
+      </button>
+      <button id='prev-button' onClick={() => {}}>
+        <img src={prev_icon} />
+      </button>
+      {
+        isPlaying
+        ?
+        <button id='play-button' onClick={() => {}}>
+          <img src={play_icon} />
+        </button>
+        :
+        <button id='pause-button' onClick={() => {}}>
+          <img src={pause_icon} />
+        </button>
+      }
+      <button id='next-button' onClick={() => {}}>
+        <img src={next_icon} />
+      </button>
+      <button id='repeat-button' onClick={() => {}}>
+        <img src={repeat_icon} />
+      </button>
     </div>
   )
 }
