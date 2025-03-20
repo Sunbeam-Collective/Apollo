@@ -1,6 +1,6 @@
-import { useParams, useNavigate  } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
-import '../App.css';
+import "../App.css";
 
 import { getDeezerTrack } from "../services/deezerService";
 
@@ -8,8 +8,8 @@ import {
   TrackDetails,
   MediaControls,
   SecondaryNav,
-  Loading
-} from '../components'
+  Loading,
+} from "../components";
 
 import { edit_icon } from "../assets";
 
@@ -28,7 +28,7 @@ function Player() {
   useEffect(() => {
     // fetching
     const fetchTrack = async () => {
-      const minDelay = new Promise(resolve => setTimeout(resolve, 500));
+      const minDelay = new Promise((resolve) => setTimeout(resolve, 500));
       let [track, error] = [null, null];
       const loadingTask = async () => {
         try {
@@ -36,24 +36,23 @@ function Player() {
           track = {
             title: data.data.title,
             artist: data.data.artist.name,
-            coverSrc: data.data.album.cover,
+            coverSrc: data.data.album.cover_xl,
             previewSrc: data.data.preview,
-          }
+          };
         } catch (err) {
-          error = err
+          error = err;
         }
-      }
+      };
       await Promise.all([minDelay, loadingTask(id)]);
       if (track !== null) {
         // set audio here as well and handlers for music!!!
         // maybe we can disable the buttons if there's no audio initialized!
         setTrack(track);
-      }
-      else {
-        console.error('Error fetching deezer charts:',error);
+      } else {
+        console.error("Error fetching deezer charts:", error);
         setError(error);
       }
-    }
+    };
     fetchTrack();
   }, [id]);
 
@@ -68,11 +67,12 @@ function Player() {
           <img id="player-cover" src={track.coverSrc} alt={track.title} />
         </div>
         {/* timeline is scrubbable... hopefully */}
-        <MediaControls
-          previewSrc={track.previewSrc}
-        />
-        <div className='player-edit'>
-          <button className='edit-button' onClick={() => navigate(`/mixer/${id}`)}>
+        <MediaControls previewSrc={track.previewSrc} />
+        <div className="player-edit">
+          <button
+            className="edit-button"
+            onClick={() => navigate(`/mixer/${id}`)}
+          >
             <img src={edit_icon} />
             <p>Edit</p>
           </button>

@@ -26,6 +26,8 @@ const SearchBar = ({ prop }) => {
   // Fetch from api using search term on enter
   const handleEnter = async (event) => {
     if (event.key === "Enter" && searchTerm && currentTab === "trending") {
+      // Trigger Loading Animation by cleaning song list
+      setSongs(null);
       const { data, status } = await getDeezerSearch(searchTerm);
       if (data) setSongs(data.data);
       if (status !== 200) setError(true);
@@ -46,7 +48,7 @@ const SearchBar = ({ prop }) => {
 
   // Error Handler
   if (error) {
-    console.warn("Error Fetching Data");
+    console.warn("Error Fetching Data at SearchBar Component");
   }
 
   return (
