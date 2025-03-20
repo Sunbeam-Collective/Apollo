@@ -1,7 +1,12 @@
 import {
   useState,
-  useEffect
+  useEffect,
+  useContext
 } from 'react';
+
+import {
+  SongContext
+} from '../context'
 
 import {
   useParams,
@@ -36,41 +41,14 @@ function Mixer() {
 
   const { id } = useParams();
   const navigate = useNavigate();
-  const [error, setError] = useState(null);
-  const [track, setTrack] = useState(null);
+
+
+  const { track } = useContext(SongContext);
 
   // placeholders
   const duration = '00:00/00:30';
 
-  useEffect(() => {
-    const fetchTrack = async () => {
-      const minDelay = new Promise(resolve => setTimeout(resolve, 500));
-      let [track, error] = [null, null];
-      const loadingTask = async () => {
-        try {
-          const { data } = await getDeezerTrack(id);
-          track = {
-            title: data.data.title,
-            artist: data.data.artist.name,
-            coverSrc: data.data.album.cover,
-            previewSrc: data.data.preview,
-          }
-        } catch (err) {
-          error = err
-        }
-      }
-      await Promise.all([minDelay, loadingTask(id)]);
-      if (track !== null) setTrack(track);
-      else {
-        console.error('Error fetching deezer charts:',error);
-        setError(error);
-      }
-    }
-    fetchTrack();
-  }, []);
 
-  if (error !== null) return <h1>{error.message}</h1>;
-  if (track === null) return <Loading />;
   return (
     <>
       <div className='mixer-container'>

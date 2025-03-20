@@ -16,8 +16,15 @@ const SongList = ({ prop }) => {
     )
       return;
     const id = e.target.closest("li").dataset.songId;
-    navigate(`/player/${id}`);
-  };
+    navigate(
+      `/player/${id}`,
+      {
+        state: {
+          from: `/home`
+        }
+      }
+    )
+};
 
   // Handle No Song Data Yet
   if (!renderedSongs)

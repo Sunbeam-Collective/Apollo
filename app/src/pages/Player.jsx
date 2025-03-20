@@ -1,6 +1,7 @@
-import { useParams, useNavigate } from "react-router-dom";
-import { useState, useEffect, useRef } from "react";
-import "../App.css";
+
+import { useParams, useNavigate, useLocation  } from "react-router-dom";
+import { useState, useEffect, useContext, useRef } from "react";
+import '../App.css';
 
 import { getDeezerTrack } from "../services/deezerService";
 
@@ -11,7 +12,11 @@ import {
   Loading,
 } from "../components";
 
-import { edit_icon } from "../assets";
+import {
+  SongContext
+} from '../context'
+
+import { edit_icon_disabled } from "../assets";
 
 import { useScrollLock } from "../adapters";
 
@@ -22,8 +27,12 @@ function Player() {
   // fetching states
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const [error, setError] = useState(null);
-  const [track, setTrack] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // context
+  const { track, setTrack } = useContext(SongContext);
 
   useEffect(() => {
     // fetching
@@ -32,7 +41,9 @@ function Player() {
       let [track, error] = [null, null];
       const loadingTask = async () => {
         try {
+          console.log(id);
           const { data } = await getDeezerTrack(id);
+          console.log(data);
           track = {
             title: data.data.title,
             artist: data.data.artist.name,
@@ -48,8 +59,10 @@ function Player() {
         // set audio here as well and handlers for music!!!
         // maybe we can disable the buttons if there's no audio initialized!
         setTrack(track);
-      } else {
-        console.error("Error fetching deezer charts:", error);
+        setIsLoading(false);
+      }
+      else {
+        console.error('Error fetching deezer charts:',error);
         setError(error);
       }
     };
@@ -57,7 +70,7 @@ function Player() {
   }, [id]);
 
   if (error !== null) return <h1>{error.message}</h1>;
-  if (track === null) return <Loading />;
+  if (isLoading) return <Loading />;
   return (
     <>
       <div className="player-container">
@@ -67,14 +80,16 @@ function Player() {
           <img id="player-cover" src={track.coverSrc} alt={track.title} />
         </div>
         {/* timeline is scrubbable... hopefully */}
-        <MediaControls previewSrc={track.previewSrc} />
-        <div className="player-edit">
+        <MediaControls
+          setIsLoading={setIsLoading}
+        />
+        <div className='player-edit'>
           <button
-            className="edit-button"
+            className='edit-button disabled'
             onClick={() => navigate(`/mixer/${id}`)}
-          >
-            <img src={edit_icon} />
-            <p>Edit</p>
+            disabled>
+            <img src={edit_icon_disabled} />
+            <p id='edit-text'>Edit</p>
           </button>
         </div>
       </div>

@@ -1,5 +1,10 @@
-import { useRef } from "react";
-import { useEffect, useState } from "react";
+import {
+  useEffect,
+  useState,
+  useContext,
+  useRef
+} from "react";
+
 import HomepageHeader from "../components/HomepageHeader";
 import HomepageFooter from "../components/HomepageFooter";
 import SongList from "../components/SongList";
@@ -10,9 +15,14 @@ import {
   getLocalStorageData,
 } from "../utils/localStorageHelpers";
 
+import {
+  SongContext
+} from '../context'
+
 function Home() {
   // State to manage array of songs to be rendered (Trending View)
-  const [songData, setSongs] = useState(null);
+  const { songData, setSongs } = useContext(SongContext);
+  const [error, setError] = useState(null);
   // State to manage what gets rendered
   const [renderedSongs, setRenderedSongs] = useState(null);
   // State to manage trending and saved tabs
