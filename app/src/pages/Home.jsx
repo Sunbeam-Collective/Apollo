@@ -4,6 +4,10 @@ import HomepageFooter from "../components/HomepageFooter";
 import SongList from "../components/SongList";
 import { getDeezerChart } from "../services/deezerService";
 import SearchBar from "../components/SearchBar";
+import {
+  initLocalStorage,
+  getLocalStorageData,
+} from "../utils/localStorageHelpers";
 
 function Home() {
   // State to manage array of songs to be rendered
@@ -11,7 +15,7 @@ function Home() {
   const [error, setError] = useState(null);
   const [currentTab, setTab] = useState("trending");
 
-  // Load chart songs on-mount
+  // This useEffect loads chart songs on-mount
   useEffect(() => {
     const doFetch = async () => {
       // Deconstruct chart data from Deezer.
@@ -19,8 +23,37 @@ function Home() {
       if (data) setSongs(data.data);
       if (status !== 200) setError(true);
     };
+    // Fetch chart data
     doFetch();
+    // Initialize local storage
+    const localStorageData = getLocalStorageData();
+    if (!localStorageData) {
+      initLocalStorage();
+    }
   }, []);
+
+  // This useEffect checks if tab is saved or trending
+  useEffect(() => {
+    // This triggers the loading animation b/c when songData is null loadingAnim is rendered
+    setSongs(null);
+    if (currentTab === "trending") {
+      const doFetch = async () => {
+        // Deconstruct chart data from Deezer.
+        const { data, status } = await getDeezerChart();
+        if (data) setSongs(data.data);
+        if (status !== 200) setError(true);
+      };
+      // Fetch chart data
+      doFetch();
+    } else if (currentTab === "saved") {
+      const data = getLocalStorageData();
+      if (data.length !== 0) {
+        setSongs(data);
+      } else {
+        setSongs([]);
+      }
+    }
+  }, [currentTab]);
 
   // Render if error is true
   if (error) return <>An Error Has Occurred While Loading the Page</>;

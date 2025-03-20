@@ -177,7 +177,8 @@ button {
 }
 
 /* Song Card Save Button */
-#save-icon-wrapper {
+#save-icon-wrapper img {
+  height: fit-content;
 }
 
 /* Search Bar */
