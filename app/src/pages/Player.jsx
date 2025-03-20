@@ -15,7 +15,7 @@ import {
   SongContext
 } from '../context'
 
-import { edit_icon } from "../assets";
+import { edit_icon_disabled } from "../assets";
 
 import { useScrollLock } from "../adapters";
 
@@ -28,13 +28,12 @@ function Player() {
   const navigate = useNavigate();
   const location = useLocation();
   const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   // context
   const { track, setTrack } = useContext(SongContext);
 
   useEffect(() => {
-    if (location.state?.from.startsWith('/home')) setTrack(null);
-    else return;
     // fetching
     const fetchTrack = async () => {
       const minDelay = new Promise(resolve => setTimeout(resolve, 500));
@@ -59,6 +58,7 @@ function Player() {
         // set audio here as well and handlers for music!!!
         // maybe we can disable the buttons if there's no audio initialized!
         setTrack(track);
+        setIsLoading(false);
       }
       else {
         console.error('Error fetching deezer charts:',error);
@@ -69,7 +69,7 @@ function Player() {
   }, [id]);
 
   if (error !== null) return <h1>{error.message}</h1>;
-  if (track === null) return <Loading />;
+  if (isLoading) return <Loading />;
   return (
     <>
       <div className="player-container">
@@ -80,12 +80,15 @@ function Player() {
         </div>
         {/* timeline is scrubbable... hopefully */}
         <MediaControls
-          previewSrc={track.previewSrc}
+          setIsLoading={setIsLoading}
         />
         <div className='player-edit'>
-          <button className='edit-button' onClick={() => navigate(`/mixer/${id}`)}>
-            <img src={edit_icon} />
-            <p>Edit</p>
+          <button
+            className='edit-button disabled'
+            onClick={() => navigate(`/mixer/${id}`)}
+            disabled>
+            <img src={edit_icon_disabled} />
+            <p id='edit-text'>Edit</p>
           </button>
         </div>
       </div>
