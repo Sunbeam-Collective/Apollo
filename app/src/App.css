@@ -357,8 +357,10 @@ div.player-timeline {
   justify-content: center;
 }
 
+/* styles for Player input slider/progress bar */
 .progress-bar {
-  width: 100%;
+  /* width: 100%; */
+  width: calc(100% * 328/375);
   height: 5px;
   -webkit-appearance: none;
   appearance: none;
@@ -371,45 +373,41 @@ div.player-timeline {
 
 /* Chrome/Safari/Opera */
 .progress-bar::-webkit-slider-runnable-track {
-  background: #ddd;
+  background: #ddd; /* Unfilled color */
   background: linear-gradient(
     to right,
-    #FFE30E var(--progress-percent, 0%),
-    #ddd var(--progress-percent, 0%)
+    #FFE30E var(--progress-percent, 0%),  /* Filled color */
+    #ddd var(--progress-percent, 0%)      /* Unfilled color */
   );
   height: 5px;
   border-radius: 3px;
-  width: 100%; /* Make sure the track is the full width */
 }
 
 .progress-bar::-webkit-slider-thumb {
   -webkit-appearance: none;
   height: 15px;
   width: 15px;
-  background: #FFE30E;
+  background: #FFE30E;  /* Thumb color */
   border-radius: 50%;
   margin-top: -5px;
-  /*  Important: Offset the thumb by half its width to align the right edge with the track end. */
-  margin-right: -7.5px; /* (thumb width / 2) */
 }
 
 /* Firefox */
 .progress-bar::-moz-range-track {
-  background: #ddd;
+  background: #ddd; /* Unfilled color */
   background: linear-gradient(
     to right,
-    #FFE30E var(--progress-percent, 0%),
-    #ddd var(--progress-percent, 0%)
+    #FFE30E var(--progress-percent, 0%),  /* Filled color */
+    #ddd var(--progress-percent, 0%)      /* Unfilled color */
   );
   height: 5px;
   border-radius: 3px;
-  width: 100%;
 }
 
 .progress-bar::-moz-range-thumb {
   height: 15px;
   width: 15px;
-  background: #FFE30E;
+  background: #FFE30E;  /* Thumb color */
   border: none;
   border-radius: 50%;
 }
