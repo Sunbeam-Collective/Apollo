@@ -1,13 +1,13 @@
-import save_icon from "../assets/save.svg";
-import { addSongToLocal } from "../utils/localStorageHelpers";
+import SaveButton from "./SaveButton";
 
-const SongCard = ({ songTitle, songArtist, coverArt, id, currentTab }) => {
-  const handleSave = (event) => {
-    if (!event.target.closest(".save-icon")) return;
-    const id = event.target.closest(".save-icon").dataset.songId;
-    addSongToLocal(Number(id));
-  };
-
+const SongCard = ({
+  songTitle,
+  songArtist,
+  coverArt,
+  id,
+  currentTab,
+  setRenderedSongs,
+}) => {
   return (
     <li data-song-id={id} className="song-card">
       <div className="song-image-wrapper">
@@ -18,17 +18,8 @@ const SongCard = ({ songTitle, songArtist, coverArt, id, currentTab }) => {
         <p>{songArtist}</p>
       </div>
       <div id="save-icon-wrapper">
-        <img
-          className="save-icon"
-          onClick={handleSave}
-          data-song-id={id}
-          style={{
-            width: "30px",
-            display: currentTab === "saved" ? "none" : "inline",
-          }}
-          src={save_icon}
-          alt="Save Icon"
-        />
+        {/* // To-do: Change Icon Based on whether saved or not */}
+        <SaveButton prop={{ id, setRenderedSongs, currentTab }} />
       </div>
     </li>
   );

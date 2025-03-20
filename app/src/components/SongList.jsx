@@ -4,26 +4,39 @@ import { useNavigate } from "react-router-dom";
 import Loading from "./Loading";
 
 const SongList = ({ prop }) => {
-  const { currentTab, songData } = prop;
+  const { renderedSongs, currentTab, setRenderedSongs } = prop;
 
   const navigate = useNavigate();
 
   const handleTrendingClick = async (e) => {
-    if (!e.target.closest("li") || e.target.closest(".save-icon")) return;
+    if (
+      !e.target.closest("li") ||
+      e.target.closest(".save-icon") ||
+      e.target.closest(".save-icon-active")
+    )
+      return;
     const id = e.target.closest("li").dataset.songId;
     navigate(`/player/${id}`);
   };
 
-  // Handle No Song Data
-  if (!songData)
+  // Handle No Song Data Yet
+  if (!renderedSongs)
     return (
       <div id="song-list-wrapper">
-        <Loading />;
+        <Loading />
       </div>
     );
 
-  // Handle No Results Found
-  if (songData.length === 0)
+  // Handle No Saved Songs
+  if (renderedSongs.length === 0 && currentTab === "saved")
+    return (
+      <div id="song-list-wrapper">
+        <Alert message="No Songs Saved" />
+      </div>
+    );
+
+  // Handle No results within trending tab
+  if (renderedSongs.length === 0 && currentTab === "trending")
     return (
       <div id="song-list-wrapper">
         <Alert message="No results Found" />
@@ -34,16 +47,17 @@ const SongList = ({ prop }) => {
     <>
       <div id="song-list-wrapper">
         <ul id="song-list" onClick={handleTrendingClick}>
-          {songData.map((song) => {
+          {renderedSongs.map((song) => {
             return (
               <SongCard
-                key={song.id}
+                key={crypto.randomUUID()}
                 id={song.id}
                 songTitle={song.title}
                 songArtist={song.artist.name}
                 coverArt={song.album.cover_xl}
                 previewSrc={song.preview}
                 currentTab={currentTab}
+                setRenderedSongs={setRenderedSongs}
               />
             );
           })}

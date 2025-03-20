@@ -181,6 +181,14 @@ button {
   height: fit-content;
 }
 
+.save-icon:hover {
+  content: url("./assets/save_icon_active.svg");
+}
+
+.save-icon-active:hover {
+  content: url("./assets/save.svg");
+}
+
 /* Search Bar */
 #header-items {
   display: flex;
