@@ -1,5 +1,5 @@
-import { useParams, useNavigate  } from "react-router-dom";
-import { useState, useEffect, useRef } from "react";
+import { useParams, useNavigate, useLocation  } from "react-router-dom";
+import { useState, useEffect, useContext } from "react";
 import '../App.css';
 
 import { getDeezerTrack } from "../services/deezerService";
@@ -10,6 +10,10 @@ import {
   SecondaryNav,
   Loading
 } from '../components'
+
+import {
+  SongContext
+} from '../context'
 
 import { edit_icon } from "../assets";
 
@@ -22,17 +26,24 @@ function Player() {
   // fetching states
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const [error, setError] = useState(null);
-  const [track, setTrack] = useState(null);
+
+  // context
+  const { track, setTrack } = useContext(SongContext);
 
   useEffect(() => {
+    if (location.state?.from.startsWith('/home')) setTrack(null);
+    else return;
     // fetching
     const fetchTrack = async () => {
       const minDelay = new Promise(resolve => setTimeout(resolve, 500));
       let [track, error] = [null, null];
       const loadingTask = async () => {
         try {
+          console.log(id);
           const { data } = await getDeezerTrack(id);
+          console.log(data);
           track = {
             title: data.data.title,
             artist: data.data.artist.name,

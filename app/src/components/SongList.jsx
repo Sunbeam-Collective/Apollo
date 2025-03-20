@@ -85,13 +85,20 @@ const SongList = ({ prop }) => {
   const handleTrendingClick = async (e) => {
     if (!e.target.closest("li")) return;
     const id = e.target.closest("li").dataset.songId;
-    navigate(`/player/${id}`);
-  };
+    navigate(
+      `/player/${id}`,
+      {
+        state: {
+          from: `/home`
+        }
+      }
+    )
+};
 
-  // Handle No Song Data
-  if (!songData) return <Alert message="Loading..." />;
+// Handle No Song Data
+if (!songData) return <Alert message="Loading..." />;
 
-  // Handle No Results Found
+// Handle No Results Found
   if (songData.length === 0) return <Alert message="No results Found" />;
 
   return (

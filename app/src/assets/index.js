@@ -8,7 +8,9 @@ import pause_icon_rect from './pause_icon_rect.svg'
 import back_icon from './back_icon.svg'
 import edit_icon from './edit_icon.svg'
 import shuffle_icon from './shuffle_icon.svg'
+import shuffle_icon_active from './shuffle_icon_active.svg'
 import repeat_icon from './repeat_icon.svg'
+import repeat_icon_active from './repeat_icon_active.svg'
 import save_icon_mixer from './save_icon_mixer.svg'
 import load_wheel_ico from './load_wheel_ico.svg'
 
@@ -24,7 +26,9 @@ export {
   back_icon,
   edit_icon,
   shuffle_icon,
+  shuffle_icon_active,
   repeat_icon,
+  repeat_icon_active,
   save_icon_mixer,
   load_wheel_ico
 }

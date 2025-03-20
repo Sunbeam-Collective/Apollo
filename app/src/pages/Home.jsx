@@ -1,13 +1,24 @@
-import { useEffect, useState } from "react";
+import {
+  useEffect,
+  useState,
+  useContext
+} from "react";
+
 import HomepageHeader from "../components/HomepageHeader";
 import HomepageFooter from "../components/HomepageFooter";
 import SongList from "../components/SongList";
 import { getDeezerChart } from "../services/deezerService";
 import SearchBar from "../components/SearchBar";
 
+import {
+  SongContext
+} from '../context'
+
 function Home() {
   // State to manage array of songs to be rendered
-  const [songData, setSongs] = useState(null);
+  // lifting songData upwards with context maybe?
+  // const [songData, setSongs] = useState(null);
+  const { songData, setSongs } = useContext(SongContext);
   const [error, setError] = useState(null);
   const [currentTab, setTab] = useState("trending");
 
