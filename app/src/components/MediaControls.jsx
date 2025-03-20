@@ -6,6 +6,7 @@ import {
   next_icon,
   shuffle_icon,
   shuffle_icon_active,
+  shuffle_icon_disabled,
   repeat_icon,
   repeat_icon_active
 } from '../assets';
@@ -27,8 +28,12 @@ import {
   SongContext
 } from '../context'
 
-function MediaControls({ previewSrc }) {
-  const { songData } = useContext(SongContext);
+import {
+  DoublyLinkedList
+} from '../classes/DoublyLinkedList'
+
+function MediaControls() {
+  const { songData, track } = useContext(SongContext);
   // audio states
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -40,96 +45,165 @@ function MediaControls({ previewSrc }) {
   // shuffle and repeat toggles
   const [isShuffled, setIsShuffled] = useState(false);
   const [isRepeating, setIsRepeating] = useState(false);
-  // const songQueue = useRef([]);
+  let songQueue = useRef(new DoublyLinkedList());
   const navigate = useNavigate();
   const location = useLocation();
   const { id } = useParams();
 
-  // const shuffle = (songs) => {
-  //   const used = new Set();
-  //   while (used.size < songs.length) {
-  //     const randomIndex = Math.floor(Math.random() * songs.length);
-  //     used.add(randomIndex);
-  //   }
-  //   return [...used.values()].map((u) => songs[u]);
-  // }
+  const shuffle = (songs) => {
+    const used = new Set();
+    while (used.size < songs.length) {
+      const randomIndex = Math.floor(Math.random() * songs.length);
+      used.add(randomIndex);
+    }
+    return [...used.values()].map((u) => songs[u]);
+  }
 
-  // useEffect(() => {
+  const pivotToLinkedList = () => {
+    let i = songData.findIndex((song) => song.id === +id);
+    const newLL = new DoublyLinkedList();
+    while (newLL.length() < songData.length) {
+      newLL.appendToTail(songData[i%songData.length]);
+      i++
+    }
+    newLL.print();
+    return newLL;
+  }
 
-  // }, [previewSrc]);
+  const arrayToLinkedList = (array) => {
+    const newLL = new DoublyLinkedList();
+    console.log(newLL.head);
+    for (const a of array) {
+      newLL.appendToTail(a);
+      console.log(newLL.tail);
+    }
+    newLL.print();
+    return newLL;
+  }
 
   useEffect(() => {
     // template for like that queue thing
-    //   if (location.state?.from.startsWith('/home')) songQueue.current = [...songData];
-    //   console.log([...songQueue.current.map((v) => v.title)]);
-    //   if (isShuffled) songQueue.current = shuffle([...songQueue.current]);
-    //   if (isRepeating) songQueue.current = [track];
+    // console.log(songData);
+    if (location.state?.from.startsWith('/home')) songQueue.current = arrayToLinkedList(songData).head;
+    // songQueue.current.print();
+    // if (isShuffled) songQueue.current = shuffle([...songQueue.current]);
+    // if (isRepeating) songQueue.current = [track];
     setIsPlaying(true);
     audioRef.current.play();
     audioRef.current.loop = false;
-  }, [previewSrc]);
+  }, [track.previewSrc]);
+
+  useEffect(() => {
+    const progressBar = document.querySelector('.progress-bar');
+    if (progressBar) {
+      progressBar.style.setProperty('--progress-percent', `${(currentTime / duration) * 100}%`);
+    }
+  }, [currentTime, duration])
 
   const handleNextClick = () => {
-    // const shiftSong = songQueue.current.shift();
-    // songQueue.current.push(shiftSong);
-    // console.log(songQueue.current[0].id);
-    let songId;
-    if (isShuffled) {
-      do {
-        songId = songData[Math.floor(Math.random() * songData.length)].id;
-      } while (songId === +id);
-    } else if (isRepeating) {
+    if (isRepeating) {
       audioRef.current.currentTime = 0;
       setCurrentTime(0);
       return;
     } else { // no shuffle
-      // just to account for -1 lol
-      let position = songData.findIndex((song) => song.id === +id) + 1;
-      console.log(position);
-      if (position >= songData.length) position = 0;
-      songId = songData[position].id;
-    }
-    navigate(
-      `/player/${songId}`,
-      {
-        state: {
-          from: `/player/${id}`
+      const next = songQueue.current.next;
+      songQueue.current = next;
+      navigate(
+        `/player/${next.data.id}`,
+        {
+          state: {
+            from: `/player/${id}`
+          }
         }
-      }
-    )
+      )
+    }
   }
 
   const handlePrevClick = () => {
-    // const popSong = songQueue.current.pop();
-    // songQueue.current.unshift(popSong);
-    // console.log(songQueue.current[0].id);
-    let songId;
-    if (isShuffled) {
-      do {
-        songId = songData[Math.floor(Math.random() * songData.length)].id;
-      } while (songId === +id);
-    } else if (isRepeating) {
+    if (currentTime > 3 || isRepeating) {
       audioRef.current.currentTime = 0;
       setCurrentTime(0);
       return;
     } else { // no shuffle
-      let position = songData.findIndex((song) => song.id === +id) - 1;
-      console.log(position);
-      if (position < 0) position = songData.length-1;
-      songId = songData[position].id;
-    }
-    navigate(
-      `/player/${songId}`,
-      {
-        state: {
-          from: `/player/${id}`
+      const prev = songQueue.current.prev;
+      songQueue.current = prev;
+      navigate(
+        `/player/${prev.data.id}`,
+        {
+          state: {
+            from: `/player/${id}`
+          }
         }
-      }
-    )
-
+      )
+    }
   }
 
+  // const handleNextClick = () => {
+  //   // const shiftSong = songQueue.current.shift();
+  //   // songQueue.current.push(shiftSong);
+  //   // console.log(songQueue.current[0].id);
+  //   let songId;
+  //   if (isShuffled) {
+  //     do {
+  //       songId = songData[Math.floor(Math.random() * songData.length)].id;
+  //     } while (songId === +id);
+  //   } else if (isRepeating) {
+  //     audioRef.current.currentTime = 0;
+  //     setCurrentTime(0);
+  //     return;
+  //   } else { // no shuffle
+  //     // just to account for -1 lol
+  //     let position = songData.findIndex((song) => song.id === +id) + 1;
+  //     console.log(position);
+  //     if (position >= songData.length) position = 0;
+  //     songId = songData[position].id;
+  //     console.log(songId);
+  //   }
+  //   navigate(
+  //     `/player/${+songId}`,
+  //     {
+  //       state: {
+  //         from: `/player/${id}`
+  //       }
+  //     }
+  //   )
+  // }
+
+  // const handlePrevClick = () => {
+  //   // const popSong = songQueue.current.pop();
+  //   // songQueue.current.unshift(popSong);
+  //   // console.log(songQueue.current[0].id);
+  //   let songId;
+  //   if (isShuffled) {
+  //     do {
+  //       songId = songData[Math.floor(Math.random() * songData.length)].id;
+  //     } while (songId === +id);
+  //   } else if (isRepeating) {
+  //     songId = 0;
+  //     audioRef.current.currentTime = 0;
+  //     setCurrentTime(0);
+  //     return;
+  //   } else { // no shuffle
+  //     let position = songData.findIndex((song) => song.id === +id) - 1;
+  //     console.log(position);
+  //     if (position < 0) position = songData.length-1;
+  //     songId = songData[position].id;
+  //     console.log(songId);
+  //   }
+  //   navigate(
+  //     `/player/${songId}`,
+  //     {
+  //       state: {
+  //         from: `/player/${id}`
+  //       }
+  //     }
+  //   )
+  // }
+
+
   const handleShuffleClick = () => {
+    if (isShuffled) songQueue.current = pivotToLinkedList().head;
+    else songQueue.current = arrayToLinkedList(shuffle(songData)).head;
     setIsShuffled(isShuffled => !isShuffled);
   }
 
@@ -140,19 +214,20 @@ function MediaControls({ previewSrc }) {
 
   const handleTimeUpdate = () => {
     setCurrentTime(audioRef.current.currentTime);
-  }
+  };
 
   const handleSeek = (e) => {
     const time = parseFloat(e.target.value);
+    e.target.style.setProperty('--progress-percent', `${(time / duration) * 100} %`)
     audioRef.current.currentTime = time;
     setCurrentTime(time);
   };
 
-  const formatTime = (time) => {
-    const minutes = Math.floor(time / 60);
-    const seconds = Math.floor(time % 60);
-    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
-  };
+  // const formatTime = (time) => {
+  //   const minutes = Math.floor(time / 60);
+  //   const seconds = Math.floor(time % 60);
+  //   return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  // };
 
   const handleLoadedData = () => {
     setDuration(audioRef.current.duration);
@@ -219,12 +294,12 @@ function MediaControls({ previewSrc }) {
     <>
       <audio
         ref={audioRef}
-        src={previewSrc}
+        src={track.previewSrc}
         playsInline
       />
       <div className='player-timeline'>
         {/* Current Time */}
-        <span>{formatTime(currentTime)}</span>
+        {/* <span>{formatTime(currentTime)}</span> */}
         {/* Progress Bar */}
         <input
           type="range"
@@ -235,12 +310,18 @@ function MediaControls({ previewSrc }) {
           className="progress-bar"
         />
         {/* Duration */}
-        <span>{formatTime(duration)}</span>
+        {/* <span>{formatTime(duration)}</span> */}
       </div>
       <div className='player-media-controls'>
-        <button id='shuffle-button' onClick={handleShuffleClick}>
-          <img src={ isShuffled ? shuffle_icon_active : shuffle_icon } />
-        </button>
+        {
+          isRepeating
+          ? <button id='shuffle-button disabled' disabled>
+              <img src={shuffle_icon_disabled} />
+            </button>
+          : <button id='shuffle-button' onClick={handleShuffleClick}>
+              <img src={ isShuffled ? shuffle_icon_active : shuffle_icon } />
+            </button>
+        }
         <button id='prev-button' onClick={handlePrevClick}>
           <img src={prev_icon} />
         </button>

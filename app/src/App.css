@@ -12,12 +12,38 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  background-color: black;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  // variables for later
+  /* Colors */
+  --color-primary: #007bff;
+  --color-secondary: #6c757d;
+  --color-success: #28a745;
+  --color-danger: #dc3545;
+
+  /* Spacing */
+  --spacing-small: 0.5em;
+  --spacing-medium: 1em;
+  --spacing-large: 1.5em;
+
+  /* Typography */
+  --ff: "Inter", sans-serif;
+  --font-h1: bold 1.125rem/1.4em var(--ff);
+  --font-h2: bold 1rem/1.4em var(--ff);
+  --font-p: 1rem/1.4em var(--ff);
+  --font-p2: .875rem/1.4em var(--ff);
+  --font-gray100: hsl(0, 0%, 100%);
+  --font-gray70: hsl(0, 0%, 70%);
+  --font-gray0: hsl(0, 0%, 0%);
+
+  /* Border */
+  --border-radius: 0.25em;
+  --border-width: 0.0625em;
 }
 
 a {
@@ -48,7 +74,7 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: black;
   cursor: pointer;
   transition: border-color 0.25s;
 }
@@ -58,6 +84,11 @@ button:hover {
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
+}
+
+.disabled {
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 @media (prefers-color-scheme: light) {
@@ -198,17 +229,17 @@ p.track-artist {
 */
 
 div.player-container {
+  display: flex;
+  height: 100vh;
+  flex-direction: column;
   /* SecondaryNav component */
   div.secondary-nav {
     width: 100%;
     flex: calc(100% * 73/812);
     display: flex;
 
-    div.back-button {
-      flex: calc(100% * 57/375);
-    }
     button#back-button {
-      background-color: black;
+      flex: calc(100% * 57/375);
     }
     div.secondary-nav-padding {
       flex: calc(100% * 318/375);
@@ -224,7 +255,7 @@ div.player-container {
   div.player-cover {
     flex: calc(100% * 316/812);
     display: flex;
-    padding-top: 0.625rem;
+    /* padding-top: 0.625rem; */
     align-items: center;
     justify-content: center;
   }
@@ -243,7 +274,7 @@ div.player-container {
     flex: calc(100% * 74/812);
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-evenly;
     gap: 0.5rem;
   }
   div.player-media-controls>button {
@@ -260,7 +291,11 @@ div.player-container {
     display: flex;
     align-items: center;
     justify-content: center;
+
   }
+}
+p#edit-text {
+  color: #343434;
 }
 
 /*
@@ -278,9 +313,6 @@ div.mixer-container {
 
     div.back-button {
       flex: calc(100% * 57/375);
-    }
-    button#back-button {
-      background-color: black;
     }
     div.secondary-nav-padding {
       flex: calc(100% * 318/375);
@@ -316,6 +348,64 @@ div.loading-container {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+/* player timeline... */
+div.player-timeline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* styles for Player input slider/progress bar */
+.progress-bar {
+  width: calc(100% * 328/375);
+  height: 5px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+/* Chrome/Safari/Opera */
+.progress-bar::-webkit-slider-runnable-track {
+  background: #ddd; /* Unfilled color */
+  background: linear-gradient(
+    to right,
+    #FFE30E var(--progress-percent, 0%),  /* Filled color */
+    #ddd var(--progress-percent, 0%)      /* Unfilled color */
+  );
+  height: 5px;
+  border-radius: 3px;
+}
+
+.progress-bar::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 15px;
+  width: 15px;
+  background: #FFE30E;  /* Thumb color */
+  border-radius: 50%;
+  margin-top: -5px;
+}
+
+/* Firefox */
+.progress-bar::-moz-range-track {
+  background: #ddd; /* Unfilled color */
+  background: linear-gradient(
+    to right,
+    #FFE30E var(--progress-percent, 0%),  /* Filled color */
+    #ddd var(--progress-percent, 0%)      /* Unfilled color */
+  );
+  height: 5px;
+  border-radius: 3px;
+}
+
+.progress-bar::-moz-range-thumb {
+  height: 15px;
+  width: 15px;
+  background: #FFE30E;  /* Thumb color */
+  border: none;
+  border-radius: 50%;
 }
 
 /* Animations */
