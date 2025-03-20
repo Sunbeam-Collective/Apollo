@@ -1,7 +1,7 @@
 import dot_marker from "../assets/dot_marker.svg";
 
 const HomepageFooter = ({ prop }) => {
-  const { setTab } = prop;
+  const { currentTab, setTab } = prop;
 
   const toggleTab = (tab) => {
     setTab(tab);
@@ -14,7 +14,10 @@ const HomepageFooter = ({ prop }) => {
           <p>Trending</p>
           <img
             id="trending-selector"
-            style={{ height: "6px" }}
+            style={{
+              height: "6px",
+              display: currentTab === "trending" ? "inline" : "none",
+            }}
             src={dot_marker}
             alt=""
           />
@@ -25,7 +28,10 @@ const HomepageFooter = ({ prop }) => {
           <p>Saved</p>
           <img
             id="saved-selector"
-            style={{ height: "6px", display: "none" }}
+            style={{
+              height: "6px",
+              display: currentTab === "saved" ? "inline" : "none",
+            }}
             src={dot_marker}
             alt=""
           />

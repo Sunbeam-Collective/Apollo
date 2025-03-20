@@ -1,5 +1,6 @@
+
 import { useParams, useNavigate, useLocation  } from "react-router-dom";
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useRef } from "react";
 import '../App.css';
 
 import { getDeezerTrack } from "../services/deezerService";
@@ -8,8 +9,8 @@ import {
   TrackDetails,
   MediaControls,
   SecondaryNav,
-  Loading
-} from '../components'
+  Loading,
+} from "../components";
 
 import {
   SongContext
@@ -36,7 +37,7 @@ function Player() {
   useEffect(() => {
     // fetching
     const fetchTrack = async () => {
-      const minDelay = new Promise(resolve => setTimeout(resolve, 500));
+      const minDelay = new Promise((resolve) => setTimeout(resolve, 500));
       let [track, error] = [null, null];
       const loadingTask = async () => {
         try {
@@ -46,13 +47,13 @@ function Player() {
           track = {
             title: data.data.title,
             artist: data.data.artist.name,
-            coverSrc: data.data.album.cover,
+            coverSrc: data.data.album.cover_xl,
             previewSrc: data.data.preview,
-          }
+          };
         } catch (err) {
-          error = err
+          error = err;
         }
-      }
+      };
       await Promise.all([minDelay, loadingTask(id)]);
       if (track !== null) {
         // set audio here as well and handlers for music!!!
@@ -64,7 +65,7 @@ function Player() {
         console.error('Error fetching deezer charts:',error);
         setError(error);
       }
-    }
+    };
     fetchTrack();
   }, [id]);
 

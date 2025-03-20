@@ -2,58 +2,81 @@ import { useState } from "react";
 import { getDeezerSearch } from "../services/deezerService";
 import { getDeezerChart } from "../services/deezerService";
 import { useEffect } from "react";
-
-const savedData = [
-  {
-    id: 2461123655,
-    title: "Hell N Back (feat. Summer Walker)",
-    artist: {
-      name: "Bakar",
-    },
-    album: {
-      cover: "https://api.deezer.com/album/489849155/image",
-    },
-    preview:
-      "https://cdnt-preview.dzcdn.net/api/1/1/2/4/5/0/245fea3e7d84dc08f4c64057db81f57a.mp3?hdnea=exp=1742407556~acl=/api/1/1/2/4/5/0/245fea3e7d84dc08f4c64057db81f57a.mp3*~data=user_id=0,application_id=42~hmac=c91c076c87d92763fd4339b77accc9102d08cd07beec97486b0862abaa6aa4c3",
-  },
-];
+import { getLocalStorageData } from "../utils/localStorageHelpers";
 
 const SearchBar = ({ prop }) => {
-  const { setSongs, currentTab } = prop;
-  const [searchTerm, setSearchTerm] = useState("");
+  const { currentTab, setRenderedSongs, setSongs, searchTerm, setSearchTerm } =
+    prop;
+
   const [error, setError] = useState(null);
 
   // Fetch from api using search term on enter
   const handleEnter = async (event) => {
-    if (event.key === "Enter" && searchTerm && currentTab === "trending") {
-      const { data, status } = await getDeezerSearch(searchTerm);
-      if (data) setSongs(data.data);
-      if (status !== 200) setError(true);
+    if (event.key === "Enter" && searchTerm) {
+      if (currentTab === "trending") {
+        // Trigger Loading Animation by cleaning song list
+        setRenderedSongs(null);
+        const { data, status } = await getDeezerSearch(searchTerm);
+        if (data) {
+          setSongs(data.data); // Save in case user returns to trending from saved
+          setRenderedSongs(data.data); // Render the search results
+        }
+        if (status !== 200) setError(true);
+      }
+      if (currentTab === "saved") {
+        const localStorageData = getLocalStorageData();
+        const searchResults = localStorageData.filter((element) => {
+          const title = element.title.toLowerCase();
+          return title.includes(searchTerm);
+        });
+        setRenderedSongs(searchResults);
+      }
     }
   };
 
-  // Reset to chart data if search term is empty
+  // Handle empty search terms
   useEffect(() => {
-    const doFetch = async () => {
-      const { data, status } = await getDeezerChart();
-      if (data) setSongs(data.data);
-      if (status !== 200) setError(true);
-    };
     if (searchTerm === "") {
-      doFetch();
+      // Trigger Loading Animation by cleaning song list
+      setRenderedSongs(null);
+      const doFetch = async () => {
+        // Deconstruct chart data from Deezer.
+        const { data, status } = await getDeezerChart();
+        if (data) {
+          // Store trending songs in case user returns from saved
+          setSongs(data.data);
+          // Render trending songs
+          setRenderedSongs(data.data);
+        }
+        if (status !== 200) setError(true);
+      };
+      // If user switches to trending it will fetch chart data again
+      if (currentTab === "trending") {
+        doFetch();
+        // If user switches to trending it gets data from local storage and renders it
+      } else if (currentTab === "saved") {
+        // Reset to list to default
+        const data = getLocalStorageData();
+        setRenderedSongs(data);
+      }
     }
   }, [searchTerm]);
 
   // Error Handler
   if (error) {
-    console.warn("Error Fetching Data");
+    console.warn("Error Fetching Data at SearchBar Component");
   }
 
   return (
     <div id="search-bar-wrapper">
       <input
+        value={searchTerm}
         type="text"
-        placeholder="Search..."
+        placeholder={
+          currentTab === "trending"
+            ? "Search songs..."
+            : "Search saved songs..."
+        }
         onChange={(event) => setSearchTerm(event.target.value)}
         onKeyDown={handleEnter}
       />
