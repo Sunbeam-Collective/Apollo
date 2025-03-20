@@ -12,7 +12,7 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  background-color: black;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -51,13 +51,6 @@ button {
   background-color: #1a1a1a;
   cursor: pointer;
   transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
 }
 
 @media (prefers-color-scheme: light) {
@@ -122,6 +115,8 @@ button:focus-visible {
   flex: calc(100vh * 78 / 812);
   justify-content: space-between;
   align-items: center;
+  padding-left: 20px;
+  padding-right: 20px;
 }
 
 /* Search Bar */
@@ -141,6 +136,9 @@ button:focus-visible {
 
 #song-list {
   width: 100vw;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 #song-details-wrapper {
@@ -155,7 +153,40 @@ button:focus-visible {
 
 .song-card {
   display: flex;
-  gap: 20px;
+  padding-left: 10px;
+  padding-right: 10px;
+  align-items: center;
+  gap: 10px;
+  padding: 5px;
+  border: 1px solid transparent;
+}
+
+/* Song Card Cover Image */
+.song-card img {
+  display: flex;
+  border-radius: 5px;
+  height: 126px;
+  width: 126px;
+}
+
+.song-card:hover {
+  border-style: solid;
+  border-radius: 15px;
+  border-color: #ffe30d;
+  border-width: 1px;
+}
+
+/* Song Card Save Button */
+#save-icon-wrapper img {
+  height: fit-content;
+}
+
+.save-icon:hover {
+  content: url("./assets/save_icon_active.svg");
+}
+
+.save-icon-active:hover {
+  content: url("./assets/save.svg");
 }
 
 /* Search Bar */
@@ -169,12 +200,30 @@ button:focus-visible {
 }
 
 #search-bar-wrapper input {
+  border: none;
+  -webkit-appearance: none;
+  -ms-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
   width: 100%;
-  background-color: #9f9d9d;
+  background: #9f9d9d;
   border-radius: 30px;
-  border-style: none;
-  padding: 10px;
+  padding: 10px 20px 12px 40px;
+  font-size: large;
+  font-weight: bold;
   color: #000;
+  outline: none;
+  border: 1px solid transparent;
+  background-image: url("./assets/search_icon.svg");
+  background-position: 10px;
+  background-repeat: no-repeat;
+}
+
+#search-bar-wrapper input:focus {
+  border-style: solid;
+  border-color: #ffe30d;
+  border-width: 1px;
+  transition: border-color 0.1s ease;
 }
 
 /* Footer */
@@ -184,6 +233,10 @@ button:focus-visible {
   justify-content: center;
   align-items: center;
   gap: 30%;
+}
+
+#footer-wrapper button {
+  background-color: transparent;
 }
 
 p.track-title {
@@ -201,54 +254,54 @@ div.player-container {
   /* SecondaryNav component */
   div.secondary-nav {
     width: 100%;
-    flex: calc(100% * 73/812);
+    flex: calc(100% * 73 / 812);
     display: flex;
 
     div.back-button {
-      flex: calc(100% * 57/375);
+      flex: calc(100% * 57 / 375);
     }
     button#back-button {
       background-color: black;
     }
     div.secondary-nav-padding {
-      flex: calc(100% * 318/375);
+      flex: calc(100% * 318 / 375);
     }
   }
 
   /* TrackDetails component */
   div.player-details {
-    flex: calc(100% * 84/812);
+    flex: calc(100% * 84 / 812);
   }
 
   /* PlayerCover portion */
   div.player-cover {
-    flex: calc(100% * 316/812);
+    flex: calc(100% * 316 / 812);
     display: flex;
     padding-top: 0.625rem;
     align-items: center;
     justify-content: center;
   }
   img#player-cover {
-    height: calc(100% * 300/316);
-    width: calc(100% * 300/375);
+    height: calc(100% * 300 / 316);
+    width: calc(100% * 300 / 375);
   }
 
   /* PlayerTimeline portion */
   div.player-timeline {
-    flex: calc(100% * 67/812);
+    flex: calc(100% * 67 / 812);
   }
 
   /* MediaControls component */
   div.player-media-controls {
-    flex: calc(100% * 74/812);
+    flex: calc(100% * 74 / 812);
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
   }
-  div.player-media-controls>button {
-    height: calc(100% * 72/74);
-    width: calc(100% * 72/378);
+  div.player-media-controls > button {
+    height: calc(100% * 72 / 74);
+    width: calc(100% * 72 / 378);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -256,7 +309,7 @@ div.player-container {
 
   /* PlayerEdit portion */
   div.player-edit {
-    flex: calc(100% * 198/812);
+    flex: calc(100% * 198 / 812);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -273,39 +326,39 @@ div.mixer-container {
   flex-direction: column;
   /* Secondary Nav */
   div.secondary-nav {
-    flex: calc(100% * 73/812);
+    flex: calc(100% * 73 / 812);
     display: flex;
 
     div.back-button {
-      flex: calc(100% * 57/375);
+      flex: calc(100% * 57 / 375);
     }
     button#back-button {
       background-color: black;
     }
     div.secondary-nav-padding {
-      flex: calc(100% * 318/375);
+      flex: calc(100% * 318 / 375);
     }
   }
   div.player-details {
     flex: calc(100% * 94 / 812);
   }
   div.mixer-timeline-container {
-    flex: calc(100% * 226/812);
+    flex: calc(100% * 226 / 812);
   }
   div.duration-container {
-    flex: calc(100% * 48/812);
+    flex: calc(100% * 48 / 812);
   }
   div.mixer-controls-container {
-    flex: calc(100% * 79/812);
+    flex: calc(100% * 79 / 812);
     display: flex;
     justify-content: center;
     gap: 0.5rem;
   }
   div.control-knobs-container {
-    flex: calc(100% * 174/812);
+    flex: calc(100% * 174 / 812);
   }
   div.save-container-mixer {
-    flex: calc(100% * 118/812);
+    flex: calc(100% * 118 / 812);
   }
 }
 
