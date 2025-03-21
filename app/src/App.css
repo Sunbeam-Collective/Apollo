@@ -309,6 +309,7 @@ div.player-container {
   /* PlayerCover portion */
   div.player-cover {
     flex: calc(100% * 316 / 812);
+    max-height: calc(100% * 316/812);
     display: flex;
     /* padding-top: 0.625rem; */
     align-items: center;
@@ -317,6 +318,7 @@ div.player-container {
   img#player-cover {
     height: calc(100% * 300 / 316);
     width: calc(100% * 300 / 375);
+    object-fit: contain;
   }
 
   /* PlayerTimeline portion */
