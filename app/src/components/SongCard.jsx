@@ -6,7 +6,10 @@ const SongCard = ({
   coverArt,
   id,
   currentTab,
+  renderedSongs,
   setRenderedSongs,
+  searchTerm,
+  setSearchTerm
 }) => {
   return (
     <li data-song-id={id} className="song-card">
@@ -19,7 +22,7 @@ const SongCard = ({
       </div>
       <div id="save-icon-wrapper">
         {/* // To-do: Change Icon Based on whether saved or not */}
-        <SaveButton prop={{ id, setRenderedSongs, currentTab }} />
+        <SaveButton prop={{ id, renderedSongs, setRenderedSongs, currentTab, searchTerm, setSearchTerm }} />
       </div>
     </li>
   );

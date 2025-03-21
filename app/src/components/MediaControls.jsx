@@ -33,7 +33,7 @@ import {
 } from '../classes/DoublyLinkedList'
 
 function MediaControls() {
-  const { songData, track } = useContext(SongContext);
+  const { track, renderedSongs } = useContext(SongContext);
   // audio states
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -50,6 +50,7 @@ function MediaControls() {
   const location = useLocation();
   const { id } = useParams();
 
+
   const shuffle = (songs) => {
     const used = new Set();
     while (used.size < songs.length) {
@@ -60,10 +61,10 @@ function MediaControls() {
   }
 
   const pivotToLinkedList = () => {
-    let i = songData.findIndex((song) => song.id === +id);
+    let i = renderedSongs.findIndex((song) => song.id === +id);
     const newLL = new DoublyLinkedList();
-    while (newLL.length() < songData.length) {
-      newLL.appendToTail(songData[i%songData.length]);
+    while (newLL.length() < renderedSongs.length) {
+      newLL.appendToTail(renderedSongs[i%renderedSongs.length]);
       i++
     }
     newLL.print();
@@ -204,7 +205,7 @@ function MediaControls() {
 
   const handleShuffleClick = () => {
     if (isShuffled) songQueue.current = pivotToLinkedList().head;
-    else songQueue.current = arrayToLinkedList(shuffle(songData)).head;
+    else songQueue.current = arrayToLinkedList(shuffle(renderedSongs)).head;
     setIsShuffled(isShuffled => !isShuffled);
   }
 

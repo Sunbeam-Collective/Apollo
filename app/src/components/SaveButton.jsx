@@ -6,9 +6,10 @@ import {
 } from "../utils/localStorageHelpers";
 
 const SaveButton = ({ prop }) => {
-  const { id, setRenderedSongs, currentTab } = prop;
+  const { id, renderedSongs, setRenderedSongs, currentTab, searchTerm, setSearchTerm } = prop;
 
   const handleSave = (event) => {
+    let renderedCopy;
     if (event.target.closest(".save-icon")) {
       console.log("Save");
 
@@ -46,14 +47,27 @@ const SaveButton = ({ prop }) => {
         }
       });
 
+      if (searchTerm) {
+        const renderedIndex = renderedSongs.find((song) => song.id === songId);
+        renderedCopy = [...renderedSongs];
+        renderedCopy.splice(renderedIndex, 1);
+      }
       localStorageData.splice(removeIndex, 1);
 
       localStorage.setItem("savedSongs", JSON.stringify(localStorageData));
     }
 
+
     if (currentTab === "saved") {
       const updatedLocalStorageData = getLocalStorageData();
-      setRenderedSongs(updatedLocalStorageData);
+      if (searchTerm) {
+        console.log('searchterm')
+        setRenderedSongs(renderedCopy);
+        setSearchTerm(searchTerm);
+      } else {
+        console.log('rerender')
+        setRenderedSongs(updatedLocalStorageData);
+      }
     }
   };
 

@@ -22,9 +22,8 @@ import {
 function Home() {
   // State to manage array of songs to be rendered (Trending View)
   const { songData, setSongs } = useContext(SongContext);
-  const [error, setError] = useState(null);
   // State to manage what gets rendered
-  const [renderedSongs, setRenderedSongs] = useState(null);
+  const { renderedSongs, setRenderedSongs } = useContext(SongContext);
   // State to manage trending and saved tabs
   const [currentTab, setTab] = useState("trending");
   // State to manage state of search bar
@@ -86,6 +85,8 @@ function Home() {
             setRenderedSongs,
             renderedSongs,
             currentTab,
+            searchTerm,
+            setSearchTerm
           }}
         />
         <HomepageFooter prop={{ currentTab, setTab }} />

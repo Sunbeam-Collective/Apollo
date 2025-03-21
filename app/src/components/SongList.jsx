@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Loading from "./Loading";
 
 const SongList = ({ prop }) => {
-  const { renderedSongs, currentTab, setRenderedSongs } = prop;
+  const { renderedSongs, currentTab, setRenderedSongs, searchTerm, setSearchTerm } = prop;
 
   const navigate = useNavigate();
 
@@ -64,7 +64,10 @@ const SongList = ({ prop }) => {
                 coverArt={song.album.cover_xl}
                 previewSrc={song.preview}
                 currentTab={currentTab}
+                renderedSongs={renderedSongs}
                 setRenderedSongs={setRenderedSongs}
+                searchTerm={searchTerm}
+                setSearchTerm={setSearchTerm}
               />
             );
           })}
