@@ -18,11 +18,7 @@ const SongList = ({ prop }) => {
     const id = e.target.closest("li").dataset.songId;
     navigate(
       `/player/${id}`,
-      {
-        state: {
-          from: `/home`
-        }
-      }
+      { state: { from: `/home` } }
     )
 };
 

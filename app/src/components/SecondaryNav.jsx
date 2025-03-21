@@ -16,20 +16,12 @@ function SecondaryNav() {
     if (location.pathname.startsWith('/player')) {
       navigate(
         '/home',
-        {
-          state: {
-            from: location.pathname
-          }
-        }
+        { state: { from: location.pathname } }
       )
     } else if (location.pathname.startsWith('/mixer')) {
       navigate(
         `/player/${id}`,
-        {
-          state: {
-            from: location.pathname
-          }
-        }
+        { state: { from: location.pathname } }
       )
     }
   }

@@ -112,11 +112,7 @@ function MediaControls() {
       songQueue.current = next;
       navigate(
         `/player/${next.data.id}`,
-        {
-          state: {
-            from: `/player/${id}`
-          }
-        }
+        { state: { from: `/player/${id}` } }
       )
     }
   }
@@ -131,11 +127,7 @@ function MediaControls() {
       songQueue.current = prev;
       navigate(
         `/player/${prev.data.id}`,
-        {
-          state: {
-            from: `/player/${id}`
-          }
-        }
+        { state: { from: `/player/${id}` } }
       )
     }
   }
@@ -245,11 +237,7 @@ function MediaControls() {
       songQueue.current = next;
       navigate(
         `/player/${next.data.id}`,
-        {
-          state: {
-            from: `/player/${id}`
-          }
-        }
+        { state: { from: `/player/${id}` } }
       )
     };
   }
