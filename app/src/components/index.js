@@ -8,6 +8,7 @@ import TrackDetails from "./TrackDetails";
 import TrendingItem from "./TrendingItem";
 import SecondaryNav from "./SecondaryNav";
 import Loading from "./Loading";
+import PlayerPopout from "./PlayerPopout";
 
 export {
   AuthTest,
@@ -19,5 +20,6 @@ export {
   TrackDetails,
   TrendingItem,
   SecondaryNav,
-  Loading
+  Loading,
+  PlayerPopout
 }

@@ -6,7 +6,7 @@
 }
 
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: "Inter", Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -141,6 +141,7 @@ button {
 
 /* Header */
 #homepage-header {
+  font-family: Avenir;
   display: flex;
   flex: calc(100vh * 78 / 812);
   justify-content: space-between;
@@ -280,6 +281,10 @@ p.track-artist {
   styles for Player.jsx
 */
 
+div.blanked {
+  color: black;
+}
+
 div.player-container {
   display: flex;
   height: 100vh;
@@ -289,15 +294,17 @@ div.player-container {
     width: 100%;
     flex: calc(100% * 73 / 812);
     display: flex;
+    justify-content: space-between;
 
-    div.back-button {
-      flex: calc(100% * 57 / 375);
-    }
     button#back-button {
-      flex: calc(100% * 57/375);
+      flex: 1;
+      /* flex: calc(100% * 57/375); */
     }
     div.secondary-nav-padding {
-      flex: calc(100% * 318 / 375);
+      flex: 2.5;
+    }
+    button#popout-button {
+      flex: 1;
     }
   }
 
@@ -340,6 +347,9 @@ div.player-container {
     display: flex;
     align-items: center;
     justify-content: center;
+    :hover {
+      transform: scale(1.125);
+    }
   }
 
   /* PlayerEdit portion */
@@ -416,9 +426,10 @@ div.player-timeline {
 
 /* styles for Player input slider/progress bar */
 .progress-bar {
-  /* width: 100%; */
-  width: calc(100% * 328/375);
-  height: 5px;
+  width: 80%;
+  max-width: 80%;
+  /* width: calc(100% * 328/375); */
+  transform: scale(1, 1.5);
   -webkit-appearance: none;
   appearance: none;
   background: transparent;
@@ -426,15 +437,33 @@ div.player-timeline {
   padding: 0;
   margin: 0;
   box-sizing: border-box; /* Make sure padding and border are included in width */
+  position: absolute;
+}
+
+div.progress-thumb-container {
+  z-index: 10;
+  height: 20px;
+  width: 80%;
+  position: absolute;
+  pointer-events: none;
+}
+
+div.progress-thumb {
+  margin-left: calc(var(--progress-percent) - 10px);
+  width: 20px;
+  height: 20px;
+  background-color: #FFFFFF;
+  border-radius: 50%;
+  pointer-events: none;
 }
 
 /* Chrome/Safari/Opera */
 .progress-bar::-webkit-slider-runnable-track {
-  background: #ddd; /* Unfilled color */
+  background: #343434; /* Unfilled color */
   background: linear-gradient(
     to right,
     #FFE30E var(--progress-percent, 0%),  /* Filled color */
-    #ddd var(--progress-percent, 0%)      /* Unfilled color */
+    #343434 var(--progress-percent, 0%)      /* Unfilled color */
   );
   height: 5px;
   border-radius: 3px;
@@ -442,31 +471,33 @@ div.player-timeline {
 
 .progress-bar::-webkit-slider-thumb {
   -webkit-appearance: none;
+  appearance: none;
   height: 15px;
   width: 15px;
-  background: #FFE30E;  /* Thumb color */
+  /* background: #FFE30E;
   border-radius: 50%;
-  margin-top: -5px;
+  margin-top: -5px; */
 }
 
 /* Firefox */
 .progress-bar::-moz-range-track {
-  background: #ddd; /* Unfilled color */
+  background: #343434;
   background: linear-gradient(
     to right,
-    #FFE30E var(--progress-percent, 0%),  /* Filled color */
-    #ddd var(--progress-percent, 0%)      /* Unfilled color */
+    #FFE30E var(--progress-percent, 0%),
+    #343434 var(--progress-percent, 0%)
   );
   height: 5px;
   border-radius: 3px;
 }
 
 .progress-bar::-moz-range-thumb {
+  opacity: 0;
   height: 15px;
   width: 15px;
-  background: #FFE30E;  /* Thumb color */
+  /* background: #FFE30E;
   border: none;
-  border-radius: 50%;
+  border-radius: 50%; */
 }
 
 /* Animations */

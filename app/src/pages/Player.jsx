@@ -31,6 +31,9 @@ function Player() {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  // popout stuff
+  const [popoutIsOpen, setPopoutIsOpen] = useState(false);
+
   // context
   const { track, setTrack } = useContext(SongContext);
 

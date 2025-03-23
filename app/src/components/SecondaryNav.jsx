@@ -4,10 +4,15 @@ import {
   useParams
 } from 'react-router-dom';
 import {
-  back_icon
+  back_icon,
+  popout_icon
 } from '../assets';
+import {
+  PlayerPopout
+} from '.'
+import ReactDOM from 'react-dom/client'
 
-function SecondaryNav() {
+function SecondaryNav({ setPopoutIsOpen }) {
   const navigate = useNavigate();
   const location = useLocation();
   const { id } = useParams();
@@ -26,6 +31,23 @@ function SecondaryNav() {
     }
   }
 
+
+  const handlePopout = async () => {
+    const pipWindow = await window.documentPictureInPicture.requestWindow();
+    const pipDiv = pipWindow.document.createElement('div');
+    pipDiv.setAttribute('id', 'pip-root');
+    pipWindow.document.body.append(pipDiv);
+    const PIP_ROOT = ReactDOM.createRoot(
+      pipWindow.document.getElementById('pip-root')
+    )
+    PIP_ROOT.render(<PlayerPopout />);
+    pipWindow.addEventListener('unload', () => {
+      console.log('you closed the popout!');
+      setPopoutIsOpen(false);
+    })
+    setPopoutIsOpen(true);
+  }
+
   return (
     <div className='secondary-nav'>
       <button
@@ -35,7 +57,13 @@ function SecondaryNav() {
         <img src={back_icon} />
         {/* {'<'} Back */}
       </button>
-      <div className='secondary-nav-padding' />
+      <div className='secondary-nav-padding'></div>
+      <button
+        id='popout-button'
+        onClick={handlePopout}
+      >
+        <img src={popout_icon} />
+      </button>
     </div>
   )
 }
