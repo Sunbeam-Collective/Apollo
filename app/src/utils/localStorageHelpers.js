@@ -16,11 +16,21 @@ const getLocalStorageData = () => {
   return localStorageData;
 };
 
-const removeSongFromLocal = () => {};
+const updateLocalStorage = (updatedArray) => {
+  localStorage.setItem("savedSongs", JSON.stringify(updatedArray));
+};
+
+const removeSongFromLocal = (songId) => {
+  const localStorageData = JSON.parse(localStorage.getItem("savedSongs"));
+  const removeIndex = localStorageData.findIndex((song) => song.id === songId);
+  localStorageData.splice(removeIndex, 1);
+  localStorage.setItem("savedSongs", JSON.stringify(localStorageData));
+};
 
 export {
   getLocalStorageData,
   initLocalStorage,
   addSongToLocal,
   removeSongFromLocal,
+  updateLocalStorage,
 };

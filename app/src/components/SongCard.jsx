@@ -1,16 +1,6 @@
 import SaveButton from "./SaveButton";
 
-const SongCard = ({
-  songTitle,
-  songArtist,
-  coverArt,
-  id,
-  currentTab,
-  renderedSongs,
-  setRenderedSongs,
-  searchTerm,
-  setSearchTerm
-}) => {
+const SongCard = ({ songTitle, songArtist, coverArt, id, currentTab }) => {
   return (
     <li data-song-id={id} className="song-card">
       <div className="song-image-wrapper">
@@ -21,8 +11,7 @@ const SongCard = ({
         <p>{songArtist}</p>
       </div>
       <div id="save-icon-wrapper">
-        {/* // To-do: Change Icon Based on whether saved or not */}
-        <SaveButton prop={{ id, renderedSongs, setRenderedSongs, currentTab, searchTerm, setSearchTerm }} />
+        <SaveButton prop={{ id, currentTab }} />
       </div>
     </li>
   );

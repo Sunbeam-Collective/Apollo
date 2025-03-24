@@ -3,104 +3,77 @@ import save_icon_active from "../assets/save_icon_active.svg";
 import {
   getLocalStorageData,
   addSongToLocal,
+  removeSongFromLocal,
 } from "../utils/localStorageHelpers";
+import { SongContext } from "../context";
+import { useContext } from "react";
 
 const SaveButton = ({ prop }) => {
-  const { id, renderedSongs, setRenderedSongs, currentTab, searchTerm, setSearchTerm } = prop;
+  const { id, currentTab } = prop;
+  const { savedTabSongs, setSavedTabSongs } = useContext(SongContext);
+  const idArray = getLocalStorageData().map((song) => song.id);
 
   const handleSave = (event) => {
-    let renderedCopy;
-    if (event.target.closest(".save-icon")) {
-      console.log("Save");
+    const saveSong = event.target.closest(".save-icon");
+    const removeSong = event.target.closest(".save-icon-active");
+    const localStorageData = getLocalStorageData();
 
-      const id = event.target.closest(".save-icon").dataset.songId;
+    // Handle localStorage
+    if (saveSong) {
+      const songId = Number(saveSong.dataset.songId);
 
-      event.target.closest(".save-icon").src = save_icon_active;
-      event.target.closest(".save-icon").className = "save-icon-active";
-
-      const localStorageData = getLocalStorageData();
       const idArray = localStorageData.map((song) => song.id);
 
-      if (idArray.includes(Number(id))) {
-        return;
-      } else {
-        addSongToLocal(Number(id));
+      // Only adds song if its not already in saved
+      if (!idArray.includes(songId)) {
+        addSongToLocal(songId);
       }
-    } else if (event.target.closest(".save-icon-active")) {
-      console.log("Delete");
-
-      const songId = Number(
-        event.target.closest(".save-icon-active").dataset.songId
-      );
-
-      event.target.closest(".save-icon-active").src = save_icon;
-      event.target.closest(".save-icon-active").className = "save-icon";
-
-      // Check if song already exists
-      const localStorageData = getLocalStorageData();
-      let removeIndex = undefined;
-
-      localStorageData.forEach((song, index) => {
-        const id = song.id;
-        if (songId === id) {
-          removeIndex = index;
-        }
-      });
-
-      if (searchTerm) {
-        const renderedIndex = renderedSongs.find((song) => song.id === songId);
-        renderedCopy = [...renderedSongs];
-        renderedCopy.splice(renderedIndex, 1);
-      }
-      localStorageData.splice(removeIndex, 1);
-
-      localStorage.setItem("savedSongs", JSON.stringify(localStorageData));
     }
 
+    if (currentTab === "trending" && removeSong) {
+      const songId = Number(removeSong.dataset.songId);
+      removeSongFromLocal(songId);
+    }
 
-    if (currentTab === "saved") {
-      const updatedLocalStorageData = getLocalStorageData();
-      if (searchTerm) {
-        console.log('searchterm')
-        setRenderedSongs(renderedCopy);
-        setSearchTerm(searchTerm);
-      } else {
-        console.log('rerender')
-        setRenderedSongs(updatedLocalStorageData);
-      }
+    if (currentTab === "saved" && removeSong) {
+      const songId = Number(removeSong.dataset.songId);
+
+      const updatedSongArray = savedTabSongs.filter(
+        (song) => song.id !== songId
+      );
+
+      removeSongFromLocal(songId);
+      setSavedTabSongs(updatedSongArray);
+    }
+
+    // Handle Styles
+    if (saveSong) {
+      // Change button style
+      saveSong.src = save_icon_active;
+      // Set class to active (song is now saved)
+      saveSong.className = "save-icon-active";
+    }
+
+    if (removeSong) {
+      // Change button style
+      removeSong.src = save_icon;
+      // Set class to inactive (song is not saved any longer)
+      removeSong.className = "save-icon";
     }
   };
 
-  const localStorageData = getLocalStorageData();
-  const idArray = localStorageData.map((song) => song.id);
-
-  if (idArray.includes(Number(id))) {
-    return (
-      <img
-        className="save-icon-active"
-        onClick={handleSave}
-        data-song-id={id}
-        style={{
-          width: "30px",
-        }}
-        src={save_icon_active}
-        alt="Save Icon"
-      />
-    );
-  } else {
-    return (
-      <img
-        className="save-icon"
-        onClick={handleSave}
-        data-song-id={id}
-        style={{
-          width: "30px",
-        }}
-        src={save_icon}
-        alt="Save Icon"
-      />
-    );
-  }
+  return (
+    <img
+      className={idArray.includes(id) ? "save-icon-active" : "save-icon"}
+      onClick={handleSave}
+      data-song-id={id}
+      style={{
+        width: "30px",
+      }}
+      src={idArray.includes(id) ? save_icon_active : save_icon}
+      alt="Remove Icon"
+    />
+  );
 };
 
 export default SaveButton;
