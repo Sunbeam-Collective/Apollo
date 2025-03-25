@@ -149,14 +149,6 @@ button {
   padding-right: 20px;
 }
 
-/* Search Bar */
-#search-bar-wrapper {
-  display: flex;
-  flex: calc(100vh * 52 / 812);
-  justify-content: center;
-  align-items: center;
-}
-
 /* Song List */
 #song-list-wrapper {
   display: flex;
@@ -210,6 +202,8 @@ button {
 /* Song Card Save Button */
 #save-icon-wrapper img {
   height: fit-content;
+  width: 30px;
+  margin: 5px;
 }
 
 .save-icon:hover {
@@ -220,6 +214,10 @@ button {
   content: url("./assets/remove_icon.svg");
 }
 
+.save-button {
+  display: flex;
+}
+
 /* Search Bar */
 #header-items {
   display: flex;
@@ -227,6 +225,11 @@ button {
 }
 
 #search-bar-wrapper {
+  display: flex;
+  flex: calc(100vh * 52 / 812);
+  justify-content: center;
+  align-items: center;
+  position: relative;
   padding: 10px;
   border-bottom-width: 1px;
   border-bottom-color: #343434;
@@ -234,6 +237,7 @@ button {
 }
 
 #search-bar-wrapper input {
+  padding-right: 40px;
   border: none;
   -webkit-appearance: none;
   -ms-appearance: none;
@@ -251,6 +255,15 @@ button {
   background-image: url("./assets/search_icon.svg");
   background-position: 10px;
   background-repeat: no-repeat;
+}
+
+#clear-button {
+  position: absolute;
+  top: 50%;
+  height: fit-content;
+  right: 20px;
+  transform: translateY(-50%);
+  background-color: transparent;
 }
 
 #search-bar-wrapper input:focus {

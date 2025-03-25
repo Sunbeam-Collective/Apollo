@@ -7,6 +7,10 @@ const initLocalStorage = () => {
 const addSongToLocal = async (songId) => {
   const localStorageData = JSON.parse(localStorage.getItem("savedSongs"));
   const songData = await getDeezerTrack(songId);
+  if (songData.status !== 200) {
+    console.warn(`error fetching song id-${songId}`);
+    return;
+  }
   localStorageData.push(songData.data.data);
   localStorage.setItem("savedSongs", JSON.stringify(localStorageData));
 };

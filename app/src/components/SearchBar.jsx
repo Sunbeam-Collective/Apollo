@@ -6,7 +6,8 @@ import { cleanInput } from "../utils/inputHandlers";
 import { SongContext } from "../context";
 import reset_searcH_icon from "../assets/reset_search_icon.svg";
 
-const SearchBar = ({ prop }) => {
+const SearchBar = () => {
+  const { setRenderedSongs } = useContext(SongContext);
   const { currentTab } = useContext(SongContext);
   // State to manage state of search bar in trending tab
   const { trendingSearch, setTrendingSearch } = useContext(SongContext);
@@ -26,6 +27,7 @@ const SearchBar = ({ prop }) => {
   const handleEnter = async (event) => {
     if (event.key === "Enter") {
       if (currentTab === "trending") {
+        setRenderedSongs(null);
         const searchTerm = cleanInput(trendingSearch);
         const { data, status } = await getDeezerSearch(searchTerm);
         if (data) setTrendingTabSongs(data.data); // Save in case user returns to trending from saved
@@ -53,6 +55,7 @@ const SearchBar = ({ prop }) => {
   useEffect(() => {
     if (trendingSearch === "" && currentTab === "trending") {
       const doFetch = async () => {
+        setRenderedSongs(null);
         // Deconstruct chart data from Deezer.
         const { data, status } = await getDeezerChart();
         if (data) setTrendingTabSongs(data.data);
@@ -84,6 +87,20 @@ const SearchBar = ({ prop }) => {
         onChange={handleChange}
         onKeyDown={handleEnter}
       />
+      <button
+        id="clear-button"
+        onClick={handleReset}
+        style={{
+          display:
+            trendingSearch && currentTab === "trending"
+              ? "flex"
+              : savedSearch && currentTab === "saved"
+              ? "flex"
+              : "none",
+        }}
+      >
+        <img src={reset_searcH_icon} alt="reset button" />
+      </button>
     </div>
   );
 };
