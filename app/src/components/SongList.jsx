@@ -67,6 +67,7 @@ const SongList = ({ prop }) => {
                 songArtist={song.artist.name}
                 coverArt={song.album.cover_xl}
                 currentTab={currentTab}
+                position={song.position}
               />
             );
           })}
