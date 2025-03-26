@@ -1,4 +1,5 @@
 const fetchData = require("../utils/fetchData");
+const fs = require('fs');
 
 // 1. Multiple Fetch API - [GET] https://api.deezer.com/chart
 //   - This endpoint fetches the charts for five categories:
@@ -66,6 +67,28 @@ const getDeezerTrack = async (req, res) => {
   });
 };
 
+
+
+const getTrackFile = async (req, res) => {
+  const [blob, error] = await fetchData(req.query.url);
+  if (error) {
+    return res.status(400).json({
+      success: false,
+      error: "Something went wrong",
+    });
+  }
+  console.log(blob);
+  try {
+    res.setHeader('Content-Type', 'audio/mpeg');
+    res.send(blob);
+  } catch (error) {
+    console.error('error sending blob back: ', error);
+    res.status(500).send('Error fetching audio blob from server');
+  }
+};
+
+
+
 // // IGNORE FOR NOW, template/reference file
 
 // const Fellow = require('../model/Fellow');
@@ -120,6 +143,7 @@ module.exports = {
   getDeezerChart,
   getDeezerTrack,
   getDeezerSearch,
+  getTrackFile,
   // serveFellows,
   // serveFellow,
   // createFellow,

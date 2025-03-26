@@ -37,7 +37,7 @@ import {
 } from '../classes/DoublyLinkedList'
 
 function MediaControls() {
-  const { track, renderedSongs } = useContext(SongContext);
+  const { trackRef, track, renderedSongs } = useContext(SongContext);
   // audio states
   const [isPlaying, setIsPlaying] = useState(false);
   const [dragTime, setDragTime] = useState(0);
@@ -46,7 +46,6 @@ function MediaControls() {
   const [duration, setDuration] = useState(0);
   // const [volume, setVolume] = useState(1);
   // const [isMuted, setIsMuted] = useState(false);
-  const audioRef = useRef(null);
 
   // shuffle and repeat toggles
   const [isShuffled, setIsShuffled] = useState(false);
@@ -56,7 +55,7 @@ function MediaControls() {
   const location = useLocation();
   const { id } = useParams();
 
-  // button
+  // TODO: button styling thing
   const shuffleButtonRef = useRef(null);
   const prevButtonRef = useRef(null);
   const playButtonRoundRef = useRef(null);
@@ -98,8 +97,8 @@ function MediaControls() {
   useEffect(() => {
     if (location.state?.from.startsWith('/home')) songQueue.current = pivotToLinkedList(id).head;
     setIsPlaying(true);
-    audioRef.current.play();
-    audioRef.current.loop = false;
+    trackRef.current.play();
+    trackRef.current.loop = false;
   }, [track.previewSrc]);
 
   useEffect(() => {
@@ -118,7 +117,7 @@ function MediaControls() {
 
   const handleNextClick = () => {
     if (isRepeating) {
-      audioRef.current.currentTime = 0;
+      trackRef.current.currentTime = 0;
       setCurrentTime(0);
       return;
     } else { // no shuffle
@@ -133,7 +132,7 @@ function MediaControls() {
 
   const handlePrevClick = () => {
     if (currentTime > 3 || isRepeating) {
-      audioRef.current.currentTime = 0;
+      trackRef.current.currentTime = 0;
       setCurrentTime(0);
       return;
     } else { // no shuffle
@@ -153,12 +152,12 @@ function MediaControls() {
   }
 
   const handleRepeatClick = () => {
-    audioRef.current.loop = !audioRef.current.loop;
+    trackRef.current.loop = !trackRef.current.loop;
     setIsRepeating(isRepeating => !isRepeating);
   }
 
   const handleTimeUpdate = () => {
-    setCurrentTime(audioRef.current.currentTime);
+    setCurrentTime(trackRef.current.currentTime);
   };
 
   const handleSeek = (e) => {
@@ -172,7 +171,7 @@ function MediaControls() {
   };
 
   const handleSeekEnd = () => {
-    audioRef.current.currentTime = dragTime;
+    trackRef.current.currentTime = dragTime;
     setCurrentTime(dragTime);
     setIsDragging(false);
   }
@@ -184,14 +183,14 @@ function MediaControls() {
   // };
 
   const handleLoadedData = () => {
-    setDuration(audioRef.current.duration);
-    console.log('Audio duration: ', audioRef.current.duration);
+    setDuration(trackRef.current.duration);
+    console.log('Audio duration: ', trackRef.current.duration);
   }
 
   const handleEnded = () => {
     if (isRepeating) {
       setCurrentTime(0);
-      audioRef.current.play();
+      trackRef.current.play();
     }
     else {
       const next = songQueue.current.next;
@@ -206,9 +205,9 @@ function MediaControls() {
   async function togglePlay() {
     try {
       if (isPlaying) {
-        await audioRef.current.pause();
+        await trackRef.current.pause();
       } else {
-        await audioRef.current.play();
+        await trackRef.current.play();
       }
       setIsPlaying(!isPlaying);
     } catch (error) {
@@ -237,6 +236,7 @@ function MediaControls() {
   //   }
   // }
 
+  // TODO: button styling thing
   function initializeButtons() {
     const initDynamicButton = (buttonRef, normalIcon, hoverIcon, clickIcon) => {
       const button = buttonRef.current
@@ -254,9 +254,10 @@ function MediaControls() {
   }
 
   useEffect(() => {
-    initializeButtons();
+    // initializeButtons();
 
-    const audio = audioRef.current; // why do i have to do this?
+    const audio = trackRef.current; // why do i have to do this?
+    console.log(trackRef);
     audio.addEventListener('timeupdate', handleTimeUpdate);
     audio.addEventListener('loadeddata', handleLoadedData);
     audio.addEventListener('ended', handleEnded);
@@ -266,18 +267,19 @@ function MediaControls() {
       audio.removeEventListener('loadeddata', handleLoadedData);
       audio.removeEventListener('ended', handleEnded);
 
-      const cleanDynamicButton = (buttonRef, normalIcon, hoverIcon, clickIcon) => {
-        const button = buttonRef.current;
-        button.removeEventListener('mouseover', () => { button.src = hoverIcon });
-        button.removeEventListener('mouseout', () => { button.src = normalIcon });
-        button.removeEventListener('mousedown', () => { button.src = clickIcon });
-      }
-      cleanDynamicButton(shuffleButtonRef, './assets/shuffle-icon.svg', './assets/shuffle-icon-hover.svg', './assets/shuffle-icon-click.svg');
-      cleanDynamicButton(prevButtonRef, './assets/prev-icon.svg', './assets/prev-icon-hover.svg', './assets/prev-icon-click.svg');
-      cleanDynamicButton(playButtonRoundRef, './assets/play-icon.svg', './assets/play-icon-hover.svg', './assets/play-icon-click.svg');
-      cleanDynamicButton(pauseButtonRoundRef, './assets/pause-icon.svg', './assets/pause-icon-hover.svg', './assets/pause-icon-click.svg');
-      cleanDynamicButton(nextButtonRef, './assets/next-icon.svg', './assets/next-icon-hover.svg', './assets/next-icon-click.svg');
-      cleanDynamicButton(repeatButtonRef, './assets/repeat-icon.svg', './assets/repeat-icon-hover.svg', './assets/repeat-icon-click.svg');
+      // TODO: this is also part of styling buttons
+      // const cleanDynamicButton = (buttonRef, normalIcon, hoverIcon, clickIcon) => {
+      //   const button = buttonRef.current;
+      //   button.removeEventListener('mouseover', () => { button.src = hoverIcon });
+      //   button.removeEventListener('mouseout', () => { button.src = normalIcon });
+      //   button.removeEventListener('mousedown', () => { button.src = clickIcon });
+      // }
+      // cleanDynamicButton(shuffleButtonRef, './assets/shuffle-icon.svg', './assets/shuffle-icon-hover.svg', './assets/shuffle-icon-click.svg');
+      // cleanDynamicButton(prevButtonRef, './assets/prev-icon.svg', './assets/prev-icon-hover.svg', './assets/prev-icon-click.svg');
+      // cleanDynamicButton(playButtonRoundRef, './assets/play-icon.svg', './assets/play-icon-hover.svg', './assets/play-icon-click.svg');
+      // cleanDynamicButton(pauseButtonRoundRef, './assets/pause-icon.svg', './assets/pause-icon-hover.svg', './assets/pause-icon-click.svg');
+      // cleanDynamicButton(nextButtonRef, './assets/next-icon.svg', './assets/next-icon-hover.svg', './assets/next-icon-click.svg');
+      // cleanDynamicButton(repeatButtonRef, './assets/repeat-icon.svg', './assets/repeat-icon-hover.svg', './assets/repeat-icon-click.svg');
     };
   }, []);
 
@@ -285,7 +287,7 @@ function MediaControls() {
   return (
     <>
       <audio
-        ref={audioRef}
+        ref={trackRef}
         src={track.previewSrc}
         playsInline
       />

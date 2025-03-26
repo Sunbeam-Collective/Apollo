@@ -16,7 +16,10 @@ import {
   SongContext
 } from '../context'
 
-import { edit_icon_disabled } from "../assets";
+import {
+  edit_icon,
+  edit_icon_disabled
+} from "../assets";
 
 import { useScrollLock } from "../adapters";
 
@@ -35,7 +38,7 @@ function Player() {
   const [popoutIsOpen, setPopoutIsOpen] = useState(false);
 
   // context
-  const { track, setTrack } = useContext(SongContext);
+  const { track, setTrack, trackRef } = useContext(SongContext);
 
   useEffect(() => {
     // fetching
@@ -72,6 +75,15 @@ function Player() {
     fetchTrack();
   }, [id]);
 
+  const handleEdit = async () => {
+    await trackRef.current.pause();
+    trackRef.current.currentTime = 0;
+    navigate(
+      `/mixer/${id}`,
+      { state: { from: `/player/${id}` } }
+    )
+  }
+
   if (error !== null) return <h1>{error.message}</h1>;
   if (isLoading) return <Loading />;
   return (
@@ -88,10 +100,10 @@ function Player() {
         />
         <div className='player-edit'>
           <button
-            className='edit-button disabled'
-            onClick={() => navigate(`/mixer/${id}`)}
-            disabled>
-            <img src={edit_icon_disabled} />
+            className='edit-button'
+            onClick={handleEdit}
+            >
+              <img src={edit_icon} />
             <p id='edit-text'>Edit</p>
           </button>
         </div>

@@ -21,6 +21,7 @@ import {
 import {
   SongContextProvider
 } from './context'
+import { SoundTest } from "./components";
 
 
 
@@ -35,6 +36,7 @@ function App() {
           <Route path="/home" element={<Home />} />
           <Route path="/player/:id" element={<Player />} />
           <Route path="/mixer/:id" element={<Mixer />} />
+          <Route path="test" element={<SoundTest />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </SongContextProvider>

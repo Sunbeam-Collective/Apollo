@@ -13,7 +13,8 @@ function SongContextProvider({ children }) {
   const [track, setTrack] = useState(null);
   const [renderedSongs, setRenderedSongs] = useState(null);
   const songQueue = useRef([]);
-  const context = { songData, setSongs, songQueue, track, setTrack, renderedSongs, setRenderedSongs };
+  const trackRef = useRef(null);
+  const context = { songData, setSongs, songQueue, track, trackRef, setTrack, renderedSongs, setRenderedSongs };
 
   return (
     <SongContext.Provider value={context}>
