@@ -1,3 +1,5 @@
+import lamejs from "lamejs";
+
 import {
   useState,
   useEffect,
@@ -36,9 +38,6 @@ import {
   getDeezerTrack,
   getTrackFile
 } from '../services/deezerService'
-
-import * as fs from 'fs';
-import * as http from 'http';
 
 function Mixer() {
   useScrollLock();
@@ -170,7 +169,7 @@ function Mixer() {
   async function handleSave(e) {
     // standard song audio file parameters
     const numberOfChannels = 2; // stereo
-    const sampleRate = 44100; // in Hz, cd quality apparently
+    const sampleRate = 48000; // in Hz, cd quality apparently
     const length = sampleRate * duration;
 
     // init ctx...
@@ -178,68 +177,114 @@ function Mixer() {
     const offAudioCtx = new OfflineAudioContext(numberOfChannels, length, sampleRate);
     console.log('fresh audioCtx', audioCtx);
 
-    // init source node for use with ctx
-    // first convert the blob back into an ArrayBuffer...
-
-    // creating an arrayBuffer of same length as buffer
+    // convert audioBlob -> arrayBuffer
     console.log('audioblob.current: ', audioBlob.current);
     const arrayBuffer = await audioBlob.current.arrayBuffer();
+    console.log('audioBlob -> arrayBuffer output: ', arrayBuffer);
 
-    // use that buffer ....
+    // convert arrayBuffer -> audioBuffer
     const decoded = await audioCtx.decodeAudioData(arrayBuffer);
-    const source = new AudioBufferSourceNode(offAudioCtx, {
-      buffer: decoded
-    });
-    // set playback rate, connect to dest, proceed
+    console.log('arrayBuffer -> audioBuffer output: ', decoded);
+
+    // assign that value to the source buffer node
+    const source = offAudioCtx.createBufferSource();
+    source.buffer = decoded;
+
+    // set playback rate
     source.playbackRate.value = playbackRate;
-    source.connect(offAudioCtx.destination);
+
+    // apply effects. gain is just to make sure that volume is preserved. (might not be necessary)
+    const gainNode = offAudioCtx.createGain();
+    gainNode.gain.value = 1.0;
+
+    // connect the nodes
+    source.connect(gainNode);
+    gainNode.connect(offAudioCtx.destination);
     source.start();
     const rendered = await offAudioCtx.startRendering();
     console.log('done rendering. output: ', rendered);
 
-    // something goes wrong here
-    // some refs
-    // https://stackoverflow.com/questions/61264581/how-to-convert-audio-buffer-to-mp3-in-javascript
+    // now we have to separate into two channels for stereo output
+    const leftChannelData = rendered.getChannelData(0);
+    const rightChannelData = rendered.getChannelData(1);
 
-    const outputBlob = new Blob([rendered], { type: 'audio/mpeg' });
+    // convert buffers from Float32Array to Int16Array
+    const leftBuffer = new Int16Array(rendered.length);
+    const rightBuffer = new Int16Array(rendered.length);
+    for (let i = 0; i < rendered.length; i++) {
+      // lamejs encodes values in the range [-32768, 32767]
+      // but our buffers are floats in the range [-1, 1]
+      // so we convert float to int16
+      leftBuffer[i] = Math.max(-32768, Math.min(32767, Math.round(leftChannelData[i] * 32767)));
+      rightBuffer[i] = Math.max(-32768, Math.min(32767, Math.round(rightChannelData[i] * 32767)));
+    }
+    console.log('left buffer: ', leftBuffer);
+    console.log('right buffer: ', rightBuffer);
+
+    // encoding left and right buffers to merged mp3Data blocks
+    const mp3Encoder = new lamejs.Mp3Encoder(numberOfChannels, sampleRate, 128); // 128kps...
+    const mp3Data = [];
+    const sampleBlockSize = 1152;
+
+    let totalSamplesProcessed = 0;
+    for (let i = 0; i < rendered.length; i += sampleBlockSize) {
+      const leftChunk = leftBuffer.subarray(i, i + sampleBlockSize);
+      const rightChunk = rightBuffer.subarray(i, i + sampleBlockSize);
+      console.log(`Processing chunk from ${i} to ${i + leftChunk.length}, chunk size: ${leftChunk.length}`);
+      totalSamplesProcessed += leftChunk.length;
+      const mp3Buff = mp3Encoder.encodeBuffer(leftChunk, rightChunk);
+      if (mp3Buff.length > 0) mp3Data.push(mp3Buff);
+    }
+    // checking length...
+    console.log(`Total samples processed: ${totalSamplesProcessed}, original buffer length: ${rendered.length}`);
+
+    // adding the remainder block
+    const mp3Buff = mp3Encoder.flush(); // remainder...
+    if (mp3Buff.length > 0) mp3Data.push(mp3Buff);
+
+    // verification logs ...
+    console.log('resulting mp3data: ', mp3Data);
+    console.log('typeof mp3data: ', typeof mp3Data);
+    console.log("mp3Data.length:", mp3Data.length);
+    if (mp3Data.length > 0) {
+      console.log("First mp3Data chunk length:", mp3Data[0].length);
+    }
+
+    // concat uin8arrays into a single uint8array for blobbing
+    let totalLength = 0;
+    for (const chunk of mp3Data) {
+      totalLength += chunk.length;
+    }
+    const mp3DataFull = new Uint8Array(totalLength);
+    let offset = 0;
+    for (const chunk of mp3Data) {
+      mp3DataFull.set(chunk, offset);
+      offset += chunk.length;
+    }
+    // check if the length stays the same
+    console.log("mp3DataFull.length:", mp3DataFull.length);
+
+    // making the blob now
+    const outputBlob = new Blob([mp3DataFull], { type: 'audio/mpeg' });
     console.log('converted to blob: ', outputBlob);
+
+    // creating a URL for the blob
     const outputURL = URL.createObjectURL(outputBlob);
     console.log('converted to URL: ', outputURL);
+
+    // blob -> link element
     const link = document.createElement('a');
     link.href = outputURL;
-    link.download = `${track.title}-mix.mp3`;
+    const timestamp = new Date().getTime();
+    link.download = `${timestamp}-mix.mp3`;
+
+    // simulating a click to the link element to download
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+
+    // cleanup
     URL.revokeObjectURL(outputURL);
-
-
-    // // commenting out for future ref
-    // // init filters for ctx
-    // const iirfilter = new IIRFilterNode(audioCtx, {
-    //   feedforward: feedForward,
-    //   feedback: feedBack
-    // })
-    // console.log('iirfilter created in audioctx', iirfilter);
-
-    // connecting source -> { processing } -> destination
-
-
-
-    // ??? more processing or something?
-    // // redirect with iirfilter
-    // source.connect(iirfilter).connect(audioCtx.destination);
-
-    // console.log('source object: ', source);
-    // console.log('audioCtx at this point ', audioCtx);
-
-    // // something something autoplay
-    // if (audioCtx.state === 'suspended') audioCtx.resume();
-    // console.log('after connecting source to audioCtx', audioCtx);
-
-    // // plain output
-    // source.connect(audioCtx.destination);
-
   }
 
   return (
