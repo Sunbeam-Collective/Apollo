@@ -1,4 +1,4 @@
-const fetchData = async (url, options = {}) => {
+const fetchJSON = async (url, options = {}) => {
   try {
     const response = await fetch(url, options);
 
@@ -10,9 +10,6 @@ const fetchData = async (url, options = {}) => {
     if (contentType !== null && contentType.includes('application/json')) {
       const jsonData = await response.json();
       return [jsonData, null]
-    } else if (contentType.includes('audio/mpeg')) {
-      const mpegData = await response.blob();
-      return [mpegData, null];
     } else {
       const textData = await response.text();
       return [textData, null]
@@ -25,4 +22,4 @@ const fetchData = async (url, options = {}) => {
   }
 }
 
-module.exports = fetchData; // Default Export
+module.exports = fetchJSON; // Default Export

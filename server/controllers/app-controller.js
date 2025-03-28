@@ -1,4 +1,5 @@
-const fetchData = require("../utils/fetchData");
+const fetchJSON = require("../utils/fetchJSON");
+const fetchAudio = require("../utils/fetchAudio");
 const fs = require('fs');
 
 // 1. Multiple Fetch API - [GET] https://api.deezer.com/chart
@@ -11,7 +12,7 @@ const fs = require('fs');
 //   - { NO PARAMS }
 
 const getDeezerChart = async (req, res) => {
-  const [data, error] = await fetchData(`https://api.deezer.com/chart`);
+  const [data, error] = await fetchJSON(`https://api.deezer.com/chart`);
   if (error) {
     return res.status(400).json({
       success: false,
@@ -26,7 +27,7 @@ const getDeezerChart = async (req, res) => {
 };
 
 const getDeezerSearch = async (req, res) => {
-  const [data, error] = await fetchData(
+  const [data, error] = await fetchJSON(
     `https://api.deezer.com/search?q=${req.query.q}`
   );
   console.log(data);
@@ -51,7 +52,7 @@ const getDeezerSearch = async (req, res) => {
 //     }
 
 const getDeezerTrack = async (req, res) => {
-  const [data, error] = await fetchData(
+  const [data, error] = await fetchJSON(
     `https://api.deezer.com/track/${req.params.id}`
   );
   if (error) {
@@ -70,17 +71,20 @@ const getDeezerTrack = async (req, res) => {
 
 
 const getTrackFile = async (req, res) => {
-  const [blob, error] = await fetchData(req.query.url);
+  const [blob, error] = await fetchAudio(req.query.url);
   if (error) {
     return res.status(400).json({
       success: false,
       error: "Something went wrong",
     });
   }
-  console.log(blob);
+  console.log('blob data: ', blob);
+  console.log('blob data size: ', blob.size);
   try {
     res.setHeader('Content-Type', 'audio/mpeg');
-    res.send(blob);
+    res.setHeader('Content-Length', blob.size);
+    // res.send(blob);
+    res.send(Buffer.from(await blob.arrayBuffer()));
   } catch (error) {
     console.error('error sending blob back: ', error);
     res.status(500).send('Error fetching audio blob from server');

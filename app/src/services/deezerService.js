@@ -10,4 +10,7 @@ export const getDeezerSearch = (query) =>
   api.get(`/api/deezer/search?q=${query}`);
 export const getTrackFile = (url) => api.get(`/api/deezer/download?url=${url}`, {
   responseType: 'blob',
+  headers: {
+    'Accept': 'audio/mpeg'
+  }
 })

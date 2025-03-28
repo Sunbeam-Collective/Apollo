@@ -1,7 +1,8 @@
 import {
   useState,
   useEffect,
-  useContext
+  useContext,
+  useRef
 } from 'react';
 
 import {
@@ -50,15 +51,20 @@ function Mixer() {
   // context
   const { track, trackRef } = useContext(SongContext);
 
+  // refs for audioCtx
+  // const audioCtx = useRef(null);
+
   // audio states
   const [isPlaying, setIsPlaying] = useState(false);
-  const [dragTime, setDragTime] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [playbackRate, setPlaybackRate] = useState(1);
+  const [isDragging, setIsDragging] = useState(false);
 
-  // actual mp3 file
-  const [audioFile, setAudioFile] = useState(null);
+
+  // actual mp3 file states
+  const audioBlob = useRef(null);
+  const [audioURL, setAudioURL] = useState(null);
 
   // inits for IIR filter
   const lowPassCoefs = [
@@ -91,54 +97,39 @@ function Mixer() {
   useEffect(() => {
     async function downloadFile() {
       const blob = await getTrackFile(track.previewSrc);
+      console.log('blob: ', blob);
       console.log('blob raw data: ', blob.data);
+      console.log('blob data size: ', blob.data.size);
+      console.log('blob data type: ', blob.data.type);
       const audioURL = URL.createObjectURL(blob.data);
       console.log('converted to URL: ', audioURL);
-      setAudioFile(audioURL);
+      audioBlob.current = blob.data;
+      setAudioURL(audioURL);
     }
     downloadFile();
-  }, []);
+    // cleanup
+    return (() => {
+      URL.revokeObjectURL(audioURL);
+    })
+  }, [track]);
 
   useEffect(() => {
+    // grabbing the audio element itself
     console.log('testing inside mixer');
     console.log(trackRef.current);
 
-    // init ctx
-    const audioCtx = new AudioContext();
-    console.log('fresh audioCtx', audioCtx);
-
-    // init source node for use with ctx
-    const source = audioCtx.createMediaElementSource(audioFile);
-    console.log('source created with audioctx', source);
-
-    // init filters for ctx
-    const iirfilter = new IIRFilterNode(audioCtx, {
-      feedforward: feedForward,
-      feedback: feedBack
-    })
-    console.log('iirfilter created in audioctx', iirfilter);
-
-    // connecting source -> { processing } -> destination
-    source.connect(audioCtx.destination);
-    // source.connect(iirfilter).connect(audioCtx.destination);
-
-    // something something autoplay
-    if (audioCtx.state === 'suspended') audioCtx.resume();
-
-
-    console.log('after connecting source to audioCtx', audioCtx);
     const audio = trackRef.current; // why do i have to do this?
     console.log('audio from trackRef.current: ', audio);
     audio.addEventListener('timeupdate', handleTimeUpdate);
     audio.addEventListener('loadeddata', handleLoadedData);
-    audio.addEventListener('ended', handleEnded);
+    audio.addEventListener('ended', handleStop); // same behavior anyway lol
 
     return () => {
       audio.removeEventListener('timeupdate', handleTimeUpdate);
       audio.removeEventListener('loadeddata', handleLoadedData);
-      audio.removeEventListener('ended', handleEnded);
+      audio.removeEventListener('ended', handleStop); // same behavior anyway lol
     };
-  }, [audioFile]);
+  }, [audioURL]);
 
   function handleTimeUpdate() {
     setCurrentTime(trackRef.current.currentTime);
@@ -147,11 +138,6 @@ function Mixer() {
   function handleLoadedData() {
     setDuration(trackRef.current.duration);
     console.log('Audio duration: ', trackRef.current.duration);
-  }
-
-  async function handleEnded() {
-    setCurrentTime(0);
-    await trackRef.current.pause();
   }
 
   async function togglePlay() {
@@ -169,16 +155,98 @@ function Mixer() {
 
   async function handleStop() {
     trackRef.current.currentTime = 0;
+    await trackRef.current.pause();
     setCurrentTime(0);
     setIsPlaying(false);
-    await trackRef.current.pause();
+  }
+
+
+  function handleSpeed(e) {
+    trackRef.current.playbackRate = parseFloat(e.target.value);
+    setPlaybackRate(e.target.value);
+  }
+
+
+  async function handleSave(e) {
+    // standard song audio file parameters
+    const numberOfChannels = 2; // stereo
+    const sampleRate = 44100; // in Hz, cd quality apparently
+    const length = sampleRate * duration;
+
+    // init ctx...
+    const audioCtx = new AudioContext();
+    const offAudioCtx = new OfflineAudioContext(numberOfChannels, length, sampleRate);
+    console.log('fresh audioCtx', audioCtx);
+
+    // init source node for use with ctx
+    // first convert the blob back into an ArrayBuffer...
+
+    // creating an arrayBuffer of same length as buffer
+    console.log('audioblob.current: ', audioBlob.current);
+    const arrayBuffer = await audioBlob.current.arrayBuffer();
+
+    // use that buffer ....
+    const decoded = await audioCtx.decodeAudioData(arrayBuffer);
+    const source = new AudioBufferSourceNode(offAudioCtx, {
+      buffer: decoded
+    });
+    // set playback rate, connect to dest, proceed
+    source.playbackRate.value = playbackRate;
+    source.connect(offAudioCtx.destination);
+    source.start();
+    const rendered = await offAudioCtx.startRendering();
+    console.log('done rendering. output: ', rendered);
+
+    // something goes wrong here
+    // some refs
+    // https://stackoverflow.com/questions/61264581/how-to-convert-audio-buffer-to-mp3-in-javascript
+
+    const outputBlob = new Blob([rendered], { type: 'audio/mpeg' });
+    console.log('converted to blob: ', outputBlob);
+    const outputURL = URL.createObjectURL(outputBlob);
+    console.log('converted to URL: ', outputURL);
+    const link = document.createElement('a');
+    link.href = outputURL;
+    link.download = `${track.title}-mix.mp3`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(outputURL);
+
+
+    // // commenting out for future ref
+    // // init filters for ctx
+    // const iirfilter = new IIRFilterNode(audioCtx, {
+    //   feedforward: feedForward,
+    //   feedback: feedBack
+    // })
+    // console.log('iirfilter created in audioctx', iirfilter);
+
+    // connecting source -> { processing } -> destination
+
+
+
+    // ??? more processing or something?
+    // // redirect with iirfilter
+    // source.connect(iirfilter).connect(audioCtx.destination);
+
+    // console.log('source object: ', source);
+    // console.log('audioCtx at this point ', audioCtx);
+
+    // // something something autoplay
+    // if (audioCtx.state === 'suspended') audioCtx.resume();
+    // console.log('after connecting source to audioCtx', audioCtx);
+
+    // // plain output
+    // source.connect(audioCtx.destination);
+
   }
 
   return (
     <>
       <audio
         ref={trackRef}
-        src={audioFile}
+        src={audioURL}
         playsInline
       />
       <div className='mixer-container'>
@@ -202,9 +270,13 @@ function Mixer() {
           }}
         />
         <ControlKnobs
+          props={{
+            currentTime, duration,
+            handleSpeed, playbackRate
+          }}
         />
         <div className='save-container-mixer'>
-          <button id='save-mixer-button' onClick={() => {}}>
+          <button id='save-mixer-button' onClick={handleSave}>
             <img id='save-mixer-button-icon' src={save_icon_mixer} />
           </button>
         </div>
