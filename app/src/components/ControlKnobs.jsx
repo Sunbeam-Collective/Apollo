@@ -4,8 +4,6 @@ import {
 
 function ControlKnobs({ props }) {
   const {
-    currentTime,
-    duration,
     playbackRate,
     handleSpeed
   } = props;
@@ -17,7 +15,7 @@ function ControlKnobs({ props }) {
           step='0.001'
           value={playbackRate}
           min='0.5'
-          max='4'
+          max='2'
           onChange={handleSpeed}
           className="playback-rate-slider"
         />
