@@ -3,7 +3,6 @@ function QueueCard({ song }) {
   return (
     <li
       className='queue-list-item'
-      key={crypto.randomUUID()}
     >
       <div className='queue-item-cover'>
         <img src={song.album.cover_xl} />

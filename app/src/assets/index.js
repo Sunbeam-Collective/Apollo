@@ -30,6 +30,7 @@ import load_wheel_ico from './load_wheel_ico.svg'
 import popout_icon from './popout_icon.svg'
 import dot_marker from './dot_marker.svg'
 import queue_icon from './queue_icon.svg'
+import exit_queue_icon from './exit_queue_icon.svg'
 
 
 export {
@@ -64,5 +65,6 @@ export {
   load_wheel_ico,
   popout_icon,
   dot_marker,
-  queue_icon
+  queue_icon,
+  exit_queue_icon
 }

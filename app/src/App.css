@@ -292,7 +292,7 @@ div.queue-modal {
   -ms-user-select: none; /* IE 10 and IE 11 */
   user-select: none; /* Standard syntax */
 
-  background-color: rgba(0,0,0,0.9);
+  background-color: rgba(0,0,0,0.8);
   position: absolute;
   z-index: 20;
   top: 0;
@@ -320,7 +320,7 @@ div.queue-modal {
       display: flex;
       justify-content: center;
       align-items: center;
-      font-size: 3rem;
+      font-size: 1.5rem;
     }
   }
   div.queue-body {
@@ -445,7 +445,7 @@ div.player-container {
   }
 }
 p#edit-text {
-  color: #343434;
+  color: #white;
 }
 
 /*

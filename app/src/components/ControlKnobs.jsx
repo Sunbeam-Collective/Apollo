@@ -251,8 +251,8 @@ function ControlKnobs({ props }) {
                 .fill(0.5)
                 .map((v,i) => Math.round((v+(i*0.01))*100))
                 .map((v) => {
-                  let className = 'rate-value'
-                  if (v / 100 === playbackRate) className += ' current'
+                  let className = 'rate-value';
+                  if (v / 100 === playbackRate) className += ' current';
                   return (
                     <>
                       <li

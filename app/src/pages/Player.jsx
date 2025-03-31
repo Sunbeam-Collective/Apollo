@@ -19,7 +19,8 @@ import {
 
 import {
   edit_icon,
-  edit_icon_disabled
+  edit_icon_disabled,
+  exit_queue_icon
 } from "../assets";
 
 import { useScrollLock } from "../adapters";
@@ -126,7 +127,9 @@ function Player() {
               queue
             </div>
             <div className='queue-header-exit-container'>
-              <button id='queue-exit' onClick={handleQueueToggle}>❌</button>
+              <button id='queue-exit' onClick={handleQueueToggle}>
+                <img src={exit_queue_icon} />
+              </button>
             </div>
           </div>
           <div className='queue-body'>
@@ -134,7 +137,7 @@ function Player() {
               {queue.length > 0 ? (
                 queue.map((song) => {
                   return (
-                    <QueueCard song={song} />
+                    <QueueCard key={crypto.randomUUID()} song={song} />
                   )
                 })
               ) : (
