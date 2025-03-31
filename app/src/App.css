@@ -35,7 +35,7 @@
   --font-h1: bold 1.125rem/1.4em var(--ff);
   --font-h2: bold 1rem/1.4em var(--ff);
   --font-p: 1rem/1.4em var(--ff);
-  --font-p2: .875rem/1.4em var(--ff);
+  --font-p2: 0.875rem/1.4em var(--ff);
   --font-gray100: hsl(0, 0%, 100%);
   --font-gray70: hsl(0, 0%, 70%);
   --font-gray0: hsl(0, 0%, 0%);
@@ -149,14 +149,6 @@ button {
   padding-right: 20px;
 }
 
-/* Search Bar */
-#search-bar-wrapper {
-  display: flex;
-  flex: calc(100vh * 52 / 812);
-  justify-content: center;
-  align-items: center;
-}
-
 /* Song List */
 #song-list-wrapper {
   display: flex;
@@ -204,19 +196,26 @@ button {
   border-radius: 15px;
   border-color: #ffe30d;
   border-width: 1px;
+  cursor: pointer;
 }
 
 /* Song Card Save Button */
 #save-icon-wrapper img {
   height: fit-content;
+  width: 30px;
+  margin: 5px;
 }
 
 .save-icon:hover {
-  content: url("./assets/save_icon_active.svg");
+  content: url("./assets/save_icon_hover.svg");
 }
 
 .save-icon-active:hover {
-  content: url("./assets/save.svg");
+  content: url("./assets/remove_icon.svg");
+}
+
+.save-button {
+  display: flex;
 }
 
 /* Search Bar */
@@ -226,10 +225,19 @@ button {
 }
 
 #search-bar-wrapper {
+  display: flex;
+  flex: calc(100vh * 52 / 812);
+  justify-content: center;
+  align-items: center;
+  position: relative;
   padding: 10px;
+  border-bottom-width: 1px;
+  border-bottom-color: #343434;
+  border-bottom-style: solid;
 }
 
 #search-bar-wrapper input {
+  padding-right: 40px;
   border: none;
   -webkit-appearance: none;
   -ms-appearance: none;
@@ -249,6 +257,15 @@ button {
   background-repeat: no-repeat;
 }
 
+#clear-button {
+  position: absolute;
+  top: 50%;
+  height: fit-content;
+  right: 20px;
+  transform: translateY(-50%);
+  background-color: transparent;
+}
+
 #search-bar-wrapper input:focus {
   border-style: solid;
   border-color: #ffe30d;
@@ -263,10 +280,22 @@ button {
   justify-content: center;
   align-items: center;
   gap: 30%;
+  border-top-width: 1px;
+  border-top-color: #343434;
+  border-top-style: solid;
 }
 
 #footer-wrapper button {
   background-color: transparent;
+}
+
+/* Alert Messages Styling */
+#alert-message {
+  display: flex;
+  flex: calc(100vh * 569 / 812);
+  overflow-y: auto;
+  align-items: center;
+  justify-content: center;
 }
 
 p.track-title {
@@ -294,7 +323,7 @@ div.player-container {
       flex: calc(100% * 57 / 375);
     }
     button#back-button {
-      flex: calc(100% * 57/375);
+      flex: calc(100% * 57 / 375);
     }
     div.secondary-nav-padding {
       flex: calc(100% * 318 / 375);
@@ -348,7 +377,6 @@ div.player-container {
     display: flex;
     align-items: center;
     justify-content: center;
-
   }
 }
 p#edit-text {
@@ -417,7 +445,7 @@ div.player-timeline {
 /* styles for Player input slider/progress bar */
 .progress-bar {
   /* width: 100%; */
-  width: calc(100% * 328/375);
+  width: calc(100% * 328 / 375);
   height: 5px;
   -webkit-appearance: none;
   appearance: none;
@@ -433,8 +461,8 @@ div.player-timeline {
   background: #ddd; /* Unfilled color */
   background: linear-gradient(
     to right,
-    #FFE30E var(--progress-percent, 0%),  /* Filled color */
-    #ddd var(--progress-percent, 0%)      /* Unfilled color */
+    #ffe30e var(--progress-percent, 0%),
+    /* Filled color */ #ddd var(--progress-percent, 0%) /* Unfilled color */
   );
   height: 5px;
   border-radius: 3px;
@@ -444,7 +472,7 @@ div.player-timeline {
   -webkit-appearance: none;
   height: 15px;
   width: 15px;
-  background: #FFE30E;  /* Thumb color */
+  background: #ffe30e; /* Thumb color */
   border-radius: 50%;
   margin-top: -5px;
 }
@@ -454,8 +482,8 @@ div.player-timeline {
   background: #ddd; /* Unfilled color */
   background: linear-gradient(
     to right,
-    #FFE30E var(--progress-percent, 0%),  /* Filled color */
-    #ddd var(--progress-percent, 0%)      /* Unfilled color */
+    #ffe30e var(--progress-percent, 0%),
+    /* Filled color */ #ddd var(--progress-percent, 0%) /* Unfilled color */
   );
   height: 5px;
   border-radius: 3px;
@@ -464,7 +492,7 @@ div.player-timeline {
 .progress-bar::-moz-range-thumb {
   height: 15px;
   width: 15px;
-  background: #FFE30E;  /* Thumb color */
+  background: #ffe30e; /* Thumb color */
   border: none;
   border-radius: 50%;
 }

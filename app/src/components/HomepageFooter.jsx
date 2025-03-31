@@ -1,4 +1,8 @@
 import dot_marker from "../assets/dot_marker.svg";
+import trending_icon from "../assets/trending_icon.svg";
+import trending_icon_active from "../assets/trending_icon_active.svg";
+import save_icon from "../assets/save_icon.svg";
+import save_icon_active from "../assets/save_icon_f_active.svg";
 
 const HomepageFooter = ({ prop }) => {
   const { currentTab, setTab } = prop;
@@ -11,30 +15,24 @@ const HomepageFooter = ({ prop }) => {
     <div id="footer-wrapper">
       <div id="trending-wrapper">
         <button onClick={() => toggleTab("trending")}>
-          <p>Trending</p>
           <img
             id="trending-selector"
-            style={{
-              height: "6px",
-              display: currentTab === "trending" ? "inline" : "none",
-            }}
-            src={dot_marker}
+            src={
+              currentTab === "trending" ? trending_icon_active : trending_icon
+            }
             alt=""
           />
+          <p>Trending</p>
         </button>
       </div>
       <div id="saved-wrapper">
         <button onClick={() => toggleTab("saved")}>
-          <p>Saved</p>
           <img
             id="saved-selector"
-            style={{
-              height: "6px",
-              display: currentTab === "saved" ? "inline" : "none",
-            }}
-            src={dot_marker}
+            src={currentTab === "saved" ? save_icon_active : save_icon}
             alt=""
           />
+          <p>Saved</p>
         </button>
       </div>
     </div>
