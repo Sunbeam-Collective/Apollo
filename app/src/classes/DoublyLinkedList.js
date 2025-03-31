@@ -62,8 +62,8 @@ export class DoublyLinkedList {
   print() {
     let curr = this.head;
     do {
-      console.log(curr.data);
-      if (curr) console.log(curr.data.title);
+      // console.log(curr.data);
+      if (curr) // console.log(curr.data.title);
       curr = curr.next;
     } while (curr !== this.head);
   }

@@ -45,7 +45,7 @@ function MixerTimeline({ props }) {
   const container = useRef(null);
 
   useEffect(() => {
-    console.log('inside first')
+    // console.log('inside first')
     if (waveRef.current) waveRef.current.destroy(); // deallocate previous wave
     waveRef.current = WaveSurfer.create({
       // functionality
@@ -72,7 +72,7 @@ function MixerTimeline({ props }) {
     });
     // events
     waveRef.current.on('ready', () => {
-      console.log('wave is now ready!');
+      // console.log('wave is now ready!');
       // so we know how to scale the current time and duration
       // when playback rate changes
       setDuration(waveRef.current.getDuration());
@@ -84,7 +84,7 @@ function MixerTimeline({ props }) {
       setIsPlaying(false);
     });
     waveRef.current.on('timeupdate', (currentTime) => {
-      console.log('here: ', currentTime);
+      // console.log('here: ', currentTime);
       setCurrentTime(currentTime / waveRef.current.getPlaybackRate());
     });
     // zoom plugin
@@ -106,7 +106,7 @@ function MixerTimeline({ props }) {
   }, [audioURL]);
 
   useEffect(() => {
-    console.log('inside second')
+    // console.log('inside second')
     waveRef.current.setOptions({
       audioRate: playbackRate
     })

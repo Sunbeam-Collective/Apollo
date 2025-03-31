@@ -19,7 +19,7 @@ const getDeezerChart = async (req, res) => {
       error: "Something went wrong",
     });
   }
-  console.log(data);
+  // console.log(data);
   return res.status(200).json({
     success: true,
     data: data.tracks.data,
@@ -30,14 +30,14 @@ const getDeezerSearch = async (req, res) => {
   const [data, error] = await fetchJSON(
     `https://api.deezer.com/search?q=${req.query.q}`
   );
-  console.log(data);
+  // console.log(data);
   if (error) {
     return res.status(400).json({
       success: false,
       error: "Something went wrong",
     });
   }
-  console.log(data);
+  // console.log(data);
   return res.status(200).json({
     success: true,
     data: data.data,
@@ -61,7 +61,7 @@ const getDeezerTrack = async (req, res) => {
       error: "Something went wrong",
     });
   }
-  console.log(data);
+  // console.log(data);
   return res.status(200).json({
     success: true,
     data: data,
@@ -78,8 +78,8 @@ const getTrackFile = async (req, res) => {
       error: "Something went wrong",
     });
   }
-  console.log('blob data: ', blob);
-  console.log('blob data size: ', blob.size);
+  // console.log('blob data: ', blob);
+  // console.log('blob data size: ', blob.size);
   try {
     res.setHeader('Content-Type', 'audio/mpeg');
     res.setHeader('Content-Length', blob.size);

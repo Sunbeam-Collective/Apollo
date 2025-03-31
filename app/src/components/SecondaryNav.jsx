@@ -49,7 +49,7 @@ function SecondaryNav({ props }) {
     )
     PIP_ROOT.render(<PlayerPopout />);
     pipWindow.addEventListener('unload', () => {
-      console.log('you closed the popout!');
+      // console.log('you closed the popout!');
       setPopoutIsOpen(false);
     })
     setPopoutIsOpen(true);

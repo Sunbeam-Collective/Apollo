@@ -57,9 +57,9 @@ const handleResponse = async (req, res) => {
   let q = url.parse(req.url, true).query;
 
   if (q.error) { // An error response e.g. error=access_denied
-    console.log('Error:' + q.error);
+    // console.log('Error:' + q.error);
   } else if (q.state !== req.session.state) { //check state value
-    console.log('State mismatch. Possible CSRF attack');
+    // console.log('State mismatch. Possible CSRF attack');
     res.end('State mismatch. Possible CSRF attack');
   } else { // Get access and refresh tokens (if access_type is offline)
 

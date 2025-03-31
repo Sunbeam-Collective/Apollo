@@ -8,12 +8,12 @@ const fetchAudio = async (url, options = {}) => {
     // Check the content type to determine how to parse the response. Then, return a tuple: [data, error]
     const contentType = response.headers.get('content-type');
     if (contentType && contentType.includes('audio/mpeg')) {
-      console.log('this is raw response: ', response);
+      // console.log('this is raw response: ', response);
       const buffer = await response.arrayBuffer();
-      console.log('after array buffering: ', buffer);
+      // console.log('after array buffering: ', buffer);
       const mpegData = new Blob([buffer], { type: 'audio/mpeg' });
-      console.log('after blobbing: ', mpegData)
-      console.log('after blobbing size: ', mpegData.size);
+      // console.log('after blobbing: ', mpegData)
+      // console.log('after blobbing size: ', mpegData.size);
       return [mpegData, null];
     } else {
       const textData = await response.text();

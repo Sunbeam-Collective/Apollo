@@ -16,15 +16,15 @@ There are several ways to add event listeners to audio elements in React. Here a
 ```jsx
 function AudioPlayer() {
   const handlePlay = () => {
-    console.log('Audio is playing');
+    // console.log('Audio is playing');
   };
 
   const handlePause = () => {
-    console.log('Audio is paused');
+    // console.log('Audio is paused');
   };
 
   const handleEnded = () => {
-    console.log('Audio finished playing');
+    // console.log('Audio finished playing');
   };
 
   return (
@@ -48,11 +48,11 @@ function AudioPlayer() {
     const audioElement = audioRef.current;
 
     const handleTimeUpdate = () => {
-      console.log('Current time:', audioElement.currentTime);
+      // console.log('Current time:', audioElement.currentTime);
     };
 
     const handleLoadedData = () => {
-      console.log('Audio data loaded');
+      // console.log('Audio data loaded');
     };
 
     // Add event listeners
@@ -88,11 +88,11 @@ export function useAudio(url) {
     const audioElement = audio.current;
 
     const handlePlay = () => {
-      console.log('Playing');
+      // console.log('Playing');
     };
 
     const handlePause = () => {
-      console.log('Paused');
+      // console.log('Paused');
     };
 
     audioElement.addEventListener('play', handlePlay);
@@ -179,11 +179,11 @@ function AudioPlayer() {
     const audioElement = audioRef.current;
 
     const events = {
-      play: () => console.log('Playing'),
-      pause: () => console.log('Paused'),
-      timeupdate: () => console.log('Time:', audioElement.currentTime),
-      ended: () => console.log('Ended'),
-      volumechange: () => console.log('Volume:', audioElement.volume),
+      play: () => // console.log('Playing'),
+      pause: () => // console.log('Paused'),
+      timeupdate: () => // console.log('Time:', audioElement.currentTime),
+      ended: () => // console.log('Ended'),
+      volumechange: () => // console.log('Volume:', audioElement.volume),
     };
 
     // Add all event listeners
@@ -552,7 +552,7 @@ app.get('/audio_blob', (req, res) => {
 
 
 app.listen(port, () => {
-  console.log(`Server listening at http://localhost:${port}`);
+  // console.log(`Server listening at http://localhost:${port}`);
 });
 ```
 

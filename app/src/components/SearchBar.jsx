@@ -30,7 +30,7 @@ const SearchBar = () => {
         setRenderedSongs(null);
         const searchTerm = cleanInput(trendingSearch);
         const { data, status } = await getDeezerSearch(searchTerm);
-        console.log("search data", data);
+        // console.log("search data", data);
         if (data) setTrendingTabSongs(data.data); // Save in case user returns to trending from saved
         if (status !== 200) setError(true);
       }

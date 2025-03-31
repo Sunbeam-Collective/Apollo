@@ -203,10 +203,11 @@ button {
 }
 
 .song-card:hover {
-  border-style: solid;
+  background: rgba(255, 255, 255, 0.2);
+  /* border-style: solid;
   border-radius: 15px;
   border-color: #ffe30d;
-  border-width: 1px;
+  border-width: 1px; */
   cursor: pointer;
 }
 
@@ -226,6 +227,7 @@ button {
 }
 
 .save-button {
+  background: transparent;
   display: flex;
 }
 
@@ -329,7 +331,7 @@ div.queue-modal {
   -ms-user-select: none; /* IE 10 and IE 11 */
   user-select: none; /* Standard syntax */
 
-  background-color: rgba(0,0,0,0.8);
+  background-color: rgba(0, 0, 0, 0.9);
   position: absolute;
   z-index: 20;
   top: 0;
@@ -347,7 +349,7 @@ div.queue-modal {
       flex: 5;
       font-size: 3rem;
       font-family: Avenir;
-      color: #FFE30E;
+      color: white;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -369,10 +371,15 @@ div.queue-modal {
       flex: 1;
       display: flex;
       flex-direction: column;
-      padding: 0 20%;
+      /* padding: 0 20%; */
       gap: 2rem;
       overflow: scroll;
+      li.queue-list-item:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
       li.queue-list-item {
+        padding: 1rem;
+        border-radius: 5px;
         min-height: 7vh;
         max-height: 7vh;
         display: flex;
@@ -392,7 +399,7 @@ div.queue-modal {
           align-items: flex-start;
           justify-content: center;
           div.queue-item-title {
-            font: var(--font-h1)
+            font: var(--font-h1);
           }
           div.queue-item-artist {
             font: var(--font-p2);
@@ -508,6 +515,7 @@ div.mixer-container {
     button#popout-button,
     button#help-button
     {
+      visibility: hidden;
       flex: 1;
     }
   }
@@ -613,7 +621,7 @@ div.mixer-container {
         color: #FF6347;
         font: var(--font-p);
         height: 20%;
-        width: 40%;
+        width: 50%;
         transform: translate(-50%, -50%);
         top: 70%;
         left: 50%;

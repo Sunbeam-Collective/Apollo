@@ -1,6 +1,6 @@
 
 function LoginSuccess() {
-  console.log(res)
+  // console.log(res)
   return (
     <>
     </>

@@ -21,4 +21,4 @@ const max = 812;
 const parts = [73, 84, 226, 48, 79, 174, 118]
 const toMax = 932;
 const res = calc(parts, max, toMax);
-console.log(res)
+// console.log(res)

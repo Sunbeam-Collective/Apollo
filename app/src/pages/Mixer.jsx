@@ -107,30 +107,30 @@ function Mixer() {
   const feedBack = lowPassCoefs[filterNumber].feedback;
 
   const initSourceNode = async (context, audioBlob) => {
-    console.log('Creating AudioBufferSourceNode from an audio blob...');
-    console.log('Converting audioBlob to audioBuffer...');
-    console.log('audioBlob: ', audioBlob);
+    // console.log('Creating AudioBufferSourceNode from an audio blob...');
+    // console.log('Converting audioBlob to audioBuffer...');
+    // console.log('audioBlob: ', audioBlob);
     const arrayBuffer = await audioBlob.arrayBuffer();
-    console.log('---> arrayBuffer: ', arrayBuffer)
+    // console.log('---> arrayBuffer: ', arrayBuffer)
     const decoded = await context.decodeAudioData(arrayBuffer);
-    console.log('---> audioBuffer: ', decoded);
-    console.log('Initializing AudioBufferSourceNode with the decoded audioBuffer...')
+    // console.log('---> audioBuffer: ', decoded);
+    // console.log('Initializing AudioBufferSourceNode with the decoded audioBuffer...')
     const source = new AudioBufferSourceNode(context, { buffer: decoded });
-    console.log('---> AudioBufferSourceNode: ', source);
-    console.log('!---initSourceNode() DONE---!');
+    // console.log('---> AudioBufferSourceNode: ', source);
+    // console.log('!---initSourceNode() DONE---!');
     return source;
   }
 
   const processAudio = async (offAudioCtx) => {
-    console.log('Rendering current offline audio context...');
-    console.log('offAudioCtx: ', offAudioCtx);
+    // console.log('Rendering current offline audio context...');
+    // console.log('offAudioCtx: ', offAudioCtx);
     const rendered = await offAudioCtx.startRendering();
-    console.log('---> rendered', rendered);
-    console.log('Converting LR channel data from Float32Array to Int16Array (lamejs compatibility)...');
+    // console.log('---> rendered', rendered);
+    // console.log('Converting LR channel data from Float32Array to Int16Array (lamejs compatibility)...');
     const leftChannelData = rendered.getChannelData(0);
     const rightChannelData = rendered.getChannelData(1);
-    console.log('leftChannelData: ', leftChannelData);
-    console.log('rightChannelData: ', rightChannelData);
+    // console.log('leftChannelData: ', leftChannelData);
+    // console.log('rightChannelData: ', rightChannelData);
     const leftBuffer = new Int16Array(rendered.length);
     const rightBuffer = new Int16Array(rendered.length);
     for (let i = 0; i < rendered.length; i++) {
@@ -140,9 +140,9 @@ function Mixer() {
       leftBuffer[i] = Math.max(-32768, Math.min(32767, Math.round(leftChannelData[i] * 32767)));
       rightBuffer[i] = Math.max(-32768, Math.min(32767, Math.round(rightChannelData[i] * 32767)));
     }
-    console.log('---> left buffer: ', leftBuffer);
-    console.log('---> right buffer: ', rightBuffer);
-    console.log('Encoding left and right buffers to merged mp3Data blocks (using lamejs!)...');
+    // console.log('---> left buffer: ', leftBuffer);
+    // console.log('---> right buffer: ', rightBuffer);
+    // console.log('Encoding left and right buffers to merged mp3Data blocks (using lamejs!)...');
     const mp3Encoder = new lamejs.Mp3Encoder(numberOfChannels, sampleRate, 128); // 128kbps is still up to standards and is the least amount of data so :sob:
     const mp3Data = [];
     const sampleBlockSize = 1152;
@@ -150,19 +150,19 @@ function Mixer() {
     for (let i = 0; i < rendered.length; i += sampleBlockSize) {
       const leftChunk = leftBuffer.subarray(i, i + sampleBlockSize);
       const rightChunk = rightBuffer.subarray(i, i + sampleBlockSize);
-      console.log(`Processing chunk from ${i} to ${i + leftChunk.length}, chunk size: ${leftChunk.length}`);
+      // console.log(`Processing chunk from ${i} to ${i + leftChunk.length}, chunk size: ${leftChunk.length}`);
       totalSamplesProcessed += leftChunk.length;
       const mp3Buff = mp3Encoder.encodeBuffer(leftChunk, rightChunk);
       if (mp3Buff.length > 0) mp3Data.push(mp3Buff);
     }
-    console.log(`Total samples processed: ${totalSamplesProcessed}, original buffer length: ${rendered.length}`);
+    // console.log(`Total samples processed: ${totalSamplesProcessed}, original buffer length: ${rendered.length}`);
     // adding the remainder
     const mp3Buff = mp3Encoder.flush();
     if (mp3Buff.length > 0) mp3Data.push(mp3Buff);
-    console.log('---> mp3Data: ', mp3Data);
-    console.log('---> mp3Data chunk length (first): ', mp3Data[0].length);
-    console.log('---> mp3Data length ', mp3Data.length);
-    console.log('Concatenating mp3Data blocks into singular UInt8Array for blobbing...');
+    // console.log('---> mp3Data: ', mp3Data);
+    // console.log('---> mp3Data chunk length (first): ', mp3Data[0].length);
+    // console.log('---> mp3Data length ', mp3Data.length);
+    // console.log('Concatenating mp3Data blocks into singular UInt8Array for blobbing...');
     let totalLength = 0;
     for (const chunk of mp3Data) totalLength += chunk.length;
     const mp3DataFull = new Uint8Array(totalLength);
@@ -171,8 +171,8 @@ function Mixer() {
       mp3DataFull.set(chunk, offset);
       offset += chunk.length;
     }
-    console.log('---> unified UInt8Array: ', mp3DataFull);
-    console.log('---> unified UInt8Array length: ', mp3DataFull.length);
+    // console.log('---> unified UInt8Array: ', mp3DataFull);
+    // console.log('---> unified UInt8Array length: ', mp3DataFull.length);
     return mp3DataFull;
   }
 
@@ -180,12 +180,12 @@ function Mixer() {
   useEffect(() => {
     const downloadFile = async () => {
       const blob = await getTrackFile(track.previewSrc);
-      console.log('blob: ', blob);
-      console.log('blob raw data: ', blob.data);
-      console.log('blob data size: ', blob.data.size);
-      console.log('blob data type: ', blob.data.type);
+      // console.log('blob: ', blob);
+      // console.log('blob raw data: ', blob.data);
+      // console.log('blob data size: ', blob.data.size);
+      // console.log('blob data type: ', blob.data.type);
       baseBlob.current = blob.data;
-      console.log('current blob: ', baseBlob.current);
+      // console.log('current blob: ', baseBlob.current);
 
       // // init acRef if applicable
       // if (acRef.current === null) acRef.current = new AudioContext();
@@ -234,7 +234,7 @@ function Mixer() {
   //   }
   //   trackRef.current.preservesPitch = false;
   //   setDuration(trackRef.current.duration);
-  //   console.log('Audio duration: ', trackRef.current.duration);
+  //   // console.log('Audio duration: ', trackRef.current.duration);
   // }
 
   const togglePlay = () => {
@@ -275,8 +275,8 @@ function Mixer() {
 
   const handleSpeed = (rate) => {
     waveRef.current.setPlaybackRate(rate, false);
-    console.log('currentTime: ', waveRef.current.getCurrentTime());
-    console.log('duration: ', waveRef.current.getDuration());
+    // console.log('currentTime: ', waveRef.current.getCurrentTime());
+    // console.log('duration: ', waveRef.current.getDuration());
 
     // rerender
     setPlaybackRate(rate);
@@ -297,7 +297,7 @@ function Mixer() {
 
   //   // recreate source
   //   const blob = baseBlob.current;
-  //   console.log('current blob: ', baseBlob.current);
+  //   // console.log('current blob: ', baseBlob.current);
   //   const source = await initSourceNode(offACtx, blob);
 
   //   // apply effects/changes
@@ -314,7 +314,7 @@ function Mixer() {
   //   // offACtx.close();
   //   const outputBlob = new Blob([mp3DataFull], { type: 'audio/mpeg' });
   //   // free current url, then create new one
-  //   console.log(audioURL);
+  //   // console.log(audioURL);
   //   URL.revokeObjectURL(audioURL);
   //   const newAudioURL = URL.createObjectURL(outputBlob);
 
@@ -333,17 +333,17 @@ function Mixer() {
 
 
     // adjusting the length based on playbackrate
-    console.log('baseDuration before saving: ', waveRef.current.getDuration());
-    console.log('playbackRate before saving: ', playbackRate);
+    // console.log('baseDuration before saving: ', waveRef.current.getDuration());
+    // console.log('playbackRate before saving: ', playbackRate);
     const length = sampleRate * (waveRef.current.getDuration() / playbackRate);
 
     // init ctx...
     const offACtx = new OfflineAudioContext(numberOfChannels, length, sampleRate);
-    console.log('fresh offAudioCtx', offACtx);
+    // console.log('fresh offAudioCtx', offACtx);
 
     // init the source node
     const blob = baseBlob.current;
-    console.log('current blob: ', baseBlob.current);
+    // console.log('current blob: ', baseBlob.current);
     const source = await initSourceNode(offACtx, blob);
 
     // set playback rate
@@ -366,11 +366,11 @@ function Mixer() {
 
     // making the blob now
     const outputBlob = new Blob([mp3DataFull], { type: 'audio/mpeg' });
-    console.log('converted to blob: ', outputBlob);
+    // console.log('converted to blob: ', outputBlob);
 
     // creating a URL for the blob
     const outputURL = URL.createObjectURL(outputBlob);
-    console.log('converted to URL: ', outputURL);
+    // console.log('converted to URL: ', outputURL);
 
     // blob -> link element
     const link = document.createElement('a');

@@ -38,7 +38,7 @@ function Home() {
       const doFetch = async () => {
         // Deconstruct chart data from Deezer.
         const { data, status } = await getDeezerChart();
-        console.log("trending data", data);
+        // console.log("trending data", data);
         if (data) setTrendingTabSongs(data.data);
         if (status !== 200) setError(true);
       };

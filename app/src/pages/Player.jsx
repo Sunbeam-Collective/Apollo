@@ -54,9 +54,9 @@ function Player() {
       let [track, error] = [null, null];
       const loadingTask = async () => {
         try {
-          console.log(id);
+          // console.log(id);
           const { data } = await getDeezerTrack(id);
-          console.log(data);
+          // console.log(data);
           track = {
             title: data.data.title,
             artist: data.data.artist.name,
@@ -98,7 +98,7 @@ function Player() {
 
   const listToArr = () => {
     if (isRepeating) return [];
-    console.log('making queue arr')
+    // console.log('making queue arr')
     const head = songQueue.current;
     const arr = [];
     let curr = head.next;
@@ -107,7 +107,7 @@ function Player() {
       curr = curr.next;
     }
     const res = arr.map((node) => node.data);
-    console.log('resulting arr: ', res);
+    // console.log('resulting arr: ', res);
     return res;
   }
 

@@ -76,7 +76,7 @@ function MediaControls({ isRepeating, setIsRepeating }) {
   }
 
   const pivotToLinkedList = () => {
-    console.log(renderedSongs);
+    // console.log(renderedSongs);
     let i = renderedSongs.findIndex((song) => song.id === +id);
     const newLL = new DoublyLinkedList();
     while (newLL.length() < renderedSongs.length) {
@@ -89,10 +89,10 @@ function MediaControls({ isRepeating, setIsRepeating }) {
 
   const arrayToLinkedList = (array) => {
     const newLL = new DoublyLinkedList();
-    console.log(newLL.head);
+    // console.log(newLL.head);
     for (const a of array) {
       newLL.appendToTail(a);
-      console.log(newLL.tail);
+      // console.log(newLL.tail);
     }
     newLL.print();
     return newLL;
@@ -167,7 +167,7 @@ function MediaControls({ isRepeating, setIsRepeating }) {
 
   const handleLoadedData = () => {
     setDuration(trackRef.current.duration);
-    console.log('Audio duration: ', trackRef.current.duration);
+    // console.log('Audio duration: ', trackRef.current.duration);
   }
 
   const handleEnded = () => {
@@ -306,7 +306,7 @@ function MediaControls({ isRepeating, setIsRepeating }) {
     // initializeButtons();
 
     const audio = trackRef.current; // why do i have to do this?
-    console.log(trackRef);
+    // console.log(trackRef);
     audio.addEventListener('timeupdate', handleTimeUpdate);
     audio.addEventListener('loadeddata', handleLoadedData);
     audio.addEventListener('ended', handleEnded);

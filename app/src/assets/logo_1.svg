@@ -1,0 +1,8 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+<style>
+.background { fill: #222; } /* Dark background */
+.primary { fill: #ffe30d; }
+</style>
+<rect class="background" width="100" height="100" rx="15"/>
+<path class="primary" d="M 50 10 L 30 30 L 70 30 L 50 10 Z M 30 30 L 20 70 Q 30 80 50 70 T 80 70 L 70 30 Z M 40 40 L 40 60 M 60 40 L 60 60" stroke="#ffe30d" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+</svg>

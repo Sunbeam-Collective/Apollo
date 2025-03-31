@@ -1,0 +1,12 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+<style>
+.background { fill: #222; } /* Dark background */
+.primary { fill: #ffe30d; }
+</style>
+<rect class="background" width="100" height="100" rx="15"/>
+<g transform="translate(50, 50)">
+<circle class="primary" r="25"/>
+<path class="primary" d="M 35 0 L 50 -15 L 65 0 M 50 35 L 65 50 L 50 65 M 15 50 L 0 65 L -15 50 M 50 -35 L 35 -50 L 50 -65" stroke="#ffe30d" stroke-width="6" stroke-linecap="round" fill="none"/>
+<path class="primary" d="M 0 35 L -15 50 L 0 65 M -35 0 L -50 -15 L -65 0" stroke="#ffe30d" stroke-width="6" stroke-linecap="round" fill="none"/>
+</g>
+</svg>
