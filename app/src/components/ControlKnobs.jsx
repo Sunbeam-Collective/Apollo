@@ -61,6 +61,9 @@ function ControlKnobs({ props }) {
       }
     }
 
+    // Add scroll event listener
+    slider.addEventListener('wheel', handleScroll);
+
     // cleanup
     return () => {
       if (slider) {
@@ -74,10 +77,52 @@ function ControlKnobs({ props }) {
         document.removeEventListener('touchend', stopDragging);
         document.removeEventListener('touchcancel', stopDragging);
         slider.removeEventListener('touchstart', startDragging);
+        // scroll
+        slider.removeEventListener('wheel', handleScroll);
       }
     }
 
   }, [playbackRate]); // for now just based on playbackrate i guess?
+
+  // Debounce function (to prevent excessive snapping)
+  function debounce(func, delay) {
+    let timeout;
+    return function(...args) {
+      const context = this;
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func.apply(context, args), delay);
+    };
+  }
+
+
+  // handler for scroll
+  const handleScroll = debounce(() => {
+    const slider = pickerUl.current;
+    if (!slider) return;
+
+    // Snap to the closest list item.
+    let closestSnapPoint = null;
+    let minDistance = Infinity;
+
+    slider.querySelectorAll('li.rate-value').forEach(listItem => {
+      const snapPoint = listItem.offsetLeft - (slider.offsetWidth - listItem.offsetWidth) / 2;  // Center the item
+      const distance = Math.abs(slider.scrollLeft - snapPoint);
+
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestSnapPoint = snapPoint;
+      }
+    });
+
+    if (closestSnapPoint !== null) {
+      slider.scrollLeft = closestSnapPoint;
+    }
+
+    const snapped = getSnappedListItem(slider);
+    const rate = parseFloat(snapped.textContent) / 100;
+    handleSpeed(rate);
+
+  }, 500); // Adjust the delay to control the snapping frequency
 
   // handlers
   // i did not figure this out, gemini did
@@ -99,6 +144,24 @@ function ControlKnobs({ props }) {
     slider.style.cursor = 'grab';
     slider.style.transition = 'scroll-behavior 0.3s ease';
 
+    // Snap to the closest list item.
+    let closestSnapPoint = null;
+    let minDistance = Infinity;
+
+    slider.querySelectorAll('li.rate-value').forEach(listItem => {
+      const snapPoint = listItem.offsetLeft - (slider.offsetWidth - listItem.offsetWidth) / 2;  // Center the item
+      const distance = Math.abs(slider.scrollLeft - snapPoint); // Using current scrollLeft
+
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestSnapPoint = snapPoint;
+      }
+    });
+
+    if (closestSnapPoint !== null) {
+      slider.scrollLeft = closestSnapPoint;
+    }
+
     // getting the snapped value to update rate
     const snapped = getSnappedListItem(slider);
     const rate = parseFloat(snapped.textContent) / 100;
@@ -116,24 +179,7 @@ function ControlKnobs({ props }) {
     const scrollDelta = (x - startX) * dragMultiplier;
     const targetScrollLeft = scrollLeft - scrollDelta;
 
-    let closestSnapPoint = null;
-    let minDistance = Infinity;
-
-    slider.querySelectorAll('li.rate-value').forEach(listItem => {
-      const snapPoint = listItem.offsetLeft - (slider.offsetWidth - listItem.offsetWidth) / 2;  // Center the item
-      const distance = Math.abs(targetScrollLeft - snapPoint);
-
-      if (distance < minDistance) {
-        minDistance = distance;
-        closestSnapPoint = snapPoint;
-      }
-    });
-
-    if (closestSnapPoint !== null) {
-        slider.scrollLeft = closestSnapPoint;
-    } else {
-        slider.scrollLeft = targetScrollLeft;
-    }
+    slider.scrollLeft = targetScrollLeft;
   };
 
   function handleDoubleClick(e) {

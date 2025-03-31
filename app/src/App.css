@@ -449,7 +449,9 @@ div.mixer-container {
         margin-top: auto;
       }
     }
+
     div.rate-picker-container {
+      box-sizing: border-box;
       flex: 1;
       overflow: hidden;
       position: relative;
@@ -462,8 +464,8 @@ div.mixer-container {
         overflow: scroll;
         height: 100%;
         /* sauce */
-        /* scroll-snap-type: x mandatory;
-        scroll-snap-stop: always; */
+        scroll-snap-type: x mandatory;
+        scroll-snap-stop: always;
         scroll-behavior: smooth;
         cursor: grab;
         li.rate-value {
@@ -472,7 +474,7 @@ div.mixer-container {
           color: white 100%;
           background-color: black;
           /* sauce */
-          /* scroll-snap-align: center; */
+          scroll-snap-align: center;
         }
         li.current { color: #FFE30E }
       }
@@ -516,6 +518,13 @@ div.mixer-container {
       right: 0;
     }
     div.rate-picker-hint {
+      border-top: 1px solid;
+      border-image: linear-gradient(to right,
+        transparent 30%,
+        white 50%,
+        transparent 70%
+      );
+      border-image-slice: 1;
       flex: 1;
     }
   }
