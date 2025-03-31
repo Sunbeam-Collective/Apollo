@@ -27,21 +27,16 @@ import {
 function SecondaryNav({ props }) {
   const navigate = useNavigate();
   const location = useLocation();
+  const { currentTab } = useContext(SongContext);
   const { id } = useParams();
 
   const handleClick = () => {
-    if (location.pathname.startsWith('/player')) {
-      navigate(
-        '/home',
-        { state: { from: location.pathname } }
-      )
-    } else if (location.pathname.startsWith('/mixer')) {
-      navigate(
-        `/player/${id}`,
-        { state: { from: location.pathname } }
-      )
+    if (location.pathname.startsWith("/player")) {
+      navigate(`/home`, { state: { from: location.pathname } });
+    } else if (location.pathname.startsWith("/mixer")) {
+      navigate(`/player/${id}`, { state: { from: location.pathname } });
     }
-  }
+  };
 
 
   const handlePopout = async () => {
@@ -72,9 +67,9 @@ function SecondaryNav({ props }) {
   }
 
   return (
-    <div className='secondary-nav'>
+    <div className="secondary-nav">
       <button
-        id='back-button'
+        id="back-button"
         onClick={handleClick} // navigate back one page
       >
         <img src={back_icon} />
@@ -98,7 +93,7 @@ function SecondaryNav({ props }) {
       )
       }
     </div>
-  )
+  );
 }
 
 export default SecondaryNav;

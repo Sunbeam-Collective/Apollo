@@ -35,7 +35,7 @@
   --font-h1: bold 1.125rem/1.4em var(--ff);
   --font-h2: bold 1rem/1.4em var(--ff);
   --font-p: 1rem/1.4em var(--ff);
-  --font-p2: .875rem/1.4em var(--ff);
+  --font-p2: 0.875rem/1.4em var(--ff);
   --font-gray100: hsl(0, 0%, 100%);
   --font-gray70: hsl(0, 0%, 70%);
   --font-gray0: hsl(0, 0%, 0%);
@@ -207,11 +207,14 @@ button {
   border-radius: 15px;
   border-color: #ffe30d;
   border-width: 1px;
+  cursor: pointer;
 }
 
 /* Song Card Save Button */
 #save-icon-wrapper img {
   height: fit-content;
+  width: 30px;
+  margin: 5px;
 }
 
 .save-icon:hover {
@@ -219,7 +222,11 @@ button {
 }
 
 .save-icon-active:hover {
-  content: url("./assets/save.svg");
+  content: url("./assets/remove_icon.svg");
+}
+
+.save-button {
+  display: flex;
 }
 
 /* Search Bar */
@@ -229,10 +236,19 @@ button {
 }
 
 #search-bar-wrapper {
+  display: flex;
+  flex: calc(100vh * 52 / 812);
+  justify-content: center;
+  align-items: center;
+  position: relative;
   padding: 10px;
+  border-bottom-width: 1px;
+  border-bottom-color: #343434;
+  border-bottom-style: solid;
 }
 
 #search-bar-wrapper input {
+  padding-right: 40px;
   border: none;
   -webkit-appearance: none;
   -ms-appearance: none;
@@ -252,6 +268,15 @@ button {
   background-repeat: no-repeat;
 }
 
+#clear-button {
+  position: absolute;
+  top: 50%;
+  height: fit-content;
+  right: 20px;
+  transform: translateY(-50%);
+  background-color: transparent;
+}
+
 #search-bar-wrapper input:focus {
   border-style: solid;
   border-color: #ffe30d;
@@ -266,10 +291,22 @@ button {
   justify-content: center;
   align-items: center;
   gap: 30%;
+  border-top-width: 1px;
+  border-top-color: #343434;
+  border-top-style: solid;
 }
 
 #footer-wrapper button {
   background-color: transparent;
+}
+
+/* Alert Messages Styling */
+#alert-message {
+  display: flex;
+  flex: calc(100vh * 569 / 812);
+  overflow-y: auto;
+  align-items: center;
+  justify-content: center;
 }
 
 p.track-title {
@@ -379,7 +416,6 @@ div.player-container {
 
     button#back-button {
       flex: 1;
-      /* flex: calc(100% * 57/375); */
     }
     div.secondary-nav-padding {
       flex: 2.5;
@@ -441,7 +477,6 @@ div.player-container {
     display: flex;
     align-items: center;
     justify-content: center;
-
   }
 }
 p#edit-text {

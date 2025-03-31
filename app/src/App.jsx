@@ -1,9 +1,5 @@
 import { Routes, Route } from "react-router-dom";
-import {
-  useState,
-  useRef,
-  createContext
-} from "react";
+import { useState, useRef, createContext } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 // import "./App.css";
@@ -21,9 +17,6 @@ import {
 import {
   SongContextProvider
 } from './context'
-import { SoundTest } from "./components";
-
-
 
 function App() {
   return (

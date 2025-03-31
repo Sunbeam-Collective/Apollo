@@ -5,14 +5,12 @@ const SongCard = ({
   songArtist,
   coverArt,
   id,
+  position,
   currentTab,
-  renderedSongs,
-  setRenderedSongs,
-  searchTerm,
-  setSearchTerm
 }) => {
   return (
     <li data-song-id={id} className="song-card">
+      <h2 style={{ display: position ? "block" : "none" }}>#{position}</h2>
       <div className="song-image-wrapper">
         <img src={coverArt} alt={`${songTitle} Album Cover`} />
       </div>
@@ -21,8 +19,7 @@ const SongCard = ({
         <p>{songArtist}</p>
       </div>
       <div id="save-icon-wrapper">
-        {/* // To-do: Change Icon Based on whether saved or not */}
-        <SaveButton prop={{ id, renderedSongs, setRenderedSongs, currentTab, searchTerm, setSearchTerm }} />
+        <SaveButton prop={{ id, currentTab }} />
       </div>
     </li>
   );
