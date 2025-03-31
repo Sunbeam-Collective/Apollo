@@ -28,6 +28,7 @@ import repeat_icon_click from './repeat_icon_click.svg'
 import save_icon_mixer from './save_icon_mixer.svg'
 import load_wheel_ico from './load_wheel_ico.svg'
 import popout_icon from './popout_icon.svg'
+import dot_marker from './dot_marker.svg'
 
 
 export {
@@ -60,5 +61,6 @@ export {
   repeat_icon_click,
   save_icon_mixer,
   load_wheel_ico,
-  popout_icon
+  popout_icon,
+  dot_marker
 }

@@ -4,6 +4,9 @@ import {
   pause_icon_rect,
 } from '../assets';
 
+import {
+  useEffect
+} from 'react';
 
 function MixerControls({ props }) {
   const {
@@ -19,6 +22,41 @@ function MixerControls({ props }) {
     const seconds = Math.floor(time % 60);
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   };
+
+  useEffect(() => {
+    /* KB SHORTCUT INITS */
+    const handleKeyPress = (e) => {
+      switch(e.code) {
+        case 'Space':
+          e.preventDefault();
+          togglePlay();
+          break;
+        case 'Escape':
+          handleStop();
+          break;
+        // case 'ArrowLeft':
+        //   audioRef.current.currentTime -= 5;
+        //   break;
+        // case 'ArrowRight':
+        //   audioRef.current.currentTime += 5;
+        //   break;
+        // case 'ArrowUp':
+        //   const newVolume = Math.min(1, audioRef.current.volume + 0.1);
+        //   audioRef.current.volume = newVolume;
+        //   setVolume(newVolume);
+        //   break;
+        // case 'ArrowDown':
+        //   const reducedVolume = Math.max(0, audioRef.current.volume - 0.1);
+        //   audioRef.current.volume = reducedVolume;
+        //   setVolume(reducedVolume);
+        //   break;
+        default:
+          break;
+      }
+    };
+    document.addEventListener('keydown', handleKeyPress);
+    return () => document.removeEventListener('keydown', handleKeyPress);
+  }, [togglePlay, isPlaying]);
 
   return (
     <div className='mixer-controls-container'>

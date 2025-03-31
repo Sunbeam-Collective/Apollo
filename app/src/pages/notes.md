@@ -1,3 +1,14 @@
+# TODOS
+## TOWARDS MVP:
+- playback input step ladder
+- implementing login
+- mixes tab
+
+## POST MVP:
+- useCallback() on component functions...
+- fix ur states my guy
+- docs Comments
+
 how do i connect event listeners to audio in react?
 There are several ways to add event listeners to audio elements in React. Here are some common approaches:
 

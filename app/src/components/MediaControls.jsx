@@ -63,6 +63,7 @@ function MediaControls() {
   const nextButtonRef = useRef(null);
   const repeatButtonRef = useRef(null);
 
+
   const shuffle = (songs) => {
     const used = new Set();
     while (used.size < songs.length) {
@@ -93,27 +94,6 @@ function MediaControls() {
     newLL.print();
     return newLL;
   }
-
-  useEffect(() => {
-    if (location.state?.from.startsWith('/home')) songQueue.current = pivotToLinkedList(id).head;
-    setIsPlaying(true);
-    trackRef.current.play();
-    trackRef.current.loop = false;
-  }, [track.previewSrc]);
-
-  useEffect(() => {
-    const progressBar = document.querySelector('.progress-bar');
-    if (progressBar && !isDragging) {
-      progressBar.value = currentTime;
-      progressBar.style.setProperty('--progress-percent', `${(currentTime / duration) * 100}%`);
-    }
-  }, [currentTime, duration])
-
-  useEffect(() => {
-    const thumb = document.querySelector('div.progress-thumb');
-    if (isDragging) thumb.style.setProperty('--progress-percent', `${dragTime / duration * 100}%`);
-    else thumb.style.setProperty('--progress-percent', `${(currentTime / duration) * 100}%`);
-  }, [currentTime, dragTime, duration])
 
   const handleNextClick = () => {
     if (isRepeating) {
@@ -202,7 +182,14 @@ function MediaControls() {
     };
   }
 
-  async function togglePlay() {
+  const handleStop = () => {
+    trackRef.current.pause();
+    setIsPlaying(false);
+    trackRef.current.currentTime = 0;
+    setCurrentTime(0);
+  }
+
+  const togglePlay = async () => {
     try {
       if (isPlaying) {
         await trackRef.current.pause();
@@ -237,7 +224,7 @@ function MediaControls() {
   // }
 
   // TODO: button styling thing
-  function initializeButtons() {
+  const initializeButtons = () => {
     const initDynamicButton = (buttonRef, normalIcon, hoverIcon, clickIcon) => {
       const button = buttonRef.current
       button.addEventListener('mouseover', () => { button.src = hoverIcon });
@@ -254,6 +241,65 @@ function MediaControls() {
   }
 
   useEffect(() => {
+    if (location.state?.from.startsWith('/home')) songQueue.current = pivotToLinkedList(id).head;
+    setIsPlaying(true);
+    trackRef.current.play();
+    trackRef.current.loop = false;
+  }, [track.previewSrc]);
+
+  useEffect(() => {
+    const progressBar = document.querySelector('.progress-bar');
+    if (progressBar && !isDragging) {
+      progressBar.value = currentTime;
+      progressBar.style.setProperty('--progress-percent', `${(currentTime / duration) * 100}%`);
+    }
+  }, [currentTime, duration])
+
+  useEffect(() => {
+    const thumb = document.querySelector('div.progress-thumb');
+    if (isDragging) thumb.style.setProperty('--progress-percent', `${dragTime / duration * 100}%`);
+    else thumb.style.setProperty('--progress-percent', `${(currentTime / duration) * 100}%`);
+  }, [currentTime, dragTime, duration])
+
+  /* KB HANDLERS */
+  useEffect(() => {
+    /* KB SHORTCUTS INITS */
+    const handleKeyPress = async (e) => {
+      if (e.repeat) return;
+      switch(e.code) {
+        case 'Space':
+          e.preventDefault();
+          await togglePlay();
+          break;
+        case 'Escape':
+          handleStop();
+          break;
+        // case 'ArrowLeft':
+        //   audioRef.current.currentTime -= 5;
+        //   break;
+        // case 'ArrowRight':
+        //   audioRef.current.currentTime += 5;
+        //   break;
+        // case 'ArrowUp':
+        //   const newVolume = Math.min(1, audioRef.current.volume + 0.1);
+        //   audioRef.current.volume = newVolume;
+        //   setVolume(newVolume);
+        //   break;
+        // case 'ArrowDown':
+        //   const reducedVolume = Math.max(0, audioRef.current.volume - 0.1);
+        //   audioRef.current.volume = reducedVolume;
+        //   setVolume(reducedVolume);
+        //   break;
+        default:
+          break;
+      }
+    };
+    document.addEventListener('keydown', handleKeyPress);
+    return () => document.removeEventListener('keydown', handleKeyPress);
+  }, [togglePlay, isPlaying])
+
+  /* AUDIO INITS */
+  useEffect(() => {
     // initializeButtons();
 
     const audio = trackRef.current; // why do i have to do this?
@@ -263,6 +309,7 @@ function MediaControls() {
     audio.addEventListener('ended', handleEnded);
 
     return () => {
+      /* AUDIO CLEANUP */
       audio.removeEventListener('timeupdate', handleTimeUpdate);
       audio.removeEventListener('loadeddata', handleLoadedData);
       audio.removeEventListener('ended', handleEnded);

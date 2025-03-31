@@ -427,7 +427,72 @@ div.mixer-container {
     }
   }
   div.control-knobs-container {
+    /* preventing select */
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
+
     flex: calc(100% * 174 / 812);
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    justify-content: center;
+    div.rate-picker-title {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 1rem;
+      z-index: 20; /* this is to that the title is above the gradient! */
+      p {
+        font: var(--font-h1);
+        margin-top: auto;
+      }
+    }
+    div.rate-picker-container {
+      flex: 1;
+      overflow: hidden;
+      ul.rate-picker {
+        /* cursor: pointer; */
+        display: flex;
+        list-style-type: none;
+        padding: 0 50% 50px 50%;
+        gap: 1rem;
+        overflow: scroll;
+        height: 100%;
+        /* sauce */
+        /* scroll-snap-type: x mandatory;
+        scroll-snap-stop: always; */
+        scroll-behavior: smooth;
+        cursor: grab;
+        li.rate-value {
+          min-width: 3rem;
+          max-width: 3rem;
+          color: white;
+          background-color: black;
+          /* sauce */
+          /* scroll-snap-align: center; */
+        }
+        li.current { color: #FFE30E }
+      }
+      /* sauce */
+    }
+    div.left-gradient {
+      height: 100%;
+      width: 42%;
+      position: absolute;
+      z-index: 10;
+      pointer-events: none;
+    }
+    div.right-gradient {
+      height: 100%;
+      width: 42%;
+      position: absolute;
+      z-index: 10;
+      pointer-events: none;
+    }
+    div.rate-picker-hint {
+      flex: 1;
+    }
   }
   div.save-container-mixer {
     flex: calc(100% * 118 / 812);

@@ -76,6 +76,10 @@ function Mixer() {
   const [isSaving, setIsSaving] = useState(false);
 
   // inits for IIR filter
+  // don't mind this part, this is just for additional effects
+  // that aren't playbackRate
+  // they're actually straightforward to use in JS but i don't even
+  // want to think about the UI/UX for this
   const lowPassCoefs = [
     {
       frequency: 200,
@@ -102,7 +106,7 @@ function Mixer() {
   const feedForward = lowPassCoefs[filterNumber].feedforward;
   const feedBack = lowPassCoefs[filterNumber].feedback;
 
-  async function initSourceNode(context, audioBlob) {
+  const initSourceNode = async (context, audioBlob) => {
     console.log('Creating AudioBufferSourceNode from an audio blob...');
     console.log('Converting audioBlob to audioBuffer...');
     console.log('audioBlob: ', audioBlob);
@@ -117,7 +121,7 @@ function Mixer() {
     return source;
   }
 
-  async function processAudio(offAudioCtx) {
+  const processAudio = async (offAudioCtx) => {
     console.log('Rendering current offline audio context...');
     console.log('offAudioCtx: ', offAudioCtx);
     const rendered = await offAudioCtx.startRendering();
@@ -174,7 +178,7 @@ function Mixer() {
 
 
   useEffect(() => {
-    async function downloadFile() {
+    const downloadFile = async () => {
       const blob = await getTrackFile(track.previewSrc);
       console.log('blob: ', blob);
       console.log('blob raw data: ', blob.data);
@@ -233,7 +237,7 @@ function Mixer() {
   //   console.log('Audio duration: ', trackRef.current.duration);
   // }
 
-  async function togglePlay() {
+  const togglePlay = () => {
     try {
       // if (isPlaying) {
       //   await trackRef.current.pause();
@@ -254,8 +258,7 @@ function Mixer() {
   //   setIsPlaying(false);
   // }
 
-  async function handleStop() {
-    waveRef.current.getCurrentTime();
+  const handleStop = () => {
     waveRef.current.stop();
     setCurrentTime(0);
     setIsPlaying(false);
@@ -270,9 +273,10 @@ function Mixer() {
   //   setDuration(baseDuration.current / rate); // LMAO
   // }
 
-  function handleSpeed(e) {
-    const rate = parseFloat(e.target.value);
+  const handleSpeed = (listItem) => {
+    const rate = parseFloat(listItem.textContent) / 100;
     waveRef.current.setPlaybackRate(rate, false);
+    console.log(rate);
 
     // rerender
     setPlaybackRate(rate);
@@ -320,7 +324,7 @@ function Mixer() {
   //   setCurrentTime(0);
   // }
 
-  async function handleSave() {
+  const handleSave = async () => {
     // pause the track and put loading modal up front
     waveRef.current.pause();
     setIsSaving(true);
