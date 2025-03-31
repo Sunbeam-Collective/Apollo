@@ -20,7 +20,7 @@ import {
 // constants, free use vars
 let mouseDown = false;
 let startX, scrollLeft;
-const dragMultiplier = 4;
+const dragMultiplier = 2;
 
 function ControlKnobs({ props }) {
   const {
@@ -29,7 +29,12 @@ function ControlKnobs({ props }) {
   } = props;
 
   const pickerUl = useRef(null);
-  const [isInitRender, setIsInitRender] = useState(true);
+
+  // states for input
+  const [isEditing, setIsEditing] = useState(false);
+  const [inputValue, setInputValue] = useState(playbackRate * 100);
+  const [editingLiPosition, setEditingLiPosition] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(''); // State for the error message
 
   useEffect(() => {
     const slider = pickerUl.current;
@@ -46,22 +51,14 @@ function ControlKnobs({ props }) {
     document.addEventListener('touchcancel', stopDragging, false);
     slider.addEventListener('touchstart', startDragging, false);
 
-    // start the render at playbackRate 100
-    const centerOnInitialRender = () => {
-      if (slider) {
-        const element100 = slider.querySelector('[data-value="100"]');
-        if (element100) {
-          const elementCenter = element100.offsetLeft + element100.offsetWidth / 2;
-          const scrollPosition = elementCenter - slider.offsetWidth / 2;
-          slider.scrollLeft = scrollPosition;
-        }
+    // center on current playback rate
+    if (slider) {
+      const current = slider.querySelector('.current');
+      if (current) {
+        const currentCenter = current.offsetLeft + current.offsetWidth / 2;
+        const scrollPosition = currentCenter - slider.offsetWidth / 2;
+        slider.scrollLeft = scrollPosition;
       }
-    };
-
-    // only do it on first render
-    if (isInitRender) {
-      centerOnInitialRender();
-      setIsInitRender(false);
     }
 
     // cleanup
@@ -104,7 +101,8 @@ function ControlKnobs({ props }) {
 
     // getting the snapped value to update rate
     const snapped = getSnappedListItem(slider);
-    handleSpeed(snapped);
+    const rate = parseFloat(snapped.textContent) / 100;
+    handleSpeed(rate);
   }
 
   function move(e) {
@@ -138,6 +136,56 @@ function ControlKnobs({ props }) {
     }
   };
 
+  function handleDoubleClick(e) {
+    e.preventDefault();
+    const li = e.target.closest('li');
+    if (li && li.classList.contains('current')) {
+      setIsEditing(true);
+      setInputValue(li.dataset.value);
+      setErrorMessage(''); // Clear any previous error message
+
+      // thank you gemini
+      const rect = li.getBoundingClientRect();
+      const ulRect = pickerUl.current.getBoundingClientRect();
+
+      setEditingLiPosition({
+        top: rect.top - ulRect.top, // Relative to the UL
+        left: rect.left - ulRect.left,  //Relative to the UL
+        width: rect.width //To match the li width
+      });
+    }
+  }
+
+  function handleChange(e) {
+    setInputValue(e.target.value);
+  }
+
+  function handleBlur() {
+    setIsEditing(false);
+    setEditingLiPosition(null);
+    setErrorMessage(''); // Clear any previous error message
+  }
+
+  function handleKeyDown(e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const newValue = parseFloat(inputValue);
+      if (isNaN(newValue) || newValue < 50 || newValue > 200) {
+        setErrorMessage('Please enter a value between 50 and 200.');
+        return; // Do not close the input if the value is invalid
+      }
+      setIsEditing(false);
+      setEditingLiPosition(null);
+      setErrorMessage(''); // Clear the error message
+      handleSpeed(newValue / 100);
+    } else if (e.key === 'Escape') {
+      setIsEditing(false);
+      setEditingLiPosition(null);
+      setErrorMessage('');
+    }
+  }
+
+
   return (
     <>
       <div className='control-knobs-container'>
@@ -147,7 +195,11 @@ function ControlKnobs({ props }) {
           <p>Speed (%)</p>
         </div>
         <div className='rate-picker-container'>
-          <ul className='rate-picker' ref={pickerUl}>
+          <ul
+            ref={pickerUl}
+            className='rate-picker'
+            onDoubleClick={handleDoubleClick}
+          >
             {
               new Array(151)
                 .fill(0.5)
@@ -173,6 +225,27 @@ function ControlKnobs({ props }) {
                 })
             }
           </ul>
+          {isEditing && editingLiPosition && (
+            <>
+              <input
+                type='number'
+                value={inputValue}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                onKeyDown={handleKeyDown}
+                autoFocus
+                className='floating-input'
+                style={{
+                  top: editingLiPosition.top + 'px',
+                  left: editingLiPosition.left + 'px',
+                  width: editingLiPosition.width + 'px',
+                }}
+              />
+              {errorMessage && (
+                <div className='error-message'>{errorMessage}</div>
+              )}
+            </>
+          )}
         </div>
         <div className='rate-picker-hint'>
         </div>

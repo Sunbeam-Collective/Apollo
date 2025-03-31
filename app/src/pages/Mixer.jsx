@@ -273,14 +273,15 @@ function Mixer() {
   //   setDuration(baseDuration.current / rate); // LMAO
   // }
 
-  const handleSpeed = (listItem) => {
-    const rate = parseFloat(listItem.textContent) / 100;
+  const handleSpeed = (rate) => {
     waveRef.current.setPlaybackRate(rate, false);
-    console.log(rate);
+    console.log('currentTime: ', waveRef.current.getCurrentTime());
+    console.log('duration: ', waveRef.current.getDuration());
 
     // rerender
     setPlaybackRate(rate);
-    setDuration(baseDuration.current / rate); // LMAO
+    setCurrentTime(waveRef.current.getCurrentTime() / rate); // LMAO
+    setDuration(waveRef.current.getDuration() / rate); // LMAO
   }
 
   // // archiving these (and the end function) for now
@@ -331,9 +332,9 @@ function Mixer() {
 
 
     // adjusting the length based on playbackrate
-    console.log('baseDuration before saving: ', baseDuration.current);
+    console.log('baseDuration before saving: ', waveRef.current.getDuration());
     console.log('playbackRate before saving: ', playbackRate);
-    const length = sampleRate * (baseDuration.current / playbackRate);
+    const length = sampleRate * (waveRef.current.getDuration() / playbackRate);
 
     // init ctx...
     const offACtx = new OfflineAudioContext(numberOfChannels, length, sampleRate);

@@ -5,6 +5,7 @@ import {
 } from '../assets';
 
 import {
+  useState,
   useEffect
 } from 'react';
 
@@ -16,6 +17,8 @@ function MixerControls({ props }) {
     togglePlay,
     handleStop
   } = props;
+
+  const [textFeedback, setTextFeedback] = useState(false);
 
   const formatTime = (time) => {
     const minutes = Math.floor(time / 60);
@@ -58,12 +61,26 @@ function MixerControls({ props }) {
     return () => document.removeEventListener('keydown', handleKeyPress);
   }, [togglePlay, isPlaying]);
 
+  // visual feedback for currentTime/duration change
+  useEffect(() => {
+    setTextFeedback(true);
+    const timer = setTimeout(() => {
+      setTextFeedback(false);
+    }, 500);
+    // event cleanup
+    return () => clearTimeout(timer);
+  }, [duration]);
+
   return (
     <div className='mixer-controls-container'>
       <button id='stop-button-rect' onClick={handleStop}>
         <img id='stop-button-rect-icon' src={stop_icon_rect} />
       </button>
-      <span>{formatTime(currentTime)}/{formatTime(duration)}</span>
+      <span
+        style={{ color: textFeedback ? '#FFE30E' : 'white'}}
+      >
+        {formatTime(currentTime)}/{formatTime(duration)}
+      </span>
       {
         isPlaying
         ? <button id='pause-button-rect' onClick={togglePlay}>

@@ -1,4 +1,5 @@
 import WaveSurfer from 'wavesurfer.js';
+import ZoomPlugin from 'wavesurfer.js/dist/plugins/zoom.esm.js';
 
 import {
   useContext,
@@ -36,7 +37,7 @@ function MixerTimeline({ props }) {
   const {
     setCurrentTime, setDuration,
     playbackRate, setIsPlaying,
-    audioURL, baseDuration
+    audioURL
   } = props;
 
   const { waveRef } = useContext(SongContext);
@@ -64,18 +65,17 @@ function MixerTimeline({ props }) {
       normalize: true,
       // barRadius: 5,
       hideScrollbar: false,
+      dragToSeek: true,
       autoScroll: true,
       autoCenter: true,
-      minPxPerSec: 100,
+      // minPxPerSec: 100,
     });
     // events
     waveRef.current.on('ready', () => {
       console.log('wave is now ready!');
       // so we know how to scale the current time and duration
       // when playback rate changes
-      const duration = waveRef.current.getDuration();
-      baseDuration.current = duration;
-      setDuration(duration);
+      setDuration(waveRef.current.getDuration());
     });
     waveRef.current.on('finish', () => {
       waveRef.current.setTime(0);
@@ -87,6 +87,14 @@ function MixerTimeline({ props }) {
       console.log('here: ', currentTime);
       setCurrentTime(currentTime / waveRef.current.getPlaybackRate());
     });
+    // zoom plugin
+    waveRef.current.registerPlugin(
+      ZoomPlugin.create({
+        iterations: 3,
+        scale: 0.25,
+        maxZoom: 200,
+      }),
+    )
 
     // cleanup for unmount or changes
     return () => {
