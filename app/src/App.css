@@ -98,6 +98,7 @@ button {
 
 /* App.css */
 #root {
+  position: relative;
   text-align: center;
   width: 100vw;
   height: 100%;
@@ -286,6 +287,85 @@ div.blanked {
   color: black;
 }
 
+div.queue-modal {
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */
+
+  background-color: rgba(0,0,0,0.9);
+  position: absolute;
+  z-index: 20;
+  top: 0;
+  height: 100%;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  div.queue-header {
+    flex: 1;
+    display: flex;
+    div.queue-header-left-padding {
+      flex: 2;
+    }
+    div.queue-header-title {
+      flex: 5;
+      font-size: 3rem;
+      font-family: Avenir;
+      color: #FFE30E;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    div.queue-header-exit-container {
+      flex: 2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 3rem;
+    }
+  }
+  div.queue-body {
+    flex: 9;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    ul.queue-list {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 0 20%;
+      gap: 2rem;
+      overflow: scroll;
+      li.queue-list-item {
+        min-height: 7vh;
+        max-height: 7vh;
+        display: flex;
+        gap: 1rem;
+        div.queue-item-cover {
+          height: 7vh;
+          width: 7vh;
+          display: flex;
+          img {
+            border-radius: 5px;
+            object-fit: contain;
+          }
+        }
+        div.queue-item-details {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          justify-content: center;
+          div.queue-item-title {
+            font: var(--font-h1)
+          }
+          div.queue-item-artist {
+            font: var(--font-p2);
+          }
+        }
+      }
+    }
+  }
+}
+
 div.player-container {
   display: flex;
   height: 100vh;
@@ -304,7 +384,9 @@ div.player-container {
     div.secondary-nav-padding {
       flex: 2.5;
     }
-    button#popout-button {
+    button#popout-button,
+    button#queue-button
+    {
       flex: 1;
     }
   }
@@ -388,7 +470,9 @@ div.mixer-container {
     div.secondary-nav-padding {
       flex: 2.5;
     }
-    button#popout-button {
+    button#popout-button,
+    button#help-button
+    {
       flex: 1;
     }
   }

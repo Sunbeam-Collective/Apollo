@@ -9,6 +9,7 @@ import TrendingItem from "./TrendingItem";
 import SecondaryNav from "./SecondaryNav";
 import Loading from "./Loading";
 import PlayerPopout from "./PlayerPopout";
+import QueueCard from "./QueueCard"
 
 export {
   AuthTest,
@@ -21,5 +22,6 @@ export {
   TrendingItem,
   SecondaryNav,
   Loading,
-  PlayerPopout
+  PlayerPopout,
+  QueueCard
 }

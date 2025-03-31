@@ -12,7 +12,7 @@ function SongContextProvider({ children }) {
   const [songData, setSongs] = useState(null);
   const [track, setTrack] = useState(null);
   const [renderedSongs, setRenderedSongs] = useState(null);
-  const songQueue = useRef([]);
+  const songQueue = useRef(null);
   const trackRef = useRef(null);
   const waveRef = useRef(null);
   const context = { songData, setSongs, songQueue, track, trackRef, waveRef, setTrack, renderedSongs, setRenderedSongs };

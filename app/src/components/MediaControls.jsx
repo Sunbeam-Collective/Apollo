@@ -36,8 +36,8 @@ import {
   DoublyLinkedList
 } from '../classes/DoublyLinkedList'
 
-function MediaControls() {
-  const { trackRef, track, renderedSongs } = useContext(SongContext);
+function MediaControls({ isRepeating, setIsRepeating }) {
+  const { trackRef, track, renderedSongs, songQueue } = useContext(SongContext);
   // audio states
   const [isPlaying, setIsPlaying] = useState(false);
   const [dragTime, setDragTime] = useState(0);
@@ -49,8 +49,8 @@ function MediaControls() {
 
   // shuffle and repeat toggles
   const [isShuffled, setIsShuffled] = useState(false);
-  const [isRepeating, setIsRepeating] = useState(false);
-  let songQueue = useRef(new DoublyLinkedList());
+  // moving this to context so the nav can access it
+  // let songQueue = useRef(new DoublyLinkedList());
   const navigate = useNavigate();
   const location = useLocation();
   const { id } = useParams();
@@ -64,16 +64,19 @@ function MediaControls() {
   const repeatButtonRef = useRef(null);
 
 
-  const shuffle = (songs) => {
+  const shuffle = () => {
     const used = new Set();
-    while (used.size < songs.length) {
-      const randomIndex = Math.floor(Math.random() * songs.length);
+    const currSongIdx = renderedSongs.findIndex((song) => song.id === +id);
+    used.add(currSongIdx);
+    while (used.size < renderedSongs.length) {
+      const randomIndex = Math.floor(Math.random() * renderedSongs.length);
       used.add(randomIndex);
     }
-    return [...used.values()].map((u) => songs[u]);
+    return [...used.values()].map((u) => renderedSongs[u]);
   }
 
   const pivotToLinkedList = () => {
+    console.log(renderedSongs);
     let i = renderedSongs.findIndex((song) => song.id === +id);
     const newLL = new DoublyLinkedList();
     while (newLL.length() < renderedSongs.length) {
@@ -127,7 +130,7 @@ function MediaControls() {
 
   const handleShuffleClick = () => {
     if (isShuffled) songQueue.current = pivotToLinkedList().head;
-    else songQueue.current = arrayToLinkedList(shuffle(renderedSongs)).head;
+    else songQueue.current = arrayToLinkedList(shuffle()).head;
     setIsShuffled(isShuffled => !isShuffled);
   }
 

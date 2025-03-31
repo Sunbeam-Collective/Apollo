@@ -29,6 +29,7 @@ import save_icon_mixer from './save_icon_mixer.svg'
 import load_wheel_ico from './load_wheel_ico.svg'
 import popout_icon from './popout_icon.svg'
 import dot_marker from './dot_marker.svg'
+import queue_icon from './queue_icon.svg'
 
 
 export {
@@ -62,5 +63,6 @@ export {
   save_icon_mixer,
   load_wheel_ico,
   popout_icon,
-  dot_marker
+  dot_marker,
+  queue_icon
 }

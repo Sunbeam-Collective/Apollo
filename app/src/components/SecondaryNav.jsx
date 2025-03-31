@@ -1,18 +1,30 @@
 import {
+  useState,
+  useContext
+} from 'react'
+
+import {
   useNavigate,
   useLocation,
   useParams
 } from 'react-router-dom';
+
 import {
   back_icon,
-  popout_icon
+  popout_icon,
+  queue_icon
 } from '../assets';
+
 import {
   PlayerPopout
 } from '.'
 import ReactDOM from 'react-dom/client'
 
-function SecondaryNav({ setPopoutIsOpen }) {
+import {
+  SongContext
+} from '../context';
+
+function SecondaryNav({ props }) {
   const navigate = useNavigate();
   const location = useLocation();
   const { id } = useParams();
@@ -48,6 +60,17 @@ function SecondaryNav({ setPopoutIsOpen }) {
     setPopoutIsOpen(true);
   }
 
+
+  const handleQueue = () => {
+    const { handleQueueToggle } = props;
+    handleQueueToggle();
+  }
+
+  const handleHelp = () => {
+    const { handleHelp } = props;
+    handleHelp();
+  }
+
   return (
     <div className='secondary-nav'>
       <button
@@ -58,12 +81,22 @@ function SecondaryNav({ setPopoutIsOpen }) {
         {/* {'<'} Back */}
       </button>
       <div className='secondary-nav-padding'></div>
-      <button
-        id='popout-button'
-        onClick={handlePopout}
-      >
-        <img src={popout_icon} />
-      </button>
+      {(location.pathname.startsWith('/player')) ? (
+        <button
+          id='queue-button'
+          onClick={handleQueue}
+        >
+          <img src={queue_icon} />
+        </button>
+      ) : (
+        <button
+          id='help-button'
+          onClick={handleHelp}
+        >
+          <img src={popout_icon} />
+        </button>
+      )
+      }
     </div>
   )
 }

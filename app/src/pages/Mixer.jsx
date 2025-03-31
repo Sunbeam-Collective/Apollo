@@ -328,6 +328,7 @@ function Mixer() {
   const handleSave = async () => {
     // pause the track and put loading modal up front
     waveRef.current.pause();
+    setIsPlaying(false);
     setIsSaving(true);
 
 
@@ -387,6 +388,10 @@ function Mixer() {
     setIsSaving(false);
   }
 
+  const handleHelp = () => {
+    // for later
+  }
+
   return (
     <>
       {isSaving && (
@@ -404,7 +409,11 @@ function Mixer() {
         playsInline
       /> */}
       <div className='mixer-container'>
-        <SecondaryNav />
+        <SecondaryNav
+          props={{
+            handleHelp
+          }}
+        />
         <TrackDetails
           title={track.title}
           artist={track.artist}

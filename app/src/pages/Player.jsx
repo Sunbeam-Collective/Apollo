@@ -10,6 +10,7 @@ import {
   MediaControls,
   SecondaryNav,
   Loading,
+  QueueCard
 } from "../components";
 
 import {
@@ -34,11 +35,16 @@ function Player() {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  // queue stuff
+  const [showQueue, setShowQueue] = useState(false);
+  const [isRepeating, setIsRepeating] = useState(false);
+  const [queue, setQueue] = useState([]);
+
   // popout stuff
   const [popoutIsOpen, setPopoutIsOpen] = useState(false);
 
   // context
-  const { track, setTrack, trackRef } = useContext(SongContext);
+  const { track, setTrack, trackRef, songQueue } = useContext(SongContext);
 
   useEffect(() => {
     // fetching
@@ -84,19 +90,74 @@ function Player() {
     )
   }
 
+  const handleQueueToggle = () => {
+    setShowQueue(!showQueue);
+    setQueue(listToArr())
+  };
+
+  const listToArr = () => {
+    if (isRepeating) return [];
+    console.log('making queue arr')
+    const head = songQueue.current;
+    const arr = [];
+    let curr = head.next;
+    while (curr !== head) {
+      arr.push(curr);
+      curr = curr.next;
+    }
+    const res = arr.map((node) => node.data);
+    console.log('resulting arr: ', res);
+    return res;
+  }
+
   if (error !== null) return <h1>{error.message}</h1>;
   if (isLoading) return <Loading />;
   return (
     <>
-      <div className="player-container">
-        <SecondaryNav />
+      {showQueue && (
+        <div
+          className='queue-modal'
+        >
+          <div className='queue-header'>
+            <div className='queue-header-left-padding'>
+              {/* nothing */}
+            </div>
+            <div className='queue-header-title'>
+              queue
+            </div>
+            <div className='queue-header-exit-container'>
+              <button id='queue-exit' onClick={handleQueueToggle}>❌</button>
+            </div>
+          </div>
+          <div className='queue-body'>
+            <ul className='queue-list'>
+              {queue.length > 0 ? (
+                queue.map((song) => {
+                  return (
+                    <QueueCard song={song} />
+                  )
+                })
+              ) : (
+                <p>u r repeating one song 🤦</p>
+              )}
+            </ul>
+          </div>
+        </div>
+      )}
+      <div className='player-container'>
+        <SecondaryNav
+          props={{
+            handleQueueToggle
+          }}
+        />
         <TrackDetails title={track.title} artist={track.artist} />
         <div className="player-cover">
           <img id="player-cover" src={track.coverSrc} alt={track.title} />
         </div>
         {/* timeline is scrubbable... hopefully */}
         <MediaControls
-          setIsLoading={setIsLoading}
+          isRepeating={isRepeating}
+          setIsRepeating={setIsRepeating}
         />
         <div className='player-edit'>
           <button
