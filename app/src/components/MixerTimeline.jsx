@@ -50,7 +50,6 @@ function MixerTimeline({ props }) {
     waveRef.current = WaveSurfer.create({
       // functionality
       url: audioURL,
-      dragToSeek: true,
       // styling
       container: container.current,
       waveColor: gradient,
