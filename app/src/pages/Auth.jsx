@@ -8,9 +8,20 @@ function Auth() {
     <div id="login-wrapper">
       <div id="login-header">
         <img src={logo} id='apollo-logo' alt="Apollo Logo" />
-        <h1>Apollo</h1>
+        <h1
+          style={{
+            opacity: 0, animation: 'fadeIn 0.5s ease-out forwards'
+          }}
+        >
+          Apollo
+        </h1>
       </div>
-      <div id="auth-options-wrapper">
+      <div
+        id="auth-options-wrapper"
+        style={{
+          opacity: 0, animation: 'fadeIn 0.5s ease-out forwards'
+        }}
+      >
         {/* To-do: Handle Google OAuth */}
         <Link to="" style={{ textDecoration: "none" }}>
           <button id='googleLogin'>

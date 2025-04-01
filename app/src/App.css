@@ -101,7 +101,7 @@ button {
   position: relative;
   text-align: center;
   width: 100vw;
-  height: 100%;
+  height: 100vh;
 }
 
 .logo {
@@ -141,6 +141,7 @@ button {
 }
 
 #login-wrapper {
+  padding-top: 20vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -818,6 +819,27 @@ div.progress-thumb {
   }
   to {
     transform: rotate(calc(var(--start-degree, 0deg) + 360deg));
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUpEase {
+  80% {
+    padding-top: 35vh;
+  }
+  95% {
+    padding-top: 21vh;
+  }
+  100% {
+    padding-top: 20vh;
   }
 }
 

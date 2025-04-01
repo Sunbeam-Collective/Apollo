@@ -25,7 +25,17 @@ function Redirect() {
 
   return (
     <>
-      <img id='apollo-logo' src={apolloLogo} alt="Apollo Logo" />
+      <div
+        className='redirect-container'
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          paddingTop: '35vh',
+          animation: 'slideUpEase 3s ease-out forwards'
+        }}
+      >
+        <img id='apollo-logo' src={apolloLogo} alt="Apollo Logo" />
+      </div>
     </>
   )
 }
