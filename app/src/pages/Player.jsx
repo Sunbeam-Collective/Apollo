@@ -80,6 +80,7 @@ function Player() {
       }
     };
     fetchTrack();
+    if (songQueue.current !== null) setQueue(listToArr()); // queue updates when song changes while queue modal is open
   }, [id]);
 
   const handleEdit = async () => {

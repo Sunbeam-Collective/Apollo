@@ -27,6 +27,7 @@ import {
 } from '../components'
 
 import {
+  save_icon_load,
   save_icon_mixer
 } from '../assets'
 
@@ -60,7 +61,7 @@ function Mixer() {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [playbackRate, setPlaybackRate] = useState(1);
-  const [isFirstLoad, setIsFirstLoad] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
   // dragging shenanigans
   const [isDragging, setIsDragging] = useState(false);
@@ -187,32 +188,37 @@ function Mixer() {
     return;
   }
     const downloadFile = async () => {
-      const blob = await getTrackFile(track.previewSrc);
-      // console.log('blob: ', blob);
-      // console.log('blob raw data: ', blob.data);
-      // console.log('blob data size: ', blob.data.size);
-      // console.log('blob data type: ', blob.data.type);
-      baseBlob.current = blob.data;
-      // console.log('current blob: ', baseBlob.current);
+      const minDelay = new Promise((resolve) => setTimeout(resolve, 500));
+      const processBlob = async () => {
+        const blob = await getTrackFile(track.previewSrc);
+        // console.log('blob: ', blob);
+        // console.log('blob raw data: ', blob.data);
+        // console.log('blob data size: ', blob.data.size);
+        // console.log('blob data type: ', blob.data.type);
+        baseBlob.current = blob.data;
+        // console.log('current blob: ', baseBlob.current);
 
-      // // init acRef if applicable
-      // if (acRef.current === null) acRef.current = new AudioContext();
+        // // init acRef if applicable
+        // if (acRef.current === null) acRef.current = new AudioContext();
 
-      // // rename for ease
-      // const audioCtx = acRef.current;
+        // // rename for ease
+        // const audioCtx = acRef.current;
 
-      // // init the source node
-      // const source = await initSourceNode(audioCtx, baseBlob.current)
-      // liveSourceRef.current = source;
+        // // init the source node
+        // const source = await initSourceNode(audioCtx, baseBlob.current)
+        // liveSourceRef.current = source;
 
-      // // connect the nodes, no effects
-      // source.connect(audioCtx.destination);
+        // // connect the nodes, no effects
+        // source.connect(audioCtx.destination);
 
-      // generate a url from a blob
-      const audioURL = URL.createObjectURL(baseBlob.current);
+        // generate a url from a blob
+        const audioURL = URL.createObjectURL(baseBlob.current);
 
-      // state change for rerenders
-      setAudioURL(audioURL);
+        // state change for rerenders
+        setAudioURL(audioURL);
+        setIsLoading(false);
+      }
+      await Promise.all([minDelay, processBlob()]);
     }
     downloadFile();
   }, []);
@@ -409,16 +415,32 @@ function Mixer() {
     return;
   }
 
+
+  if (isLoading) return <Loading />;
   return (
     <>
       {isSaving && (
-        <Loading
-          style={{
-            position: 'absolute',
-            zIndex: 2,
-            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-          }}
-        />
+        <>
+          <Loading
+            style={{
+              position: 'absolute',
+              zIndex: 2,
+              backgroundColor: 'rgba(0, 0, 0, 0.8)',
+            }}
+          >
+          </Loading>
+          <img
+            id='save-icon-load'
+            src={save_icon_load}
+            style={{
+              position: 'absolute',
+              zIndex: 30,
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)'
+            }}
+          />
+        </>
       )}
       {/* <audio
         ref={trackRef}

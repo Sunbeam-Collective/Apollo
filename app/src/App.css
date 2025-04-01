@@ -174,7 +174,12 @@ button {
 
 }
 
-#auth-options-wrapper button:hover {
+/* auth-options-wrapper */
+#googleLogin {
+  opacity: 0.5;
+  cursor: default;
+}
+#guestLogin:hover {
   /* border-color: #ffe30d; */
   background: rgba(255, 255, 255, 0.2);
 }
@@ -408,6 +413,9 @@ div.queue-modal {
       justify-content: center;
       align-items: center;
       font-size: 1.5rem;
+      button#queue-exit:hover {
+        transform: scale(1.125);
+      }
     }
   }
   div.queue-body {
@@ -419,8 +427,8 @@ div.queue-modal {
       flex: 1;
       display: flex;
       flex-direction: column;
-      /* padding: 0 20%; */
-      gap: 2rem;
+      padding: 0 1rem;
+      gap: 0.25rem;
       overflow: scroll;
       li.queue-list-item:hover {
         background: rgba(255, 255, 255, 0.2);
@@ -532,6 +540,9 @@ div.player-container {
     display: flex;
     align-items: center;
     justify-content: center;
+    button:hover {
+      transform: scale(1.125);
+    }
   }
 }
 p#edit-text {
@@ -808,4 +819,8 @@ div.progress-thumb {
   to {
     transform: rotate(calc(var(--start-degree, 0deg) + 360deg));
   }
+}
+
+.secondary-nav button:hover {
+  transform: scale(1.25);
 }

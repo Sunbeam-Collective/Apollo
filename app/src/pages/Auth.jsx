@@ -13,13 +13,13 @@ function Auth() {
       <div id="auth-options-wrapper">
         {/* To-do: Handle Google OAuth */}
         <Link to="" style={{ textDecoration: "none" }}>
-          <button>
+          <button id='googleLogin'>
             <img src={google_logo} alt="Google Logo" />
             Login with Google
           </button>
         </Link>
         <Link to="/home" style={{ textDecoration: "none" }}>
-          <button>
+          <button id='guestLogin'>
             <img src={guest_logo} alt="Google Logo" />
             Continue as Guest
           </button>
