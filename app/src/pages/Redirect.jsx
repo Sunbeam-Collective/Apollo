@@ -15,11 +15,11 @@ function Redirect() {
     if (authState) {
       setTimeout(()=> {
         navigate('/home')
-      }, 3000)
+      }, 2000)
     } else {
       setTimeout(()=> {
         navigate('/auth')
-      }, 3000)
+      }, 2000)
     }
   }, [])
 
@@ -31,7 +31,7 @@ function Redirect() {
           display: 'flex',
           justifyContent: 'center',
           paddingTop: '35vh',
-          animation: 'slideUpEase 3s ease-out forwards'
+          animation: 'slideUpEase 2s ease-out forwards'
         }}
       >
         <img id='apollo-logo' src={apolloLogo} alt="Apollo Logo" />
