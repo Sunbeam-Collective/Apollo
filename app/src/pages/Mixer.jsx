@@ -178,6 +178,14 @@ function Mixer() {
 
 
   useEffect(() => {
+  // handle refresh
+  if (track === null) {
+    navigate(
+      `/home`,
+      { state: { from: `/mixer/${id}` } }
+    )
+    return;
+  }
     const downloadFile = async () => {
       const blob = await getTrackFile(track.previewSrc);
       // console.log('blob: ', blob);
@@ -390,6 +398,15 @@ function Mixer() {
 
   const handleHelp = () => {
     // for later
+  }
+
+  // handle refresh
+  if (track === null) {
+    navigate(
+      `/home`,
+      { state: { from: `/mixer/${id}` } }
+    )
+    return;
   }
 
   return (

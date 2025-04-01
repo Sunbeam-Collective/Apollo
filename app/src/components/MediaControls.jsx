@@ -244,6 +244,14 @@ function MediaControls({ isRepeating, setIsRepeating }) {
   }
 
   useEffect(() => {
+    // handle refresh
+    if (renderedSongs === null) {
+      navigate(
+        `/home`,
+        { state: { from: `/player/${id}` } }
+      )
+      return;
+    }
     if (location.state?.from.startsWith('/home')) songQueue.current = pivotToLinkedList(id).head;
     setIsPlaying(true);
     trackRef.current.play();

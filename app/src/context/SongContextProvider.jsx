@@ -11,6 +11,8 @@ function SongContextProvider({ children }) {
   const [currentTab, setTab] = useState("trending");
   const [trendingSearch, setTrendingSearch] = useState("");
   const [savedSearch, setSavedSearch] = useState("");
+  // State to manage whether user is logged in or not
+  const [authState, setAuthState] = useState(false);
   const trackRef = useRef(null);
   const waveRef = useRef(null);
   const songQueue = useRef(null);
@@ -34,6 +36,8 @@ function SongContextProvider({ children }) {
     setTrendingSearch,
     savedSearch,
     setSavedSearch,
+    authState, 
+    setAuthState
   };
 
   return (

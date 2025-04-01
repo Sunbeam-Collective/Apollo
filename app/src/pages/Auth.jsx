@@ -7,8 +7,8 @@ function Auth() {
   return (
     <div id="login-wrapper">
       <div id="login-header">
-        <img src={logo} alt="Apollo Logo" />
-        <h1>Login</h1>
+        <img src={logo} id='apollo-logo' alt="Apollo Logo" />
+        <h1>Apollo</h1>
       </div>
       <div id="auth-options-wrapper">
         {/* To-do: Handle Google OAuth */}

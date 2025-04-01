@@ -130,6 +130,54 @@ button {
     animation: logo-spin infinite 20s linear;
   }
 }
+/* Auth Page Styling */
+#login-header {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  font-family: Avenir;
+}
+
+#login-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5vh;
+}
+
+#apollo-logo {
+  border-radius: 35px;
+  width: 30vh;
+}
+
+#auth-options-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 320px;
+  gap: 10px;
+}
+
+#auth-options-wrapper button {
+  font-family: Avenir;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-style: solid;
+  border-color: white;
+  padding: 20px;
+  width: 100%;
+  gap: 5px;
+  font-size: larger;
+
+}
+
+#auth-options-wrapper button:hover {
+  /* border-color: #ffe30d; */
+  background: rgba(255, 255, 255, 0.2);
+}
 
 /* Homepage Styling */
 
@@ -487,7 +535,7 @@ div.player-container {
   }
 }
 p#edit-text {
-  color: #white;
+  color: white;
 }
 
 /*
