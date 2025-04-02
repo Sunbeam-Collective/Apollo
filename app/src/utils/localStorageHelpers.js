@@ -1,4 +1,4 @@
-import { getDeezerTrack } from "../services/deezerService";
+import { getDeezerTrack } from "./deezerService";
 
 const initLocalStorage = () => {
   localStorage.setItem("savedSongs", JSON.stringify([]));

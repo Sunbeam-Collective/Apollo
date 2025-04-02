@@ -3,7 +3,7 @@ import { useParams, useNavigate, useLocation  } from "react-router-dom";
 import { useState, useEffect, useContext, useRef } from "react";
 import '../App.css';
 
-import { getDeezerTrack } from "../services/deezerService";
+import { getDeezerTrack } from "../utils/deezerService";
 
 import {
   TrackDetails,
@@ -23,12 +23,7 @@ import {
   exit_queue_icon
 } from "../assets";
 
-import { useScrollLock } from "../adapters";
-
 function Player() {
-  // no scrolling while on player!
-  useScrollLock();
-
   // fetching states
   const { id } = useParams();
   const navigate = useNavigate();
@@ -40,6 +35,7 @@ function Player() {
   const [showQueue, setShowQueue] = useState(false);
   const [isRepeating, setIsRepeating] = useState(false);
   const [queue, setQueue] = useState([]);
+  // const queueLoadRef = useRef(false);
 
   // popout stuff
   const [popoutIsOpen, setPopoutIsOpen] = useState(false);
@@ -97,11 +93,34 @@ function Player() {
     setQueue(listToArr())
   };
 
+  const handleMoveQueue = (e) => {
+    e.preventDefault();
+    const li = e.target.closest('li');
+    // if click on an item or click on the now playing
+    if (!li || li.classList.contains('current')) return;
+    const songId = parseInt(li.dataset.songid);
+    let curr = songQueue.current;
+    while (curr.data.id !== songId) {
+      curr = curr.next;
+    }
+    // state updates for rerenders
+    const track = {
+      title: curr.data.title,
+      artist: curr.data.artist.name,
+      coverSrc: curr.data.album.cover_xl,
+      previewSrc: curr.data.preview,
+    }
+    setTrack(track);
+    // update the queue
+    songQueue.current = curr;
+    setQueue(listToArr());
+  }
+
   const listToArr = () => {
-    if (isRepeating) return [];
+    if (isRepeating) return [songQueue.current.data];
     // console.log('making queue arr')
     const head = songQueue.current;
-    const arr = [];
+    const arr = [head];
     let curr = head.next;
     while (curr !== head) {
       arr.push(curr);
@@ -125,7 +144,7 @@ function Player() {
               {/* nothing */}
             </div>
             <div className='queue-header-title'>
-              queue
+              {/* queue */}
             </div>
             <div className='queue-header-exit-container'>
               <button id='queue-exit' onClick={handleQueueToggle}>
@@ -134,15 +153,23 @@ function Player() {
             </div>
           </div>
           <div className='queue-body'>
-            <ul className='queue-list'>
-              {queue.length > 0 ? (
-                queue.map((song) => {
-                  return (
-                    <QueueCard key={crypto.randomUUID()} song={song} />
-                  )
-                })
+            <ul className='queue-list' onClick={handleMoveQueue}>
+              {queue.length > 1 ? (
+                <>
+                  <h2 className='queue-label'>Now playing</h2>
+                  <QueueCard key={crypto.randomUUID()} song={queue[0]} current={true} />
+                  <h2 className='queue-label'>Up next</h2>
+                  {queue.slice(1).map((song) => {
+                    return (
+                      <QueueCard key={crypto.randomUUID()} song={song} current={false} />
+                    )
+                  })}
+                </>
               ) : (
-                <p>u r repeating one song 🤦</p>
+                <>
+                  <h2 className='queue-label'>On repeat</h2>
+                  <QueueCard key={crypto.randomUUID()} song={queue[0]} current={true} />
+                </>
               )}
             </ul>
           </div>

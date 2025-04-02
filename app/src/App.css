@@ -424,6 +424,12 @@ div.queue-modal {
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    h2.queue-label {
+      text-align: left;
+    }
+    h2.queue-label:not(:first-child) {
+      padding-top: 1rem;
+    }
     ul.queue-list {
       flex: 1;
       display: flex;
@@ -431,8 +437,14 @@ div.queue-modal {
       padding: 0 1rem;
       gap: 0.25rem;
       overflow: scroll;
-      li.queue-list-item:hover {
+      li.queue-list-item:nth-child(n+3):hover {
         background: rgba(255, 255, 255, 0.2);
+      }
+      li.queue-list-item:nth-child(n+3) {
+        cursor: pointer;
+        div.queue-item-hover-container:hover {
+          opacity: 1;
+        }
       }
       li.queue-list-item {
         padding: 1rem;
@@ -441,11 +453,28 @@ div.queue-modal {
         max-height: 7vh;
         display: flex;
         gap: 1rem;
+        position: relative;
         div.queue-item-cover {
           height: 7vh;
           width: 7vh;
           display: flex;
           img {
+            border-radius: 5px;
+            object-fit: contain;
+          }
+        }
+        div.queue-item-hover-container {
+          opacity: 0;
+          position: absolute;
+          top: 0;
+          right: 0;
+          bottom: 0;
+          left: 0;
+          padding: 1rem;
+          display: flex;
+          img {
+            height: 7vh;
+            width: 7vh;
             border-radius: 5px;
             object-fit: contain;
           }

@@ -61,7 +61,6 @@ const getDeezerTrack = async (req, res) => {
       error: "Something went wrong",
     });
   }
-  // console.log(data);
   return res.status(200).json({
     success: true,
     data: data,

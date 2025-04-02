@@ -31,14 +31,11 @@ import {
   save_icon_mixer
 } from '../assets'
 
-import {
-  useScrollLock
-} from '../adapters'
 
 import {
   getDeezerTrack,
   getTrackFile
-} from '../services/deezerService'
+} from '../utils/deezerService'
 
 
 // standard song audio file parameters
@@ -46,8 +43,6 @@ const numberOfChannels = 2; // stereo
 const sampleRate = 44100; // in Hz, cd quality apparently
 
 function Mixer() {
-  useScrollLock();
-
   // fetching states
   const { id } = useParams();
   const navigate = useNavigate();

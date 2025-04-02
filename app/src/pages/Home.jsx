@@ -2,7 +2,7 @@ import { useEffect, useState, useContext } from "react";
 import HomepageHeader from "../components/HomepageHeader";
 import HomepageFooter from "../components/HomepageFooter";
 import SongList from "../components/SongList";
-import { getDeezerChart } from "../services/deezerService";
+import { getDeezerChart } from "../utils/deezerService";
 import SearchBar from "../components/SearchBar";
 import {
   initLocalStorage,
