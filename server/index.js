@@ -12,6 +12,8 @@ const PORT = process.env.PORT || 4000;
 // what is this part for?
 // const pathToFrontendDist = path.join(__dirname, '../app/dist');
 
+app.use(express.static(path.join(__dirname, '../app/dist')));
+
 // setting up middleware
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
