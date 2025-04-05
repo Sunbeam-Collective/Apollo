@@ -2,7 +2,6 @@ import {
   load_wheel_ico
 } from '../assets'
 
-
 function Loading() {
   const randomDegree = Math.floor(Math.random() * 360);
   return (

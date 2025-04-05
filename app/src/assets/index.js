@@ -37,6 +37,7 @@ import apollo_logo_mask from './apollo_logo_mask.svg'
 import apollo_logo_gradient from './apollo_logo_gradient.png'
 import user_icon from './user_icon.svg'
 import cover_hover from './cover_hover.svg'
+import help_icon from './help_icon.svg'
 
 
 export {
@@ -78,5 +79,6 @@ export {
   apollo_logo_mask,
   apollo_logo_gradient,
   user_icon,
-  cover_hover
+  cover_hover,
+  help_icon
 }

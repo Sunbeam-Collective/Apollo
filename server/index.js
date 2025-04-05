@@ -13,6 +13,7 @@ const PORT = process.env.PORT || 4000;
 // const pathToFrontendDist = path.join(__dirname, '../app/dist');
 
 // setting up middleware
+// app.use(express.static(path.join(__dirname, '../app/dist')));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 // if i need to setup cors

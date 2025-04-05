@@ -1,13 +1,13 @@
 import {
+  useState,
+  useEffect
+} from 'react';
+
+import {
   stop_icon_rect,
   play_icon_rect,
   pause_icon_rect,
 } from '../assets';
-
-import {
-  useState,
-  useEffect
-} from 'react';
 
 function MixerControls({ props }) {
   const {
@@ -18,6 +18,7 @@ function MixerControls({ props }) {
     handleStop
   } = props;
 
+  // State used for visual feedback upon playbackRate prop change.
   const [textFeedback, setTextFeedback] = useState(false);
 
   const formatTime = (time) => {
@@ -26,8 +27,13 @@ function MixerControls({ props }) {
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   };
 
+  /**
+  * This hook handles some neat keyboard shortcuts
+  * for Mixer controls' ease of access.
+  *
+  * It runs whenever the playing state changes.
+  */
   useEffect(() => {
-    /* KB SHORTCUT INITS */
     const handleKeyPress = (e) => {
       switch(e.code) {
         case 'Space':
@@ -37,22 +43,6 @@ function MixerControls({ props }) {
         case 'Escape':
           handleStop();
           break;
-        // case 'ArrowLeft':
-        //   audioRef.current.currentTime -= 5;
-        //   break;
-        // case 'ArrowRight':
-        //   audioRef.current.currentTime += 5;
-        //   break;
-        // case 'ArrowUp':
-        //   const newVolume = Math.min(1, audioRef.current.volume + 0.1);
-        //   audioRef.current.volume = newVolume;
-        //   setVolume(newVolume);
-        //   break;
-        // case 'ArrowDown':
-        //   const reducedVolume = Math.max(0, audioRef.current.volume - 0.1);
-        //   audioRef.current.volume = reducedVolume;
-        //   setVolume(reducedVolume);
-        //   break;
         default:
           break;
       }
@@ -61,13 +51,19 @@ function MixerControls({ props }) {
     return () => document.removeEventListener('keydown', handleKeyPress);
   }, [togglePlay, isPlaying]);
 
-  // visual feedback for currentTime/duration change
+  /**
+  * This hook handles dynamically updating the
+  * currentTime and duration of the song being played.
+  *
+  * It runs whenever the duration prop changes. This accounts for when
+  * the audio is progressing, or when the playbackRate prop changes (which, in turn)
+  * also affects the currentTime prop.
+  */
   useEffect(() => {
     setTextFeedback(true);
     const timer = setTimeout(() => {
       setTextFeedback(false);
     }, 500);
-    // event cleanup
     return () => clearTimeout(timer);
   }, [duration]);
 
