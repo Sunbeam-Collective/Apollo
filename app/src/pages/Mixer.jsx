@@ -33,7 +33,8 @@ import {
 
 import {
   save_icon_load,
-  save_icon_mixer
+  save_icon_mixer,
+  save_icon_mixer_hover
 } from '../assets'
 
 
@@ -61,6 +62,9 @@ function Mixer() {
   // Dragging shenanigans
   // const [isDragging, setIsDragging] = useState(false);
   // const fromRate = useRef(1);
+
+  // Save icon element for hover effects
+  const saveButtonRef = useRef(null);
 
   // Actual mp3 file states
   const baseBlob = useRef(null);
@@ -333,6 +337,16 @@ function Mixer() {
     downloadFile();
   }, []);
 
+  const expandSave = () => {
+    const img = saveButtonRef.current.querySelector('img');
+    img.src = save_icon_mixer_hover;
+  }
+
+  const shrinkSave = () => {
+    const img = saveButtonRef.current.querySelector('img');
+    img.src = save_icon_mixer;
+  }
+
   /**
   * To handle refreshes...
   * TODO: Implement proper state management with tools like
@@ -408,8 +422,13 @@ function Mixer() {
             handleSpeed
           }}
         />
-        <div className='save-container-mixer'>
-          <button id='save-mixer-button' onClick={handleSave}>
+        <div ref={saveButtonRef}  className='save-container-mixer'>
+          <button
+            id='save-mixer-button'
+            onClick={handleSave}
+            onMouseEnter={expandSave}
+            onMouseLeave={shrinkSave}
+          >
             <img id='save-mixer-button-icon' src={save_icon_mixer} />
           </button>
         </div>

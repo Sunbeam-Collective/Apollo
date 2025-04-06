@@ -701,14 +701,57 @@ p#edit-text {
 */
 
 /* styling here for now */
-div.mixer-help {
+div.mixer-help-block {
   position: absolute;
-  height: 100%;
+  padding: 1rem;
+  height: calc(100% - 2rem);
+  width: calc(100% - 2rem);
   display: flex;
   flex-direction: column;
-  opacity: 0.8;
-  z-index: 10;
-  display: none;
+  align-items: center;
+  z-index: 30;
+  background: #000000;
+  video {
+    width: 70%;
+    height: auto;
+    align-self: center;
+    margin-bottom: 2rem;
+  }
+  p {
+    margin-bottom: 1rem;
+  }
+  h2 {
+    color: #ffe30d;
+    align-self: flex-start;
+    margin-bottom: 1rem;
+  }
+}
+
+div.help-body {
+  width: 380px;
+}
+
+div.help-header {
+  width: 100%;
+  display: flex;
+  .help-header-left-padding {
+    flex: 1;
+  }
+  .help-header-title {
+    flex: 8;
+  }
+  .help-header-exit-container {
+    flex: 1;
+    button#help-exit:hover {
+      transform: scale(1.125);
+    }
+  }
+}
+
+div.timeline-controls-container,
+div.rate-controls-container {
+  display: flex;
+  flex-direction: column;
 }
 
 div.mixer-container {
@@ -869,14 +912,19 @@ div.mixer-container {
       );
       border-image-slice: 1;
       flex: 1;
+      display: flex;
+      justify-content: center;
+      position: relative;
+    }
+    div.error-message {
+      position: absolute;
+      padding-top: 1rem;
+      color: #FF6347;
+      z-index: 20;
     }
   }
   div.save-container-mixer {
     flex: calc(100% * 118 / 812);
-    img#save-mixer-button-icon:hover {
-      animation: expand 0.5s ease-in-out forwards;
-      content: url("./assets/save_icon_mixer_hover.svg");
-    }
   }
 }
 
@@ -972,7 +1020,7 @@ div.progress-thumb {
   border-radius: 50%; */
 }
 
-/* Animations */
+/* Loading screen keyframes */
 @keyframes spin {
   from {
     transform: rotate(var(--start-degree, 0deg));
@@ -982,26 +1030,7 @@ div.progress-thumb {
   }
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes expand {
-  0% {
-    transform: scale(0);
-    opacity: 0;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
+/* Landing page logo */
 @keyframes slideUpEase {
   80% {
     padding-top: 35vh;
@@ -1014,6 +1043,27 @@ div.progress-thumb {
   }
 }
 
+/* Mixer save button */
+@keyframes expand {
+  0% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.1);
+    opacity: 0;
+  }
+}
+
+/* Auth modal keyframes */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
 @keyframes fadeSlideFromLeft {
   0% {
     opacity: 0;
@@ -1024,7 +1074,6 @@ div.progress-thumb {
     transform: translateX(0);
   }
 }
-
 @keyframes fadeSlideFromRight {
   0% {
     opacity: 0;
@@ -1035,7 +1084,6 @@ div.progress-thumb {
     transform: translateX(0);
   }
 }
-
 @keyframes pullUp {
   0% {
     transform: translateY(50vh);
@@ -1044,7 +1092,6 @@ div.progress-thumb {
     transform: translateY(0);
   }
 }
-
 @keyframes pullDown {
   0% {
     transform: translateY(0);

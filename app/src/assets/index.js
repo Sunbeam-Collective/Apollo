@@ -27,6 +27,7 @@ import repeat_icon_active from './repeat_icon_active.svg'
 import repeat_icon_hover from './repeat_icon_hover.svg'
 import repeat_icon_click from './repeat_icon_click.svg'
 import save_icon_mixer from './save_icon_mixer.svg'
+import save_icon_mixer_hover from './save_icon_mixer_hover.svg'
 import save_icon_load from './save_icon_load.svg'
 import load_wheel_ico from './load_wheel_ico.svg'
 import popout_icon from './popout_icon.svg'
@@ -37,7 +38,12 @@ import apollo_logo from './apollo_logo.svg'
 import user_icon from './user_icon.svg'
 import cover_hover from './cover_hover.svg'
 import help_icon from './help_icon.svg'
-
+import rate_drag from './rate_drag.mp4'
+import rate_scroll from './rate_scroll.mp4'
+import rate_type from './rate_type.mp4'
+import time_hori_scroll from './time_hori_scroll.mp4'
+import time_scrub from './time_scrub.mp4'
+import time_vert_scroll from './time_vert_scroll.mp4'
 
 export {
   next_icon,
@@ -69,6 +75,7 @@ export {
   repeat_icon_hover,
   repeat_icon_click,
   save_icon_mixer,
+  save_icon_mixer_hover,
   save_icon_load,
   load_wheel_ico,
   popout_icon,
@@ -78,5 +85,11 @@ export {
   apollo_logo,
   user_icon,
   cover_hover,
-  help_icon
+  help_icon,
+  rate_drag,
+  rate_scroll,
+  rate_type,
+  time_hori_scroll,
+  time_scrub,
+  time_vert_scroll
 }
