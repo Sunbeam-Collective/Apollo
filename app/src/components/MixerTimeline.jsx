@@ -11,28 +11,6 @@ import {
   SongContext
 } from '../context'
 
-const canvas = document.createElement('canvas');
-const ctx = canvas.getContext('2d');
-
-// quick and dirty ref - https://wavesurfer.xyz/examples/?soundcloud.js
-// Define the waveform gradient
-const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height * 3.5)
-gradient.addColorStop(0, '#656666') // Top color
-gradient.addColorStop((canvas.height * 0.7) / canvas.height, '#656666') // Top color
-gradient.addColorStop((canvas.height * 0.7 + 1) / canvas.height, '#ffffff') // White line
-gradient.addColorStop((canvas.height * 0.7 + 2) / canvas.height, '#ffffff') // White line
-gradient.addColorStop((canvas.height * 0.7 + 3) / canvas.height, '#B1B1B1') // Bottom color
-gradient.addColorStop(1, '#B1B1B1') // Bottom color
-
-// Define the progress gradient
-const progressGradient = ctx.createLinearGradient(0, 0, 0, canvas.height * 3.5)
-progressGradient.addColorStop(0, '#FFE30E') // Top color
-progressGradient.addColorStop((canvas.height * 0.7) / canvas.height, '#FFE30E') // Top color
-progressGradient.addColorStop((canvas.height * 0.7 + 1) / canvas.height, '#ffffff') // White line
-progressGradient.addColorStop((canvas.height * 0.7 + 2) / canvas.height, '#ffffff') // White line
-progressGradient.addColorStop((canvas.height * 0.7 + 3) / canvas.height, '#FEF9D0') // Bottom color
-progressGradient.addColorStop(1, '#FEF9D0') // Bottom color
-
 function MixerTimeline({ props }) {
   const {
     setCurrentTime, setDuration,
@@ -40,53 +18,41 @@ function MixerTimeline({ props }) {
     audioURL
   } = props;
 
+  // Shared states
   const { waveRef } = useContext(SongContext);
 
+  // Grabbing the container element with React.
   const container = useRef(null);
 
+  /**
+  * This hooks initializes the waveform and the audio HTMLElement.
+  * Courtesy of the wavesurfer.js library!
+  *
+  * It runs when the audioURL changes.
+  * As of now, it happens only on mount.
+  */
   useEffect(() => {
-    // console.log('inside first')
-    if (waveRef.current) waveRef.current.destroy(); // deallocate previous wave
+    if (waveRef.current) waveRef.current.destroy(); // Deallocate previous waveform, if applicable.
+    // Initializing and configuring the waveform.
     waveRef.current = WaveSurfer.create({
-      // functionality
+      // Functionality
       url: audioURL,
-      // styling
+      // Styling
       container: container.current,
-      waveColor: gradient,
-      progressColor: progressGradient,
-      // waveColor: '#343434',
-      // progressColor: '#FFE30E',
+      waveColor: '#343434',
+      progressColor: '#FFE30E',
       cursorColor: '#FFFFFF',
       height: 200,
       width: '100vw',
       barWidth: 2,
       barGap: 3,
       normalize: true,
-      // barRadius: 5,
       hideScrollbar: false,
       dragToSeek: true,
       autoScroll: true,
       autoCenter: true,
-      // minPxPerSec: 100,
     });
-    // events
-    waveRef.current.on('ready', () => {
-      // console.log('wave is now ready!');
-      // so we know how to scale the current time and duration
-      // when playback rate changes
-      setDuration(waveRef.current.getDuration());
-    });
-    waveRef.current.on('finish', () => {
-      waveRef.current.setTime(0);
-      waveRef.current.pause();
-      setCurrentTime(0);
-      setIsPlaying(false);
-    });
-    waveRef.current.on('timeupdate', (currentTime) => {
-      // console.log('here: ', currentTime);
-      setCurrentTime(currentTime / waveRef.current.getPlaybackRate());
-    });
-    // zoom plugin
+    // Wavesurfer.js plugin that enables zooming in/out on the audio waveform.
     waveRef.current.registerPlugin(
       ZoomPlugin.create({
         iterations: 3,
@@ -95,15 +61,42 @@ function MixerTimeline({ props }) {
       }),
     )
 
-    // cleanup for unmount or changes
+    /** EVENT HANDLERS
+    * The following are handlers that are set up for the purpose
+    * of bubbling up information for the parent component to use:
+    */
+    // The event 'ready' on a wavesurfer object is similar to the 'loadeddata' event on an audio HTMLElement.
+    waveRef.current.on('ready', () => {
+      setDuration(waveRef.current.getDuration());
+    });
+    // The event 'finish' on a wavesurfer object is similar to the 'ended' event on an audio HTMLElement.
+    waveRef.current.on('finish', () => {
+      waveRef.current.setTime(0);
+      waveRef.current.pause();
+      setCurrentTime(0);
+      setIsPlaying(false);
+    });
+    // The event 'timeupdate' on a wavesurfer object is is similar to the '
+    waveRef.current.on('timeupdate', (currentTime) => {
+      // console.log('here: ', currentTime);
+      setCurrentTime(currentTime / waveRef.current.getPlaybackRate());
+    });
+
+    // Cleanup for unmount or changes
     return () => {
       if (waveRef.current) {
-        waveRef.current.destroy(); // wavesurfer deallocation
+        waveRef.current.destroy();
         waveRef.current = null;
       }
     }
   }, [audioURL]);
 
+  /**
+  * This hook handles dynamically updating the playback rate of the audio
+  * rendered/played by the wavesurfer object.
+  *
+  * It runs whenever the playbackRate prop from the parent component changes.
+  */
   useEffect(() => {
     // console.log('inside second')
     waveRef.current.setOptions({

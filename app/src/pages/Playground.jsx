@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import {
   getDeezerTrack,
   getDeezerChart
-} from "../services/deezerService";
+} from "../utils/deezerService";
 import { useNavigate } from "react-router-dom";
 
 

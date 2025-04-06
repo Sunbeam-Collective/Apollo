@@ -1,20 +1,3 @@
-
-import {
-  prev_icon,
-  prev_icon_hover,
-  play_icon_round,
-  pause_icon_round,
-  next_icon,
-  next_icon_hover,
-  shuffle_icon,
-  shuffle_icon_hover,
-  shuffle_icon_active,
-  shuffle_icon_disabled,
-  repeat_icon,
-  repeat_icon_hover,
-  repeat_icon_active
-} from '../assets';
-
 import {
   useState,
   useRef,
@@ -29,6 +12,10 @@ import {
 } from 'react-router-dom'
 
 import {
+  BlankProgressBar
+} from '.'
+
+import {
   SongContext
 } from '../context'
 
@@ -36,26 +23,33 @@ import {
   DoublyLinkedList
 } from '../classes/DoublyLinkedList'
 
+import {
+  prev_icon,
+  prev_icon_hover,
+  prev_icon_click,
+  play_icon_round,
+  play_icon_hover,
+  play_icon_click,
+  pause_icon_round,
+  pause_icon_hover,
+  pause_icon_click,
+  next_icon,
+  next_icon_hover,
+  next_icon_click,
+  shuffle_icon,
+  shuffle_icon_active,
+  shuffle_icon_disabled,
+  shuffle_icon_hover,
+  shuffle_icon_click,
+  repeat_icon,
+  repeat_icon_active,
+  repeat_icon_hover,
+  repeat_icon_click
+} from '../assets';
+
 function MediaControls({ isRepeating, setIsRepeating }) {
-  const { trackRef, track, renderedSongs, songQueue } = useContext(SongContext);
-  // audio states
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [dragTime, setDragTime] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(0);
-  // const [volume, setVolume] = useState(1);
-  // const [isMuted, setIsMuted] = useState(false);
-
-  // shuffle and repeat toggles
-  const [isShuffled, setIsShuffled] = useState(false);
-  // moving this to context so the nav can access it
-  // let songQueue = useRef(new DoublyLinkedList());
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { id } = useParams();
-
-  // TODO: button styling thing
+  // IGNORE STARTS HERE---FEATURES WIP
+  // IN PROGRESS: button styling thing
   const shuffleButtonRef = useRef(null);
   const prevButtonRef = useRef(null);
   const playButtonRoundRef = useRef(null);
@@ -63,170 +57,7 @@ function MediaControls({ isRepeating, setIsRepeating }) {
   const nextButtonRef = useRef(null);
   const repeatButtonRef = useRef(null);
 
-
-  const shuffle = () => {
-    const used = new Set();
-    const currSongIdx = renderedSongs.findIndex((song) => song.id === +id);
-    used.add(currSongIdx);
-    while (used.size < renderedSongs.length) {
-      const randomIndex = Math.floor(Math.random() * renderedSongs.length);
-      used.add(randomIndex);
-    }
-    return [...used.values()].map((u) => renderedSongs[u]);
-  }
-
-  const pivotToLinkedList = () => {
-    // console.log(renderedSongs);
-    let i = renderedSongs.findIndex((song) => song.id === +id);
-    const newLL = new DoublyLinkedList();
-    while (newLL.length() < renderedSongs.length) {
-      newLL.appendToTail(renderedSongs[i%renderedSongs.length]);
-      i++
-    }
-    newLL.print();
-    return newLL;
-  }
-
-  const arrayToLinkedList = (array) => {
-    const newLL = new DoublyLinkedList();
-    // console.log(newLL.head);
-    for (const a of array) {
-      newLL.appendToTail(a);
-      // console.log(newLL.tail);
-    }
-    newLL.print();
-    return newLL;
-  }
-
-  const handleNextClick = () => {
-    if (isRepeating) {
-      trackRef.current.currentTime = 0;
-      setCurrentTime(0);
-      return;
-    } else { // no shuffle
-      const next = songQueue.current.next;
-      songQueue.current = next;
-      navigate(
-        `/player/${next.data.id}`,
-        { state: { from: `/player/${id}` } }
-      )
-    }
-  }
-
-  const handlePrevClick = () => {
-    if (currentTime > 3 || isRepeating) {
-      trackRef.current.currentTime = 0;
-      setCurrentTime(0);
-      return;
-    } else { // no shuffle
-      const prev = songQueue.current.prev;
-      songQueue.current = prev;
-      navigate(
-        `/player/${prev.data.id}`,
-        { state: { from: `/player/${id}` } }
-      )
-    }
-  }
-
-  const handleShuffleClick = () => {
-    if (isShuffled) songQueue.current = pivotToLinkedList().head;
-    else songQueue.current = arrayToLinkedList(shuffle()).head;
-    setIsShuffled(isShuffled => !isShuffled);
-  }
-
-  const handleRepeatClick = () => {
-    trackRef.current.loop = !trackRef.current.loop;
-    setIsRepeating(isRepeating => !isRepeating);
-  }
-
-  const handleTimeUpdate = () => {
-    setCurrentTime(trackRef.current.currentTime);
-  };
-
-  const handleSeek = (e) => {
-    const time = parseFloat(e.target.value);
-    e.target.style.setProperty('--progress-percent', `${(time / duration) * 100}%`)
-    // move the thumb as well
-    const thumb = document.querySelector('div.progress-thumb');
-    thumb.style.setProperty('--progress-percent', `${(time / duration) * 100}%`)
-    setIsDragging(true);
-    setDragTime(time);
-  };
-
-  const handleSeekEnd = () => {
-    trackRef.current.currentTime = dragTime;
-    setCurrentTime(dragTime);
-    setIsDragging(false);
-  }
-
-  // const formatTime = (time) => {
-  //   const minutes = Math.floor(time / 60);
-  //   const seconds = Math.floor(time % 60);
-  //   return `${minutes}:${seconds.toString().padStart(2, '0')}`;
-  // };
-
-  const handleLoadedData = () => {
-    setDuration(trackRef.current.duration);
-    // console.log('Audio duration: ', trackRef.current.duration);
-  }
-
-  const handleEnded = () => {
-    if (isRepeating) {
-      setCurrentTime(0);
-      trackRef.current.play();
-    }
-    else {
-      const next = songQueue.current.next;
-      songQueue.current = next;
-      navigate(
-        `/player/${next.data.id}`,
-        { state: { from: `/player/${id}` } }
-      )
-    };
-  }
-
-  const handleStop = () => {
-    trackRef.current.pause();
-    setIsPlaying(false);
-    trackRef.current.currentTime = 0;
-    setCurrentTime(0);
-  }
-
-  const togglePlay = async () => {
-    try {
-      if (isPlaying) {
-        await trackRef.current.pause();
-      } else {
-        await trackRef.current.play();
-      }
-      setIsPlaying(!isPlaying);
-    } catch (error) {
-      console.error('Error toggling play state:', error);
-    }
-  }
-
-  // const handleVolume = (e) => {
-  //   const newVolume = parseFloat(e.target.value);
-  //   audioRef.current.volume = newVolume;
-  //   setVolume(newVolume);
-  //   if (newVolume === 0) {
-  //     setIsMuted(true);
-  //   } else {
-  //     setIsMuted(false);
-  //   }
-  // }
-
-  // const toggleMute = () => {
-  //   if (isMuted) {
-  //     audioRef.current.volume = volume;
-  //     setIsMuted(false);
-  //   } else {
-  //     audioRef.current.volume = 0;
-  //     setIsMuted(true);
-  //   }
-  // }
-
-  // TODO: button styling thing
+  // IN PROGRESS: button styling thing
   const initializeButtons = () => {
     const initDynamicButton = (buttonRef, normalIcon, hoverIcon, clickIcon) => {
       const button = buttonRef.current
@@ -242,9 +73,295 @@ function MediaControls({ isRepeating, setIsRepeating }) {
     initDynamicButton(nextButtonRef, './assets/next-icon.svg', './assets/next-icon-hover.svg', './assets/next-icon-click.svg');
     initDynamicButton(repeatButtonRef, './assets/repeat-icon.svg', './assets/repeat-icon-hover.svg', './assets/repeat-icon-click.svg');
   }
+  // IGNORE ENDS HERE.
 
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Shared states and setters
+  const { trackRef, track, renderedSongs, songQueue } = useContext(SongContext);
+
+  // Audio states
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [dragTime, setDragTime] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+
+  // Shuffle and repeat states
+  const [isShuffled, setIsShuffled] = useState(false);
+
+  /**
+   * Shuffles the renderedSongs array, ensuring the current song is included and no song is repeated.
+   *
+   * @returns An array containing the shuffled songs, starting from the current song and without duplicates.
+   */
+  const shuffle = () => {
+    const used = new Set();
+    const currSongIdx = renderedSongs.findIndex((song) => song.id === +id);
+    used.add(currSongIdx);
+    while (used.size < renderedSongs.length) {
+      const randomIndex = Math.floor(Math.random() * renderedSongs.length);
+      used.add(randomIndex);
+    }
+    return [...used.values()].map((u) => renderedSongs[u]);
+  }
+
+  /**
+   * Creates a doubly linked list from the rendered songs, starting with the song matching the current ID.
+   *
+   * @returns A doubly linked list containing the rendered songs, starting with the song with the matching ID.
+   */
+  const pivotToLinkedList = () => {
+    let i = renderedSongs.findIndex((song) => song.id === +id);
+    const newLL = new DoublyLinkedList();
+    while (newLL.length() < renderedSongs.length) {
+      newLL.appendToTail(renderedSongs[i%renderedSongs.length]);
+      i++
+    }
+    return newLL;
+  }
+
+  /**
+   * Converts an array into a doubly linked list.
+   *
+   * @param {Array} array The array to convert.
+   * @returns {DoublyLinkedList} A new doubly linked list containing the elements of the array.
+   */
+  const arrayToLinkedList = (array) => {
+    const newLL = new DoublyLinkedList();
+    for (const a of array) {
+      newLL.appendToTail(a);
+    }
+    return newLL;
+  }
+
+  /**
+   * Handles the click event for the "Next" button.
+   *
+   * If the track is repeating, it restarts the current track. Otherwise, it advances to the next song in the queue.
+   *
+   * @param {void}
+   * @returns {void}
+   * @sideEffects:
+   *  - If repeating, sets track current time to 0 and updates the current time state.
+   *  - If not repeating, updates the song queue, navigates to the next song's Player page, and sets the 'from' state for navigation.
+   */
+  const handleNextClick = () => {
+    if (isRepeating) {
+      trackRef.current.currentTime = 0;
+      setCurrentTime(0);
+      return;
+    } else {
+      const next = songQueue.current.next;
+      songQueue.current = next;
+      navigate(
+        `/player/${next.data.id}`,
+        { state: { from: `/player/${id}` } }
+      )
+    }
+  }
+
+  /**
+   * Handles the "previous" button click event.  If the current time is greater than 3 seconds, or the track is repeating, rewind to the beginning of the track.  Otherwise, navigate to the previous track in the queue.
+   *
+   * @param {void}
+   * @returns {void}
+   * @sideeffects:
+   *  - Sets the `currentTime` state to 0 if rewinding or currentTime > 3.
+   *  - Updates the `songQueue.current` to the previous song if not rewinding or currentTime > 3.
+   *  - Navigates to the previous song's Player page if not rewinding or currentTime > 3.
+   */
+  const handlePrevClick = () => {
+    if (currentTime > 3 || isRepeating) {
+      trackRef.current.currentTime = 0;
+      setCurrentTime(0);
+      return;
+    } else {
+      const prev = songQueue.current.prev;
+      songQueue.current = prev;
+      navigate(
+        `/player/${prev.data.id}`,
+        { state: { from: `/player/${id}` } }
+      )
+    }
+  }
+
+  /**
+   * Handles the shuffle button click event.  Toggles the shuffle state and updates the song queue.
+   *
+   * @param {void}
+   * @returns {void}
+   * @sideeffect/s:
+   *  - Updates the `isShuffled` state.
+   *  - Modifies the `songQueue.current` linked list based on the shuffle state.
+   */
+  const handleShuffleClick = () => {
+    if (isShuffled) songQueue.current = pivotToLinkedList().head;
+    else songQueue.current = arrayToLinkedList(shuffle()).head;
+    setIsShuffled(isShuffled => !isShuffled);
+  }
+
+  /**
+   * Toggles the loop state of the audio track.
+   *
+   * @param {void}
+   * @returns {void}
+   * @sideEffects:
+   *  - Sets the `loop` property of the `trackRef.current` to its inverse.
+   *  - Updates the `isRepeating` state to its inverse.
+   */
+  const handleRepeatClick = () => {
+    trackRef.current.loop = !trackRef.current.loop;
+    setIsRepeating(isRepeating => !isRepeating);
+  }
+
+  /**
+   * Updates the current time state with the audio track's current time.
+   *
+   * @param {void}
+   * @returns {void}
+   * @sideEffects:
+   *  - Sets the `currentTime` state to `trackRef.current.currentTime`.
+   */
+  const handleTimeUpdate = () => {
+    setCurrentTime(trackRef.current.currentTime);
+  };
+
+  /**
+   * Handles the seek operation when the user interacts with the progress bar.
+   *
+   * @param {Event} e - The change event from the input range slider.
+   * @returns {void}
+   * @sideEffects:
+   *  - Updates the CSS variable `--progress-percent` of the event target to reflect the seek position.
+   *  - Sets the CSS variable `--progress-percent` of the progress thumb element to reflect the seek position.
+   *  - Sets the `isDragging` state to true.
+   *  - Sets the `dragTime` state to the new time value.
+   */
+  const handleSeek = (e) => {
+    const time = parseFloat(e.target.value);
+    e.target.style.setProperty('--progress-percent', `${(time / duration) * 100}%`)
+    const thumb = document.querySelector('div.progress-thumb');
+    thumb.style.setProperty('--progress-percent', `${(time / duration) * 100}%`)
+    setIsDragging(true);
+    setDragTime(time);
+  };
+
+  /**
+   * Handles the end of the seek operation, updating the audio track's current time.
+   *
+   * @param {void}
+   * @returns {void}
+   * @sideEffects:
+   *  - Sets the `currentTime` of the `trackRef.current` to the value of `dragTime`.
+   *  - Sets the `currentTime` state to the value of `dragTime`.
+   *  - Sets the `isDragging` state to false.
+   */
+  const handleSeekEnd = () => {
+    trackRef.current.currentTime = dragTime;
+    setCurrentTime(dragTime);
+    setIsDragging(false);
+  }
+
+  /**
+   * Handles the event when the audio track's data has loaded.
+   *
+   * @param {void}
+   * @returns {void}
+   * @sideEffects:
+   *  - Sets the `duration` state to the audio track's duration.
+   */
+  const handleLoadedData = () => {
+    setDuration(trackRef.current.duration);
+  }
+
+  /**
+   * Handles the event when the audio track has ended.  Plays the next track in the queue or repeats the current track.
+   *
+   * @param {void}
+   * @returns {void}
+   * @sideEffects:
+   *  - If `isRepeating` is true:
+   *    - Sets the `currentTime` state to 0.
+   *    - Calls `trackRef.current.play()`.
+   *  - If `isRepeating` is false:
+   *    - Updates the `songQueue.current` to the next song in the queue.
+   *    - Navigates to the Player page for the next song.
+   */
+  const handleEnded = () => {
+    if (isRepeating) {
+      setCurrentTime(0);
+      trackRef.current.play();
+    }
+    else {
+      const next = songQueue.current.next;
+      songQueue.current = next;
+      navigate(
+        `/player/${next.data.id}`,
+        { state: { from: `/player/${id}` } }
+      )
+    };
+  }
+
+  /**
+   * Stops the audio playback and resets the current time.
+   *
+   * @param {void}
+   * @returns {void}
+   * @sideEffects:
+   *  - Pauses the `trackRef.current` (audio element).
+   *  - Sets `isPlaying` state to false.
+   *  - Sets the `currentTime` of `trackRef.current` to 0.
+   *  - Sets the `currentTime` state to 0.
+   */
+  const handleStop = () => {
+    trackRef.current.pause();
+    setIsPlaying(false);
+    trackRef.current.currentTime = 0;
+    setCurrentTime(0);
+  }
+
+  /**
+   * Toggles the playback state of the audio track.
+   *
+   * @param {void}
+   * @returns {void}
+   * @sideEffects:
+   *  - If `isPlaying` is true:
+   *    - Pauses the `trackRef.current` (audio element).
+   *  - If `isPlaying` is false:
+   *    - Plays the `trackRef.current` (audio element).
+   *  - Sets the `isPlaying` state to its inverse.
+   */
+  const togglePlay = async () => {
+    try {
+      if (isPlaying) {
+        await trackRef.current.pause();
+      } else {
+        await trackRef.current.play();
+      }
+      setIsPlaying(!isPlaying);
+    } catch (error) {
+      console.error('Error toggling play state:', error);
+    }
+  }
+
+  /**
+  * This hook handles the initialization of the doubly
+  * linked list that is used to represent the songs queue.
+  *
+  * It runs when the audio source is updated,
+  * indicating that the Player has changed to a new song.
+  */
   useEffect(() => {
-    // handle refresh
+    /**
+    * To handle refreshes...
+    * TODO: Implement proper state management with tools like
+    *  Redux to gracefully handle refreshes on pages/components
+    *  that have props/contexts that are dependent on parents.
+    */
     if (renderedSongs === null) {
       navigate(
         `/home`,
@@ -252,13 +369,23 @@ function MediaControls({ isRepeating, setIsRepeating }) {
       )
       return;
     }
+    /**
+    * If coming from the Home page, initialize the doubly linked list object for the queue.
+    */
     if (location.state?.from.startsWith('/home')) songQueue.current = pivotToLinkedList(id).head;
     setIsPlaying(true);
     trackRef.current.play();
     trackRef.current.loop = false;
   }, [track.previewSrc]);
 
+  /**
+  * This hook handles the dynamic display of the song progress bar.
+  *
+  * It runs as the current song progresses, or when the
+  * song changes (new song loads in) or repeats.
+  */
   useEffect(() => {
+    // useRef could be used here to grab the element but that would just be clutter. Nothing wrong with simple querySelectors!
     const progressBar = document.querySelector('.progress-bar');
     if (progressBar && !isDragging) {
       progressBar.value = currentTime;
@@ -266,61 +393,63 @@ function MediaControls({ isRepeating, setIsRepeating }) {
     }
   }, [currentTime, duration])
 
+  /**
+  * This hook also handles the dynamic display of the song progress bar
+  *
+  * It runs as the user drags the thumb element to "seek" through
+  * the song.
+  */
   useEffect(() => {
+    // useRef could be used here to grab the element but that would just be clutter. Nothing wrong with simple querySelectors!
     const thumb = document.querySelector('div.progress-thumb');
     if (isDragging) thumb.style.setProperty('--progress-percent', `${dragTime / duration * 100}%`);
     else thumb.style.setProperty('--progress-percent', `${(currentTime / duration) * 100}%`);
   }, [currentTime, dragTime, duration])
 
-  /* KB HANDLERS */
+  /**
+  * This hook handles some neat keyboard shortcuts
+  * for Player controls' ease of access.
+  *
+  * It runs whenever the playing state changes.
+  */
   useEffect(() => {
-    /* KB SHORTCUTS INITS */
     const handleKeyPress = async (e) => {
-      if (e.repeat) return;
+      if (e.repeat) return; // Handles held keypresses!
       switch(e.code) {
         case 'Space':
           e.preventDefault();
-          await togglePlay();
+          togglePlay();
           break;
         case 'Escape':
           handleStop();
           break;
-        // case 'ArrowLeft':
-        //   audioRef.current.currentTime -= 5;
-        //   break;
-        // case 'ArrowRight':
-        //   audioRef.current.currentTime += 5;
-        //   break;
-        // case 'ArrowUp':
-        //   const newVolume = Math.min(1, audioRef.current.volume + 0.1);
-        //   audioRef.current.volume = newVolume;
-        //   setVolume(newVolume);
-        //   break;
-        // case 'ArrowDown':
-        //   const reducedVolume = Math.max(0, audioRef.current.volume - 0.1);
-        //   audioRef.current.volume = reducedVolume;
-        //   setVolume(reducedVolume);
-        //   break;
         default:
-          break;
       }
     };
     document.addEventListener('keydown', handleKeyPress);
     return () => document.removeEventListener('keydown', handleKeyPress);
-  }, [togglePlay, isPlaying])
+  }, [isPlaying])
 
-  /* AUDIO INITS */
+  /**
+  * This hook handles the listeners required for audio playback.
+  *
+  * It runs only on Player mount.
+  */
   useEffect(() => {
     // initializeButtons();
 
-    const audio = trackRef.current; // why do i have to do this?
-    // console.log(trackRef);
+    // Initialize thumb offset programmatically.
+    const thumb = document.querySelector('div.progress-thumb');
+    thumb.style.setProperty('--progress-percent', `${0 / 30 * 100}%`);
+
+    // Grab the audio HTMLelement.
+    const audio = trackRef.current;
     audio.addEventListener('timeupdate', handleTimeUpdate);
     audio.addEventListener('loadeddata', handleLoadedData);
     audio.addEventListener('ended', handleEnded);
 
+    // Cleanup
     return () => {
-      /* AUDIO CLEANUP */
       audio.removeEventListener('timeupdate', handleTimeUpdate);
       audio.removeEventListener('loadeddata', handleLoadedData);
       audio.removeEventListener('ended', handleEnded);
@@ -341,7 +470,6 @@ function MediaControls({ isRepeating, setIsRepeating }) {
     };
   }, []);
 
-
   return (
     <>
       <audio
@@ -350,27 +478,23 @@ function MediaControls({ isRepeating, setIsRepeating }) {
         playsInline
       />
       <div className='player-timeline'>
-        {/* Current Time */}
-        {/* <span>{formatTime(currentTime)}</span> */}
-        {/* Progress Bar */}
         <input
           type="range"
-          min="0"
-          max={duration || 0}
+          min='0'
+          max={duration || '30'}
           step='0.000001'
-          value={currentTime}
+          value={currentTime || '0'}
           onChange={handleSeek}
           onMouseUp={handleSeekEnd}
           onTouchEnd={handleSeekEnd}
           className="progress-bar"
         />
+        <BlankProgressBar />
         <div
           className='progress-thumb-container'
         >
           <div className='progress-thumb'/>
         </div>
-        {/* Duration */}
-        {/* <span>{formatTime(duration)}</span> */}
       </div>
       <div className='player-media-controls'>
         {
@@ -406,5 +530,6 @@ function MediaControls({ isRepeating, setIsRepeating }) {
     </>
   )
 }
+
 
 export default MediaControls;

@@ -8,16 +8,17 @@ import {
 } from 'react';
 
 import {
-  SongContext
-} from '../context'
-
-import {
   useParams,
   useNavigate,
   useLocation
 } from 'react-router-dom';
 
 import {
+  SongContext
+} from '../context'
+
+import {
+  MixerHelp,
   MixerControls,
   TrackDetails,
   MixerTimeline,
@@ -27,60 +28,60 @@ import {
 } from '../components'
 
 import {
+  getTrackFile
+} from '../utils/deezerService'
+
+import {
   save_icon_load,
-  save_icon_mixer
+  save_icon_mixer,
+  save_icon_mixer_hover
 } from '../assets'
 
-import {
-  useScrollLock
-} from '../adapters'
 
-import {
-  getDeezerTrack,
-  getTrackFile
-} from '../services/deezerService'
-
-
-// standard song audio file parameters
-const numberOfChannels = 2; // stereo
-const sampleRate = 44100; // in Hz, cd quality apparently
+// Standard song audio file parameters
+const numberOfChannels = 2; // Indicates stereo
+const sampleRate = 44100; // Hz, cd quality apparently
 
 function Mixer() {
-  useScrollLock();
-
-  // fetching states
   const { id } = useParams();
   const navigate = useNavigate();
-  const location = useLocation();
 
-  // context
+  // Help 'modal' states
+  const [helpActive, setHelpActive] = useState(false);
+
+  // Shared states
   const { track, waveRef } = useContext(SongContext);
 
-  // audio states
+  // Audio states
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [playbackRate, setPlaybackRate] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
 
-  // dragging shenanigans
-  const [isDragging, setIsDragging] = useState(false);
-  const fromRate = useRef(1);
+  // Dragging shenanigans
+  // const [isDragging, setIsDragging] = useState(false);
+  // const fromRate = useRef(1);
 
-  // actual mp3 file states
+  // Save icon element for hover effects
+  const saveButtonRef = useRef(null);
+
+  // Actual mp3 file states
   const baseBlob = useRef(null);
   const baseDuration = useRef(null);
   const [audioURL, setAudioURL] = useState(null);
   // const audioURL = useRef(null);
-  const acRef = useRef(null);
-  const liveSourceRef = useRef(null);
+  // const acRef = useRef(null);
+  // const liveSourceRef = useRef(null);
   const [isSaving, setIsSaving] = useState(false);
 
-  // inits for IIR filter
-  // don't mind this part, this is just for additional effects
-  // that aren't playbackRate
-  // they're actually straightforward to use in JS but i don't even
-  // want to think about the UI/UX for this
+  /**
+  * Inits for IIR filter
+  *
+  * Don't mind this part, this is just for additional effects that aren't playbackRate.
+  * They're actually straightforward to use in JS but I don't even want to think about the UI/UX for this.
+  * MAYBE: a future feature? TBD.
+  */
   const lowPassCoefs = [
     {
       frequency: 200,
@@ -107,43 +108,41 @@ function Mixer() {
   const feedForward = lowPassCoefs[filterNumber].feedforward;
   const feedBack = lowPassCoefs[filterNumber].feedback;
 
+  /**
+  * Initializes an AudioBufferSourceNode from an audio blob.
+  *
+  * @param {AudioContext} context - The audio context.
+  * @param {Blob} audioBlob - The audio blob to decode.
+  * @returns {Promise<AudioBufferSourceNode>} - A promise that resolves to the initialized AudioBufferSourceNode.
+  */
   const initSourceNode = async (context, audioBlob) => {
-    // console.log('Creating AudioBufferSourceNode from an audio blob...');
-    // console.log('Converting audioBlob to audioBuffer...');
-    // console.log('audioBlob: ', audioBlob);
     const arrayBuffer = await audioBlob.arrayBuffer();
-    // console.log('---> arrayBuffer: ', arrayBuffer)
     const decoded = await context.decodeAudioData(arrayBuffer);
-    // console.log('---> audioBuffer: ', decoded);
-    // console.log('Initializing AudioBufferSourceNode with the decoded audioBuffer...')
     const source = new AudioBufferSourceNode(context, { buffer: decoded });
-    // console.log('---> AudioBufferSourceNode: ', source);
-    // console.log('!---initSourceNode() DONE---!');
     return source;
   }
 
+  /**
+   * Processes audio data from an offline audio context, encodes it to MP3 format, and returns the MP3 data as a Uint8Array.
+   *
+   * @param {OfflineAudioContext} offAudioCtx - The offline audio context containing the audio data to process.
+   * @returns {Promise<Uint8Array>} - A promise that resolves to the MP3 data as a Uint8Array.
+   */
   const processAudio = async (offAudioCtx) => {
-    // console.log('Rendering current offline audio context...');
-    // console.log('offAudioCtx: ', offAudioCtx);
     const rendered = await offAudioCtx.startRendering();
-    // console.log('---> rendered', rendered);
-    // console.log('Converting LR channel data from Float32Array to Int16Array (lamejs compatibility)...');
     const leftChannelData = rendered.getChannelData(0);
     const rightChannelData = rendered.getChannelData(1);
-    // console.log('leftChannelData: ', leftChannelData);
-    // console.log('rightChannelData: ', rightChannelData);
     const leftBuffer = new Int16Array(rendered.length);
     const rightBuffer = new Int16Array(rendered.length);
     for (let i = 0; i < rendered.length; i++) {
-      // lamejs encodes values in the range [-32768, 32767]
-      // but our buffers are floats in the range [-1, 1]
-      // so we convert float to int16
+      /**
+      * lamejs encodes values in the range [-32768, 32767],
+      * but our buffers are floats in the range [-1, 1].
+      * So we convert our floats to fit those int16 bounds.
+      */
       leftBuffer[i] = Math.max(-32768, Math.min(32767, Math.round(leftChannelData[i] * 32767)));
       rightBuffer[i] = Math.max(-32768, Math.min(32767, Math.round(rightChannelData[i] * 32767)));
     }
-    // console.log('---> left buffer: ', leftBuffer);
-    // console.log('---> right buffer: ', rightBuffer);
-    // console.log('Encoding left and right buffers to merged mp3Data blocks (using lamejs!)...');
     const mp3Encoder = new lamejs.Mp3Encoder(numberOfChannels, sampleRate, 128); // 128kbps is still up to standards and is the least amount of data so :sob:
     const mp3Data = [];
     const sampleBlockSize = 1152;
@@ -151,19 +150,20 @@ function Mixer() {
     for (let i = 0; i < rendered.length; i += sampleBlockSize) {
       const leftChunk = leftBuffer.subarray(i, i + sampleBlockSize);
       const rightChunk = rightBuffer.subarray(i, i + sampleBlockSize);
-      // console.log(`Processing chunk from ${i} to ${i + leftChunk.length}, chunk size: ${leftChunk.length}`);
       totalSamplesProcessed += leftChunk.length;
       const mp3Buff = mp3Encoder.encodeBuffer(leftChunk, rightChunk);
       if (mp3Buff.length > 0) mp3Data.push(mp3Buff);
     }
-    // console.log(`Total samples processed: ${totalSamplesProcessed}, original buffer length: ${rendered.length}`);
-    // adding the remainder
+    // Adding the remainder
     const mp3Buff = mp3Encoder.flush();
     if (mp3Buff.length > 0) mp3Data.push(mp3Buff);
-    // console.log('---> mp3Data: ', mp3Data);
-    // console.log('---> mp3Data chunk length (first): ', mp3Data[0].length);
-    // console.log('---> mp3Data length ', mp3Data.length);
-    // console.log('Concatenating mp3Data blocks into singular UInt8Array for blobbing...');
+    /**
+    * Merging []Uint8Array into Uint8Array
+    *
+    * 1. Compute the total length needed by checking each chunk (each Uint8Array size)
+    * 2. Create a Uint8Array with that total length
+    * 3. Fill it in with the data per chunk.
+    */
     let totalLength = 0;
     for (const chunk of mp3Data) totalLength += chunk.length;
     const mp3DataFull = new Uint8Array(totalLength);
@@ -172,14 +172,136 @@ function Mixer() {
       mp3DataFull.set(chunk, offset);
       offset += chunk.length;
     }
-    // console.log('---> unified UInt8Array: ', mp3DataFull);
-    // console.log('---> unified UInt8Array length: ', mp3DataFull.length);
     return mp3DataFull;
   }
 
+  /**
+  * Toggles the play/pause state of the waveform and updates the isPlaying state.
+  *
+  * @param {void}
+  * @returns {void}
+  * @sideEffects:
+  *  - Calls `waveRef.current.playPause()` to toggle playback.
+  *  - Updates the `isPlaying` state using `setIsPlaying(!isPlaying)`.
+  *  - Logs an error to the console if an error occurs during playback.
+  */
+  const togglePlay = () => {
+    try {
+      waveRef.current.playPause();
+      setIsPlaying(!isPlaying);
+    } catch (error) {
+      console.error('Error toggling play state: ', error);
+    }
+  }
 
+  /**
+   * Stops the audio playback, resets the current time to 0, and updates the isPlaying state.
+   *
+   * @param {void}
+   * @returns {void}
+   * @sideEffects:
+   *  - Stops the audio playback using waveRef.current.stop().
+   *  - Sets the current time to 0 using setCurrentTime(0).
+   *  - Sets the isPlaying state to false using setIsPlaying(false).
+   */
+  const handleStop = () => {
+    waveRef.current.stop();
+    setCurrentTime(0);
+    setIsPlaying(false);
+  }
+
+  /**
+   * Sets the playback rate of the audio and updates the state to reflect the new rate, adjusting current time and duration accordingly.
+   *
+   * @param {number} rate The desired playback rate.
+   * @returns {void}
+   * @sideEffects:
+   *  - Sets the playback rate of the audio using waveRef.current.setPlaybackRate(rate, false).
+   *  - Sets the playbackRate state to the new rate using setPlaybackRate(rate).
+   *  - Updates the currentTime state based on the new rate.
+   *  - Updates the duration state based on the new rate.
+   */
+  const handleSpeed = (rate) => {
+    waveRef.current.setPlaybackRate(rate, false);
+    setPlaybackRate(rate);
+    setCurrentTime(waveRef.current.getCurrentTime() / rate); // LMAO
+    setDuration(waveRef.current.getDuration() / rate); // LMAO
+  }
+
+  /**
+   * Pauses the audio, initiates the saving process, and triggers a download of the processed audio as an MP3 file.
+   *
+   * @param {void}
+   * @returns {void}
+   * @sideEffects:
+   *  - Pauses audio playback and displays saving modal.
+   *  - Creates and processes audio using OfflineAudioContext with effects and current playback rate.
+   *  - Generates and triggers the download of the processed audio as an MP3 file.
+   *  - Cleans up resources and hides the saving modal.
+   */
+  const handleSave = async () => {
+    // Pause track and saving screen trigger
+    waveRef.current.pause();
+    setIsPlaying(false);
+    setIsSaving(true);
+    /**
+    * The alotted length of the array buffer depends on
+    * the playbackRate and the duration of the audio file.
+    */
+    const length = sampleRate * (waveRef.current.getDuration() / playbackRate);
+    // Create offline context, initialize source node with the current audio blob.
+    const offACtx = new OfflineAudioContext(numberOfChannels, length, sampleRate);
+    const blob = baseBlob.current;
+    const source = await initSourceNode(offACtx, blob);
+    // TODO: Adjust playbackRate and apply effects. Gain is just to make sure that volume is preserved and may not be necessary.
+    source.playbackRate.value = playbackRate;
+    const gainNode = offACtx.createGain();
+    gainNode.gain.value = 1.0;
+    // Connect the nodes in order onto the destination.
+    source.connect(gainNode);
+    gainNode.connect(offACtx.destination);
+    source.start();
+    // Render the offline context and process it into a Uint8Array.
+    const mp3DataFull = await processAudio(offACtx);
+    /**
+    * To simulate a 'download', the processed audio is blobbed
+    * and generated its own URL to attach to a link which
+    * simulates a user interaction. The URL is freed after,
+    * then the saving screen is hidden.
+    */
+    const outputBlob = new Blob([mp3DataFull], { type: 'audio/mpeg' });
+    const outputURL = URL.createObjectURL(outputBlob);
+    const link = document.createElement('a');
+    link.href = outputURL;
+    const timestamp = new Date().getTime();
+    link.download = `${timestamp}-mix.mp3`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(outputURL);
+    setIsSaving(false);
+  }
+
+  // TODO: IMPORTANT BEFORE DEPLOYING
+  const handleToggleHelp = () => {
+    setHelpActive(!helpActive);
+  }
+
+  /**
+  * This hook handles the initialization of the audioURL
+  * that is passed onto the MixerTimeline component which
+  * creates the audio HTMLElement along with the waveRef
+  * waveform (courtesy of wavesurfer.js)!
+  *
+  * It runs only on Mixer mount.
+  */
   useEffect(() => {
-  // handle refresh
+  /**
+  * To handle refreshes...
+  * TODO: Implement proper state management with tools like
+  *  Redux to gracefully handle refreshes on pages/components
+  *  that have props/contexts that are dependent on parents.
+  */
   if (track === null) {
     navigate(
       `/home`,
@@ -188,225 +310,49 @@ function Mixer() {
     return;
   }
     const downloadFile = async () => {
+      /**
+      * minDelay here is to make sure that the Loading component shows
+      * for at least 500 seconds. API calls with getDeezerTrack() is
+      * variable, but usually takes very fast (sub 500ms)!
+      * This is more of a UX choice so that the transition is
+      * smooth and easily interpreted by the user.
+      */
       const minDelay = new Promise((resolve) => setTimeout(resolve, 500));
+      let audioURL;
       const processBlob = async () => {
         const blob = await getTrackFile(track.previewSrc);
-        // console.log('blob: ', blob);
-        // console.log('blob raw data: ', blob.data);
-        // console.log('blob data size: ', blob.data.size);
-        // console.log('blob data type: ', blob.data.type);
         baseBlob.current = blob.data;
-        // console.log('current blob: ', baseBlob.current);
-
-        // // init acRef if applicable
-        // if (acRef.current === null) acRef.current = new AudioContext();
-
-        // // rename for ease
-        // const audioCtx = acRef.current;
-
-        // // init the source node
-        // const source = await initSourceNode(audioCtx, baseBlob.current)
-        // liveSourceRef.current = source;
-
-        // // connect the nodes, no effects
-        // source.connect(audioCtx.destination);
-
-        // generate a url from a blob
-        const audioURL = URL.createObjectURL(baseBlob.current);
-
-        // state change for rerenders
-        setAudioURL(audioURL);
-        setIsLoading(false);
+        audioURL = URL.createObjectURL(baseBlob.current);
       }
+      /**
+      * Promise.all executes the provided async functions concurrently!
+      * putting minDelay with loadingTask(id) makes sure that it waits
+      * at least 500ms (since that was our minDelay) until it moves
+      * onto the next task.
+      */
       await Promise.all([minDelay, processBlob()]);
-    }
+      setAudioURL(audioURL);
+      setIsLoading(false);
+    };
     downloadFile();
   }, []);
 
-  // setting up listeners everytime... react rerenders... crazy
-  // useEffect(() => {
-  //   const audio = trackRef.current;
-  //   audio.addEventListener('timeupdate', handleTimeUpdate);
-  //   audio.addEventListener('loadeddata', handleLoadedData);
-  //   audio.addEventListener('ended', handleStop); // same behavior anyway lol
-  //   return () => {
-  //     audio.removeEventListener('timeupdate', handleTimeUpdate);
-  //     audio.removeEventListener('loadeddata', handleLoadedData);
-  //     audio.removeEventListener('ended', handleStop); // same behavior anyway lol
-  //   };
-  // }, [playbackRate]);
-
-  // function handleTimeUpdate() {
-  //   setCurrentTime(trackRef.current.currentTime / playbackRate);
-  // };
-
-  // function handleLoadedData() {
-  //   // so we know the original duration of the base audio
-  //   if (isFirstLoad) {
-  //     baseDuration.current = trackRef.current.duration;
-  //     setIsFirstLoad(false);
-  //   }
-  //   trackRef.current.preservesPitch = false;
-  //   setDuration(trackRef.current.duration);
-  //   // console.log('Audio duration: ', trackRef.current.duration);
-  // }
-
-  const togglePlay = () => {
-    try {
-      // if (isPlaying) {
-      //   await trackRef.current.pause();
-      // } else {
-      //   await trackRef.current.play();
-      // }
-      waveRef.current.playPause();
-      setIsPlaying(!isPlaying);
-    } catch (error) {
-      console.error('Error toggling play state: ', error);
-    }
+  const expandSave = () => {
+    const img = saveButtonRef.current.querySelector('img');
+    img.src = save_icon_mixer_hover;
   }
 
-  // async function handleStop() {
-  //   trackRef.current.currentTime = 0;
-  //   await trackRef.current.pause();
-  //   setCurrentTime(0);
-  //   setIsPlaying(false);
-  // }
-
-  const handleStop = () => {
-    waveRef.current.stop();
-    setCurrentTime(0);
-    setIsPlaying(false);
+  const shrinkSave = () => {
+    const img = saveButtonRef.current.querySelector('img');
+    img.src = save_icon_mixer;
   }
 
-  // function handleSpeed(e) {
-  //   const rate = parseFloat(e.target.value);
-  //   trackRef.current.playbackRate = rate;
-
-  //   // rerender
-  //   setPlaybackRate(rate);
-  //   setDuration(baseDuration.current / rate); // LMAO
-  // }
-
-  const handleSpeed = (rate) => {
-    waveRef.current.setPlaybackRate(rate, false);
-    // console.log('currentTime: ', waveRef.current.getCurrentTime());
-    // console.log('duration: ', waveRef.current.getDuration());
-
-    // rerender
-    setPlaybackRate(rate);
-    setCurrentTime(waveRef.current.getCurrentTime() / rate); // LMAO
-    setDuration(waveRef.current.getDuration() / rate); // LMAO
-  }
-
-  // // archiving these (and the end function) for now
-  // function handleSpeedDrag(e) {
-  //   if (isPlaying) togglePlay();
-  //   setIsDragging(true);
-  //   setPlaybackRate(e.target.value);
-  // }
-  // async function handleSpeedDragEnd(e) {
-  //   // make a new offline audio context
-  //   const length = sampleRate * (baseDuration.current / playbackRate);
-  //   const offACtx = new OfflineAudioContext(numberOfChannels, length, sampleRate);
-
-  //   // recreate source
-  //   const blob = baseBlob.current;
-  //   // console.log('current blob: ', baseBlob.current);
-  //   const source = await initSourceNode(offACtx, blob);
-
-  //   // apply effects/changes
-  //   source.playbackRate.value = playbackRate;
-  //   const adjustedDuration = baseDuration.current / playbackRate;
-
-  //   // connect new source to context
-  //   source.connect(offACtx.destination);
-  //   source.start();
-
-  //   // make new audio url
-  //   const mp3DataFull = await processAudio(offACtx);
-  //   // close context (stops source too)
-  //   // offACtx.close();
-  //   const outputBlob = new Blob([mp3DataFull], { type: 'audio/mpeg' });
-  //   // free current url, then create new one
-  //   // console.log(audioURL);
-  //   URL.revokeObjectURL(audioURL);
-  //   const newAudioURL = URL.createObjectURL(outputBlob);
-
-  //   // state updates for rerender
-  //   setIsDragging(false);
-  //   setAudioURL(newAudioURL);
-  //   setDuration(adjustedDuration);
-  //   setCurrentTime(0);
-  // }
-
-  const handleSave = async () => {
-    // pause the track and put loading modal up front
-    waveRef.current.pause();
-    setIsPlaying(false);
-    setIsSaving(true);
-
-
-    // adjusting the length based on playbackrate
-    // console.log('baseDuration before saving: ', waveRef.current.getDuration());
-    // console.log('playbackRate before saving: ', playbackRate);
-    const length = sampleRate * (waveRef.current.getDuration() / playbackRate);
-
-    // init ctx...
-    const offACtx = new OfflineAudioContext(numberOfChannels, length, sampleRate);
-    // console.log('fresh offAudioCtx', offACtx);
-
-    // init the source node
-    const blob = baseBlob.current;
-    // console.log('current blob: ', baseBlob.current);
-    const source = await initSourceNode(offACtx, blob);
-
-    // set playback rate
-    source.playbackRate.value = playbackRate;
-
-    // apply effects. gain is just to make sure that volume is preserved. (might not be necessary)
-    const gainNode = offACtx.createGain();
-    gainNode.gain.value = 1.0;
-
-    // connect the nodes with effects and render
-    source.connect(gainNode);
-    gainNode.connect(offACtx.destination);
-    source.start();
-
-    // process the audio for blobbing
-    // audioContext -> Float32Array -> Int16Array -> [] UInt8Array -> UInt8Array
-    const mp3DataFull = await processAudio(offACtx);
-    // close context (stops source too)
-    // offACtx.close();
-
-    // making the blob now
-    const outputBlob = new Blob([mp3DataFull], { type: 'audio/mpeg' });
-    // console.log('converted to blob: ', outputBlob);
-
-    // creating a URL for the blob
-    const outputURL = URL.createObjectURL(outputBlob);
-    // console.log('converted to URL: ', outputURL);
-
-    // blob -> link element
-    const link = document.createElement('a');
-    link.href = outputURL;
-    const timestamp = new Date().getTime();
-    link.download = `${timestamp}-mix.mp3`;
-
-    // simulating a click to the link element to download
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-
-    // cleanup
-    URL.revokeObjectURL(outputURL);
-    setIsSaving(false);
-  }
-
-  const handleHelp = () => {
-    // for later
-  }
-
-  // handle refresh
+  /**
+  * To handle refreshes...
+  * TODO: Implement proper state management with tools like
+  *  Redux to gracefully handle refreshes on pages/components
+  *  that have props/contexts that are dependent on parents.
+  */
   if (track === null) {
     navigate(
       `/home`,
@@ -415,11 +361,13 @@ function Mixer() {
     return;
   }
 
-
   if (isLoading) return <Loading />;
   return (
     <>
-      {isSaving && (
+      {helpActive &&
+        <MixerHelp handleToggleHelp={handleToggleHelp} />
+      }
+      {isSaving &&
         <>
           <Loading
             style={{
@@ -441,16 +389,11 @@ function Mixer() {
             }}
           />
         </>
-      )}
-      {/* <audio
-        ref={trackRef}
-        src={audioURL}
-        playsInline
-      /> */}
+      }
       <div className='mixer-container'>
         <SecondaryNav
           props={{
-            handleHelp
+            handleToggleHelp
           }}
         />
         <TrackDetails
@@ -479,8 +422,13 @@ function Mixer() {
             handleSpeed
           }}
         />
-        <div className='save-container-mixer'>
-          <button id='save-mixer-button' onClick={handleSave}>
+        <div ref={saveButtonRef}  className='save-container-mixer'>
+          <button
+            id='save-mixer-button'
+            onClick={handleSave}
+            onMouseEnter={expandSave}
+            onMouseLeave={shrinkSave}
+          >
             <img id='save-mixer-button-icon' src={save_icon_mixer} />
           </button>
         </div>

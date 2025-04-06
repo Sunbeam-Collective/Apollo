@@ -1,16 +1,21 @@
+import {
+  useState,
+  useEffect,
+  useContext,
+} from "react";
 
-import { useParams, useNavigate, useLocation  } from "react-router-dom";
-import { useState, useEffect, useContext, useRef } from "react";
-import '../App.css';
-
-import { getDeezerTrack } from "../services/deezerService";
+import {
+  useParams,
+  useNavigate,
+  useLocation
+} from "react-router-dom";
 
 import {
   TrackDetails,
   MediaControls,
   SecondaryNav,
   Loading,
-  QueueCard
+  QueueModal
 } from "../components";
 
 import {
@@ -18,45 +23,52 @@ import {
 } from '../context'
 
 import {
+  getDeezerTrack
+} from "../utils/deezerService";
+
+import {
   edit_icon,
-  edit_icon_disabled,
   exit_queue_icon
 } from "../assets";
 
-import { useScrollLock } from "../adapters";
-
 function Player() {
-  // no scrolling while on player!
-  useScrollLock();
-
-  // fetching states
   const { id } = useParams();
   const navigate = useNavigate();
-  const location = useLocation();
+
+  // Shared states and setters
+  const { track, setTrack, trackRef, songQueue } = useContext(SongContext);
+
+  // Fetching states
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // queue stuff
+  // Song queue states
   const [showQueue, setShowQueue] = useState(false);
   const [isRepeating, setIsRepeating] = useState(false);
   const [queue, setQueue] = useState([]);
 
-  // popout stuff
+  // IN PROGRESS: popout stuff
   const [popoutIsOpen, setPopoutIsOpen] = useState(false);
 
-  // context
-  const { track, setTrack, trackRef, songQueue } = useContext(SongContext);
-
+  /**
+  * This hook runs when the id location parameter changes,
+  * indicating that the current song has changed. It fetches
+  * song details necessary for playback from the deezerAPI.
+  */
   useEffect(() => {
-    // fetching
     const fetchTrack = async () => {
+      /**
+      * minDelay here is to make sure that the Loading component shows
+      * for at least 500 seconds. API calls with getDeezerTrack() is
+      * variable, but usually takes very fast (sub 500ms)!
+      * This is more of a UX choice so that the transition is
+      * smooth and easily interpreted by the user.
+      */
       const minDelay = new Promise((resolve) => setTimeout(resolve, 500));
       let [track, error] = [null, null];
       const loadingTask = async () => {
         try {
-          // console.log(id);
           const { data } = await getDeezerTrack(id);
-          // console.log(data);
           track = {
             title: data.data.title,
             artist: data.data.artist.name,
@@ -67,10 +79,14 @@ function Player() {
           error = err;
         }
       };
+      /**
+      * Promise.all executes the provided async functions concurrently!
+      * putting minDelay with loadingTask(id) makes sure that it waits
+      * at least 500ms (since that was our minDelay) until it moves
+      * onto the next task.
+      */
       await Promise.all([minDelay, loadingTask(id)]);
       if (track !== null) {
-        // set audio here as well and handlers for music!!!
-        // maybe we can disable the buttons if there's no audio initialized!
         setTrack(track);
         setIsLoading(false);
       }
@@ -80,9 +96,92 @@ function Player() {
       }
     };
     fetchTrack();
-    if (songQueue.current !== null) setQueue(listToArr()); // queue updates when song changes while queue modal is open
+    // This accounts for when the queue modal is open, and the current song changes
+    if (songQueue.current !== null) setQueue(listToArr());
   }, [id]);
 
+
+  /**
+   * Toggles the visibility of the queue and updates the queue state.
+   *  When the queue is toggled, the current doubly linked list of songs is converted to an array.
+   * @param {void}
+   * @returns {void}
+   * @sideEffects:
+   *  - Sets the `showQueue` state to the opposite of its current value.
+   *  - Converts the current doubly linked list of songs to an array.
+   *  - Updates the `queue` state with this new array, thereby triggering a re-render of the queue UI.
+   */
+  const handleQueueToggle = () => {
+    setShowQueue(!showQueue);
+    setQueue(listToArr())
+  };
+
+  /**
+   * Handles moving the play queue to a selected song.
+   *
+   * @param {Event} e - The click event on a QueueCard.
+   * @returns {void}
+   * @sideEffects
+   * - Updates `track` state with selected song info.
+   * - Updates `songQueue.current` to point to the selected song.
+   * - Updates `queue` state to reflect the new queue order.
+   */
+  const handleMoveQueue = (e) => {
+    e.preventDefault();
+    const li = e.target.closest('li');
+    // Invalidates clicking on a song that is currently playing
+    if (!li || li.classList.contains('current')) return;
+    // Traverse to the node of the selected song
+    const songId = parseInt(li.dataset.songid);
+    let curr = songQueue.current;
+    while (curr.data.id !== songId) curr = curr.next;
+    // State updates for rerenders
+    const track = {
+      title: curr.data.title,
+      artist: curr.data.artist.name,
+      coverSrc: curr.data.album.cover_xl,
+      previewSrc: curr.data.preview,
+    }
+    setTrack(track);
+    songQueue.current = curr;
+    setQueue(listToArr());
+  }
+
+  /**
+   * Converts the circular doubly linked list `songQueue` into an array of song data.
+   *
+   * @param {void}
+   * @returns {Array<object>} An array containing the `data` property of each node in the queue.
+   * @sideEffects If `isRepeating` is true, returns an array containing only the current song.
+   */
+  const listToArr = () => {
+    if (isRepeating) return [songQueue.current.data];
+    /**
+    * With the current song as head, build an array
+    * while traversing the doubly linked list until
+    * it makes a cycle.
+    */
+    const head = songQueue.current;
+    const arr = [head];
+    let curr = head.next;
+    while (curr !== head) {
+      arr.push(curr);
+      curr = curr.next;
+    }
+    const res = arr.map((node) => node.data);
+    return res;
+  }
+
+  /**
+   * Handles the edit button interacton. The track is stopped and
+   * the user is taken to the Mixer page, loading the same track.
+   *
+   * @returns {void}
+   * @sideEffects:
+   *  - Pauses the audio track using `trackRef.current.pause()`.
+   *  - Resets the audio track's current time to 0 using `trackRef.current.currentTime = 0`.
+   *  - Navigates to the mixer page with the track's ID and a `from` state using `navigate`.
+   */
   const handleEdit = async () => {
     await trackRef.current.pause();
     trackRef.current.currentTime = 0;
@@ -92,61 +191,20 @@ function Player() {
     )
   }
 
-  const handleQueueToggle = () => {
-    setShowQueue(!showQueue);
-    setQueue(listToArr())
-  };
-
-  const listToArr = () => {
-    if (isRepeating) return [];
-    // console.log('making queue arr')
-    const head = songQueue.current;
-    const arr = [];
-    let curr = head.next;
-    while (curr !== head) {
-      arr.push(curr);
-      curr = curr.next;
-    }
-    const res = arr.map((node) => node.data);
-    // console.log('resulting arr: ', res);
-    return res;
-  }
-
+  // Error handling and load rendering
   if (error !== null) return <h1>{error.message}</h1>;
   if (isLoading) return <Loading />;
+
   return (
     <>
       {showQueue && (
-        <div
-          className='queue-modal'
-        >
-          <div className='queue-header'>
-            <div className='queue-header-left-padding'>
-              {/* nothing */}
-            </div>
-            <div className='queue-header-title'>
-              queue
-            </div>
-            <div className='queue-header-exit-container'>
-              <button id='queue-exit' onClick={handleQueueToggle}>
-                <img src={exit_queue_icon} />
-              </button>
-            </div>
-          </div>
-          <div className='queue-body'>
-            <ul className='queue-list'>
-              {queue.length > 0 ? (
-                queue.map((song) => {
-                  return (
-                    <QueueCard key={crypto.randomUUID()} song={song} />
-                  )
-                })
-              ) : (
-                <p>u r repeating one song 🤦</p>
-              )}
-            </ul>
-          </div>
-        </div>
+        <QueueModal
+          props={{
+            handleQueueToggle,
+            handleMoveQueue,
+            queue
+          }}
+        />
       )}
       <div className='player-container'>
         <SecondaryNav
@@ -158,7 +216,6 @@ function Player() {
         <div className="player-cover">
           <img id="player-cover" src={track.coverSrc} alt={track.title} />
         </div>
-        {/* timeline is scrubbable... hopefully */}
         <MediaControls
           isRepeating={isRepeating}
           setIsRepeating={setIsRepeating}

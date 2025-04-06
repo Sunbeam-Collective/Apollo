@@ -3,6 +3,7 @@
   margin: 0;
   padding: 0;
   touch-action: none;
+  list-style: none;
 }
 
 :root {
@@ -147,6 +148,7 @@ button {
   justify-content: center;
   align-items: center;
   gap: 5vh;
+  position: relative;
 }
 
 #apollo-logo {
@@ -154,11 +156,23 @@ button {
   width: 30vh;
 }
 
+div.title-div {
+  position: relative;
+}
+
+div.title-div>span {
+  position: absolute;
+  top: 80%;
+  left: 40%;
+  text-wrap: nowrap;
+}
+
 #auth-options-wrapper {
   display: flex;
   flex-direction: column;
   width: 320px;
   gap: 10px;
+  position: relative;
 }
 
 #auth-options-wrapper button {
@@ -172,10 +186,25 @@ button {
   width: 100%;
   gap: 5px;
   font-size: larger;
-
 }
 
 /* auth-options-wrapper */
+.button-tooltip {
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */
+
+  position: absolute;
+  background: #FFFFFF;
+  font-family: Avenir;
+  font-size: 0.75rem;
+  text-wrap: nowrap;
+  padding: 0.25rem 0.5rem;
+  color: #000;
+  z-index: 10;
+  left: 80%;
+  top: -10%;
+}
 #googleLogin {
   opacity: 0.5;
   cursor: default;
@@ -183,6 +212,92 @@ button {
 #guestLogin:hover {
   /* border-color: #ffe30d; */
   background: rgba(255, 255, 255, 0.2);
+}
+
+/* Auth footer */
+.auth-footer-container {
+  position: absolute;
+  top: 95vh;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+span.changelog-roadmap-button {
+  cursor: pointer;
+}
+
+/* Auth modal */
+.auth-modal-block {
+  font-family: 'Avenir';
+  position: absolute;
+  z-index: 10;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.auth-modal-container {
+  box-sizing: border-box;
+  position: absolute;
+  top: 50vh;
+  height: 50vh;
+  width: 380px;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  background: linear-gradient(to bottom, #343434, #000000); /* Replace with your desired colors */
+  /* background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px); */
+}
+
+.auth-tabs-container {
+  padding-top: 1rem;
+  font-size: 1.5rem;
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.auth-tabs-container>button {
+  flex: 1;
+  background: transparent;
+}
+
+span.auth-tab {
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */
+
+  flex: 5;
+  width: calc(380px - 2rem);
+  font-weight: bold;
+  color: #ffffff;
+  pointer-events: auto;
+}
+
+.auth-body-container>ul {
+  padding-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+li.auth-modal-item {
+  font-family: 'Inter';
+  display: flex;
+  flex-direction: column;
+}
+
+span.modal-item-title {
+  color: #ffe30d;
+  font-weight: bold;
+}
+
+span.modal-item-desc {
+
 }
 
 /* Homepage Styling */
@@ -424,6 +539,13 @@ div.queue-modal {
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    h2.queue-label {
+      text-align: left;
+      color: #ffe30d;
+    }
+    h2.queue-label:not(:first-child) {
+      padding-top: 1rem;
+    }
     ul.queue-list {
       flex: 1;
       display: flex;
@@ -431,8 +553,14 @@ div.queue-modal {
       padding: 0 1rem;
       gap: 0.25rem;
       overflow: scroll;
-      li.queue-list-item:hover {
+      li.queue-list-item:nth-child(n+3):hover {
         background: rgba(255, 255, 255, 0.2);
+      }
+      li.queue-list-item:nth-child(n+3) {
+        cursor: pointer;
+        div.queue-item-hover-container:hover {
+          opacity: 1;
+        }
       }
       li.queue-list-item {
         padding: 1rem;
@@ -441,11 +569,28 @@ div.queue-modal {
         max-height: 7vh;
         display: flex;
         gap: 1rem;
+        position: relative;
         div.queue-item-cover {
           height: 7vh;
           width: 7vh;
           display: flex;
           img {
+            border-radius: 5px;
+            object-fit: contain;
+          }
+        }
+        div.queue-item-hover-container {
+          opacity: 0;
+          position: absolute;
+          top: 0;
+          right: 0;
+          bottom: 0;
+          left: 0;
+          padding: 1rem;
+          display: flex;
+          img {
+            height: 7vh;
+            width: 7vh;
             border-radius: 5px;
             object-fit: contain;
           }
@@ -513,6 +658,7 @@ div.player-container {
 
   /* PlayerTimeline portion */
   div.player-timeline {
+    position: relative;
     flex: calc(100% * 67 / 812);
   }
 
@@ -554,6 +700,60 @@ p#edit-text {
   styles for Mixer.jsx
 */
 
+/* styling here for now */
+div.mixer-help-block {
+  position: absolute;
+  padding: 1rem;
+  height: calc(100% - 2rem);
+  width: calc(100% - 2rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 30;
+  background: #000000;
+  video {
+    width: 70%;
+    height: auto;
+    align-self: center;
+    margin-bottom: 2rem;
+  }
+  p {
+    margin-bottom: 1rem;
+  }
+  h2 {
+    color: #ffe30d;
+    align-self: flex-start;
+    margin-bottom: 1rem;
+  }
+}
+
+div.help-body {
+  width: 380px;
+}
+
+div.help-header {
+  width: 100%;
+  display: flex;
+  .help-header-left-padding {
+    flex: 1;
+  }
+  .help-header-title {
+    flex: 8;
+  }
+  .help-header-exit-container {
+    flex: 1;
+    button#help-exit:hover {
+      transform: scale(1.125);
+    }
+  }
+}
+
+div.timeline-controls-container,
+div.rate-controls-container {
+  display: flex;
+  flex-direction: column;
+}
+
 div.mixer-container {
   height: 100%;
   display: flex;
@@ -575,7 +775,6 @@ div.mixer-container {
     button#popout-button,
     button#help-button
     {
-      visibility: hidden;
       flex: 1;
     }
   }
@@ -677,7 +876,7 @@ div.mixer-container {
       }
       div.error-message {
         position: absolute;
-        z-index: 10;
+        z-index: 20;
         color: #FF6347;
         font: var(--font-p);
         height: 20%;
@@ -713,6 +912,15 @@ div.mixer-container {
       );
       border-image-slice: 1;
       flex: 1;
+      display: flex;
+      justify-content: center;
+      position: relative;
+    }
+    div.error-message {
+      position: absolute;
+      padding-top: 1rem;
+      color: #FF6347;
+      z-index: 20;
     }
   }
   div.save-container-mixer {
@@ -812,7 +1020,7 @@ div.progress-thumb {
   border-radius: 50%; */
 }
 
-/* Animations */
+/* Loading screen keyframes */
 @keyframes spin {
   from {
     transform: rotate(var(--start-degree, 0deg));
@@ -822,15 +1030,7 @@ div.progress-thumb {
   }
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
+/* Landing page logo */
 @keyframes slideUpEase {
   80% {
     padding-top: 35vh;
@@ -840,6 +1040,64 @@ div.progress-thumb {
   }
   100% {
     padding-top: 20vh;
+  }
+}
+
+/* Mixer save button */
+@keyframes expand {
+  0% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.1);
+    opacity: 0;
+  }
+}
+
+/* Auth modal keyframes */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes fadeSlideFromLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+@keyframes fadeSlideFromRight {
+  0% {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+@keyframes pullUp {
+  0% {
+    transform: translateY(50vh);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+@keyframes pullDown {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(50vh);
   }
 }
 

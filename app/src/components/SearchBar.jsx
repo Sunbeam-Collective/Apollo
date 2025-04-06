@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { getDeezerSearch, getDeezerChart } from "../services/deezerService";
+import { getDeezerSearch, getDeezerChart } from "../utils/deezerService";
 import { useEffect } from "react";
 import { getLocalStorageData } from "../utils/localStorageHelpers";
 import { cleanInput } from "../utils/inputHandlers";
