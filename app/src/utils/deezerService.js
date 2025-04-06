@@ -1,8 +1,11 @@
 import axios from "axios";
 axios.defaults.withCredentials = true;
 const api = axios.create({
-  // baseURL: "https://netlify-apollo-backend-test.onrender.com",
-  baseURL: "http://localhost:4000",
+  /**
+  * to test locally, make an .env file in the app directory
+  * and set BACKEND_URL to http://localhost:{port}
+  */
+  baseURL: process.env.BACKEND_URL,
 });
 
 export const getDeezerChart = () => api.get("/api/deezer/charts");

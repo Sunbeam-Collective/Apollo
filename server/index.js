@@ -8,7 +8,7 @@ const cors = require("cors");
 // creating a server
 dotenv.config();
 const app = express();
-const PORT = process.env.PORT || 4000;
+const PORT = 4000;
 // what is this part for?
 // const pathToFrontendDist = path.join(__dirname, '../app/dist');
 
@@ -22,15 +22,24 @@ app.use(express.json());
 app.use(
   cors({
     origin: [
+      /**
+      * to test locally, make an .env file in the server directory
+      * and set CLIENT to http://localhost:{port}
+      */
       `${process.env.CLIENT_URL}`,
-      `http://localhost:5174`,
-      `http://localhost:5173`,
     ],
     credentials: true,
   })
 );
 // if i need to setup cookie parser
 // app.use(cookieParser());
+
+// logger
+app.use((req, res, next) => {
+  const time = (new Date()).toLocaleString();
+  console.log(`${req.method}: ${req.originalUrl} - ${time}`);
+  next();
+})
 
 // routers as middleware (for file organization)
 // oauth routes
