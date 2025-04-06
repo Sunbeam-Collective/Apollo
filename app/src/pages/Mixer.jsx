@@ -46,7 +46,7 @@ function Mixer() {
   const navigate = useNavigate();
 
   // Help 'modal' states
-  const [helpIsOpen, setHelpIsOpen] = useState(false);
+  const [helpActive, setHelpActive] = useState(false);
 
   // Shared states
   const { track, waveRef } = useContext(SongContext);
@@ -279,8 +279,8 @@ function Mixer() {
   }
 
   // TODO: IMPORTANT BEFORE DEPLOYING
-  const handleHelp = () => {
-
+  const handleToggleHelp = () => {
+    setHelpActive(!helpActive);
   }
 
   /**
@@ -350,10 +350,10 @@ function Mixer() {
   if (isLoading) return <Loading />;
   return (
     <>
-      {helpIsOpen && (
-        <MixerHelp />
-      )}
-      {isSaving && (
+      {helpActive &&
+        <MixerHelp handleToggleHelp={handleToggleHelp} />
+      }
+      {isSaving &&
         <>
           <Loading
             style={{
@@ -375,11 +375,11 @@ function Mixer() {
             }}
           />
         </>
-      )}
+      }
       <div className='mixer-container'>
         <SecondaryNav
           props={{
-            handleHelp
+            handleToggleHelp
           }}
         />
         <TrackDetails

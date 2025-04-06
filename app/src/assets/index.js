@@ -14,6 +14,7 @@ import stop_icon_rect from './stop_icon_rect.svg'
 import play_icon_rect from './play_icon_rect.svg'
 import pause_icon_rect from './pause_icon_rect.svg'
 import back_icon from './back_icon.svg'
+import forward_icon from './forward_icon.svg'
 import edit_icon from './edit_icon.svg'
 import edit_icon_disabled from './edit_icon_disabled.svg'
 import shuffle_icon from './shuffle_icon.svg'
@@ -55,6 +56,7 @@ export {
   play_icon_rect,
   pause_icon_rect,
   back_icon,
+  forward_icon,
   edit_icon,
   edit_icon_disabled,
   shuffle_icon,

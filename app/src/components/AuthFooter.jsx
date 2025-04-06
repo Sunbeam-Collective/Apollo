@@ -6,14 +6,10 @@ function AuthFooter({ handleToggleModal }) {
         href='https://github.com/Sunbeam-Collective/Apollo'
         target='_blank'
         rel='noopener noreferrer'
-        style={{
-          color: 'white',
-          textDecoration: 'underline'
-        }}
       >
         github
       </a>
-      <span style={{ color: '#FFE30E'}}>|</span>
+      <span>|</span>
       <span
         className='changelog-roadmap-button'
         onClick={handleToggleModal}

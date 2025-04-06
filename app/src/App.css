@@ -156,6 +156,17 @@ button {
   width: 30vh;
 }
 
+div.title-div {
+  position: relative;
+}
+
+div.title-div>span {
+  position: absolute;
+  top: 80%;
+  left: 40%;
+  text-wrap: nowrap;
+}
+
 #auth-options-wrapper {
   display: flex;
   flex-direction: column;
@@ -225,13 +236,14 @@ span.changelog-roadmap-button {
   height: 100%;
   display: flex;
   justify-content: center;
+  overflow: hidden;
 }
 
 .auth-modal-container {
   box-sizing: border-box;
   position: absolute;
-  top: 60vh;
-  height: 40vh;
+  top: 50vh;
+  height: 50vh;
   width: 380px;
   padding: 0.5rem 1rem;
   border-radius: 5px;
@@ -242,31 +254,39 @@ span.changelog-roadmap-button {
 }
 
 .auth-tabs-container {
+  padding-top: 1rem;
+  font-size: 1.5rem;
+  position: relative;
   display: flex;
   justify-content: center;
-  gap: 1rem;
-  font-size: 1.5rem;
+}
+
+.auth-tabs-container>button {
+  flex: 1;
+  background: transparent;
 }
 
 span.auth-tab {
-  font-style: italic;
-  color: #000000;
-  cursor: pointer;
-}
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */
 
-span.auth-tab.current {
+  flex: 5;
+  width: calc(380px - 2rem);
   font-weight: bold;
-  color: #ffe30d;
+  color: #ffffff;
+  pointer-events: auto;
 }
 
 .auth-body-container>ul {
-  padding-top: 1rem;
+  padding-top: 2rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
 
 li.auth-modal-item {
+  font-family: 'Inter';
   display: flex;
   flex-direction: column;
 }
@@ -521,6 +541,7 @@ div.queue-modal {
     overflow: hidden;
     h2.queue-label {
       text-align: left;
+      color: #ffe30d;
     }
     h2.queue-label:not(:first-child) {
       padding-top: 1rem;
@@ -990,6 +1011,46 @@ div.progress-thumb {
   }
   100% {
     padding-top: 20vh;
+  }
+}
+
+@keyframes fadeSlideFromLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeSlideFromRight {
+  0% {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pullUp {
+  0% {
+    transform: translateY(50vh);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes pullDown {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(50vh);
   }
 }
 

@@ -13,7 +13,7 @@ import {
 function Auth() {
   const [modalActive, setModalActive] = useState(false);
 
-  const handleToggleModal = (e) => {
+  const handleToggleModal = () => {
     setModalActive(!modalActive);
   }
 
@@ -27,13 +27,27 @@ function Auth() {
       <div id="login-wrapper">
         <div id="login-header">
           <img src={logo} id='apollo-logo' alt="Apollo Logo" />
-          <h1
+          <div
+            className='title-div'
             style={{
               opacity: 0, animation: 'fadeIn 0.5s ease-out forwards'
             }}
           >
-            Apollo
-          </h1>
+            <h1>Apollo</h1>
+            <span>
+
+              by <a
+                href='https://github.com/Jordid13'
+                target='_blank'
+                rel='noopener noreferrer'
+              >jordi </a>
+              and <a
+                href='https://raffycastillo.com'
+                target='_blank'
+                rel='noopener noreferrer'
+              > raffy </a>
+            </span>
+          </div>
         </div>
         <div
           id="auth-options-wrapper"

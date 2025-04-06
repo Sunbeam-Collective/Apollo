@@ -59,8 +59,8 @@ function SecondaryNav({ props }) {
    *  - Calls the `handleHelp` function which toggles the help modal for the Mixer page.
    */
   const handleHelp = () => {
-    const { handleHelp } = props;
-    handleHelp();
+    const { handleToggleHelp } = props;
+    handleToggleHelp();
   }
 
   return (
