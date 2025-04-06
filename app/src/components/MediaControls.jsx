@@ -134,7 +134,7 @@ function MediaControls({ isRepeating, setIsRepeating }) {
     for (const a of array) {
       newLL.appendToTail(a);
     }
-    newLL.print();
+    return newLL;
   }
 
   /**
@@ -360,7 +360,7 @@ function MediaControls({ isRepeating, setIsRepeating }) {
     * To handle refreshes...
     * TODO: Implement proper state management with tools like
     *  Redux to gracefully handle refreshes on pages/components
-    *  that have props/contexts that are depended on parents.
+    *  that have props/contexts that are dependent on parents.
     */
     if (renderedSongs === null) {
       navigate(
@@ -478,18 +478,18 @@ function MediaControls({ isRepeating, setIsRepeating }) {
         playsInline
       />
       <div className='player-timeline'>
-        <BlankProgressBar />
         <input
           type="range"
           min='0'
-          max={(duration > 0) ? `${duration}` : '30'}
+          max={duration || '30'}
           step='0.000001'
-          value={`${currentTime}` || '0'}
+          value={currentTime || '0'}
           onChange={handleSeek}
           onMouseUp={handleSeekEnd}
           onTouchEnd={handleSeekEnd}
           className="progress-bar"
         />
+        <BlankProgressBar />
         <div
           className='progress-thumb-container'
         >

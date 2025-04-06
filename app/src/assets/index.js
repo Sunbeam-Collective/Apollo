@@ -33,8 +33,6 @@ import dot_marker from './dot_marker.svg'
 import queue_icon from './queue_icon.svg'
 import exit_queue_icon from './exit_queue_icon.svg'
 import apollo_logo from './apollo_logo.svg'
-import apollo_logo_mask from './apollo_logo_mask.svg'
-import apollo_logo_gradient from './apollo_logo_gradient.png'
 import user_icon from './user_icon.svg'
 import cover_hover from './cover_hover.svg'
 import help_icon from './help_icon.svg'
@@ -76,8 +74,6 @@ export {
   queue_icon,
   exit_queue_icon,
   apollo_logo,
-  apollo_logo_mask,
-  apollo_logo_gradient,
   user_icon,
   cover_hover,
   help_icon

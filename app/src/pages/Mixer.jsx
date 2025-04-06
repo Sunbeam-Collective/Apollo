@@ -153,6 +153,13 @@ function Mixer() {
     // Adding the remainder
     const mp3Buff = mp3Encoder.flush();
     if (mp3Buff.length > 0) mp3Data.push(mp3Buff);
+    /**
+    * Merging []Uint8Array into Uint8Array
+    *
+    * 1. Compute the total length needed by checking each chunk (each Uint8Array size)
+    * 2. Create a Uint8Array with that total length
+    * 3. Fill it in with the data per chunk.
+    */
     let totalLength = 0;
     for (const chunk of mp3Data) totalLength += chunk.length;
     const mp3DataFull = new Uint8Array(totalLength);
@@ -289,7 +296,7 @@ function Mixer() {
   * To handle refreshes...
   * TODO: Implement proper state management with tools like
   *  Redux to gracefully handle refreshes on pages/components
-  *  that have props/contexts that are depended on parents.
+  *  that have props/contexts that are dependent on parents.
   */
   if (track === null) {
     navigate(
@@ -307,12 +314,11 @@ function Mixer() {
       * smooth and easily interpreted by the user.
       */
       const minDelay = new Promise((resolve) => setTimeout(resolve, 500));
+      let audioURL;
       const processBlob = async () => {
         const blob = await getTrackFile(track.previewSrc);
         baseBlob.current = blob.data;
-        const audioURL = URL.createObjectURL(baseBlob.current);
-        setAudioURL(audioURL);
-        setIsLoading(false);
+        audioURL = URL.createObjectURL(baseBlob.current);
       }
       /**
       * Promise.all executes the provided async functions concurrently!
@@ -321,7 +327,9 @@ function Mixer() {
       * onto the next task.
       */
       await Promise.all([minDelay, processBlob()]);
-    }
+      setAudioURL(audioURL);
+      setIsLoading(false);
+    };
     downloadFile();
   }, []);
 
@@ -329,7 +337,7 @@ function Mixer() {
   * To handle refreshes...
   * TODO: Implement proper state management with tools like
   *  Redux to gracefully handle refreshes on pages/components
-  *  that have props/contexts that are depended on parents.
+  *  that have props/contexts that are dependent on parents.
   */
   if (track === null) {
     navigate(

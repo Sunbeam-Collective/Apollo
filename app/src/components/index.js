@@ -1,4 +1,6 @@
 import AuthTest from "./AuthTest";
+import AuthFooter from "./AuthFooter";
+import LogsModal from "./LogsModal";
 import ControlKnobs from "./ControlKnobs";
 import RatePicker from "./RatePicker";
 import RatePickerTextInput from "./RatePickerTextInput";
@@ -18,6 +20,8 @@ import QueueModal from "./QueueModal";
 
 export {
   AuthTest,
+  AuthFooter,
+  LogsModal,
   ControlKnobs,
   RatePicker,
   RatePickerTextInput,
