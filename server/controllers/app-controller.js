@@ -1,15 +1,5 @@
 const fetchJSON = require("../utils/fetchJSON");
 const fetchAudio = require("../utils/fetchAudio");
-const fs = require('fs');
-
-// 1. Multiple Fetch API - [GET] https://api.deezer.com/chart
-//   - This endpoint fetches the charts for five categories:
-//     1. tracks
-//     2. albums
-//     3. artists
-//     4. playlists
-//     5. podcasts
-//   - { NO PARAMS }
 
 const getDeezerChart = async (req, res) => {
   const [data, error] = await fetchJSON(`https://api.deezer.com/chart`);
@@ -45,12 +35,6 @@ const getDeezerSearch = async (req, res) => {
   });
 };
 
-// 2. Single Fetch API - [GET] https://api.deezer.com/track/{ trackId }
-//   - This endpoint fetches the data for a specified track.
-//   - Parameters: {
-//       trackId: int
-//     }
-
 const getDeezerTrack = async (req, res) => {
   const [data, error] = await fetchJSON(
     `https://api.deezer.com/track/${req.params.id}`
@@ -66,8 +50,6 @@ const getDeezerTrack = async (req, res) => {
     data: data,
   });
 };
-
-
 
 const getTrackFile = async (req, res) => {
   const [blob, error] = await fetchAudio(req.query.url);
@@ -89,8 +71,6 @@ const getTrackFile = async (req, res) => {
     res.status(500).send('Error fetching audio blob from server');
   }
 };
-
-
 
 // // IGNORE FOR NOW, template/reference file
 

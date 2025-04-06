@@ -1,11 +1,12 @@
 import axios from "axios";
+
 axios.defaults.withCredentials = true;
 const api = axios.create({
   /**
   * to test locally, make an .env file in the app directory
-  * and set BACKEND_URL to http://localhost:{port}
+  * and set VITE_BACKEND_URL to http://localhost:{port}
   */
-  baseURL: process.env.BACKEND_URL,
+  baseURL: import.meta.env.VITE_BACKEND_URL || process.env.BACKEND_URL,
 });
 
 export const getDeezerChart = () => api.get("/api/deezer/charts");

@@ -1,24 +1,17 @@
 const express = require("express");
 const path = require("path");
 const dotenv = require("dotenv");
-// if ever i need these
 const cors = require("cors");
-// const cookieParser = require('cookie-parser');
 
 // creating a server
 dotenv.config();
 const app = express();
 const PORT = 4000;
-// what is this part for?
-// const pathToFrontendDist = path.join(__dirname, '../app/dist');
-
-app.use(express.static(path.join(__dirname, '../app/dist')));
 
 // setting up middleware
-// app.use(express.static(path.join(__dirname, '../app/dist')));
+app.use(express.static(path.join(__dirname, '../app/dist')));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-// if i need to setup cors
 app.use(
   cors({
     origin: [
@@ -31,9 +24,6 @@ app.use(
     credentials: true,
   })
 );
-// if i need to setup cookie parser
-// app.use(cookieParser());
-
 // logger
 app.use((req, res, next) => {
   const time = (new Date()).toLocaleString();
