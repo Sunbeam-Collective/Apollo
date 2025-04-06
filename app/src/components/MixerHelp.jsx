@@ -49,11 +49,11 @@ function MixerHelp({ handleToggleHelp }) {
           </div>
           <div className='rate-controls-container'>
             <h2 className='mixer-label'>Playback Rate Knob</h2>
-            <p>Drag the knobs to adjust to rate.</p>
+            <p>Drag the knobs to adjust the rate.</p>
             <video src={rate_drag} autoPlay loop={true} />
             <p>or scroll horizontally...</p>
             <video src={rate_scroll} autoPlay loop={true} />
-            <p>You can also manually input the value.</p>
+            <p>Input the playback rate with a double click.</p>
             <video src={rate_type} autoPlay loop={true} />
           </div>
         </div>
