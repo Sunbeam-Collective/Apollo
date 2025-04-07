@@ -245,6 +245,10 @@ function ControlKnobs({ props }) {
         const scrollPosition = currentCenter - slider.offsetWidth / 2;
         slider.scrollLeft = scrollPosition;
       }
+      setTimeout(() => {
+        slider.style.scrollSnapType = `x mandatory`;
+        slider.style.scrollSnapStop = `always`;
+      }, 1000);
     }
 
     // Add scroll event listener

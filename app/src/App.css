@@ -849,8 +849,6 @@ div.mixer-container {
         overflow: scroll;
         height: 100%;
         /* sauce */
-        scroll-snap-type: x mandatory;
-        scroll-snap-stop: always;
         scroll-behavior: smooth;
         cursor: grab;
         li.rate-value {
