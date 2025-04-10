@@ -87,6 +87,8 @@ function ControlKnobs({ props }) {
     scrollLeft = slider.scrollLeft;
     slider.style.cursor = 'grabbing';
     slider.style.transition = 'none';
+    slider.style.scrollSnapType = 'none';
+    slider.style.scrollSnapStop = 'normal';
   }
 
   /**
@@ -104,6 +106,8 @@ function ControlKnobs({ props }) {
     mouseDown = false;
     slider.style.cursor = 'grab';
     slider.style.transition = 'scroll-behavior 0.3s ease';
+    slider.style.scrollSnapType = 'x mandatory';
+    slider.style.scrollSnapStop = 'always';
     const snapped = getSnappedListItem(slider);
     const rate = parseFloat(snapped.textContent) / 100;
     handleSpeed(rate);
@@ -245,10 +249,10 @@ function ControlKnobs({ props }) {
         const scrollPosition = currentCenter - slider.offsetWidth / 2;
         slider.scrollLeft = scrollPosition;
       }
-      setTimeout(() => {
-        slider.style.scrollSnapType = `x mandatory`;
-        slider.style.scrollSnapStop = `always`;
-      }, 1000);
+      // setTimeout(() => {
+      //   slider.style.scrollSnapType = `x mandatory`;
+      //   slider.style.scrollSnapStop = `always`;
+      // }, 1000);
     }
 
     // Add scroll event listener

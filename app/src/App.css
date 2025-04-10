@@ -849,7 +849,7 @@ div.mixer-container {
         overflow: scroll;
         height: 100%;
         /* sauce */
-        scroll-behavior: smooth;
+        /* scroll-behavior: smooth; */
         cursor: grab;
         li.rate-value {
           min-width: 3rem;
