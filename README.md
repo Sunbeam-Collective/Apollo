@@ -31,34 +31,3 @@ Made something cool? Save your customized mix directly to your device. Whether i
 
 📱 Sleek, Intuitive Interface
 Apollo is designed to feel powerful but lightweight. Everything’s right where you expect it, so you can focus on playing with your sound, not figuring out how the app works.
-
-# Why OKLCH and APCA?
-OKLCH, currently the most perceptually accurate color model, provides consistent perceptual chroma and lightness, making your colors feel “right” across all levels and hues.
-APCA is a modern contrast formula optimized for self-illuminated displays, better reflecting how users perceive contrast on screens.
-APCACH, our own custom calculator that blends these two technologies to generate balanced and accessible colors.
-Technical details
-This project is a monorepo managed with PNPM, consisting of a core package and two targets: a web application and a Figma plugin.
-
-## Monorepo Structure
-packages/core: Contains the main application code shared between different targets.
-packages/web: The web application target.
-packages/figma-plugin: The Figma plugin target.
-
-## Available PNPM Commands
-The following PNPM commands are available for working with the repository:
-
-pnpm install: Installs all dependencies.
-pnpm web <sub-command>: It is the alias for running commands for the web target from the root. Available sub-commands: dev, build and preview.
-pnpm figma <sub-command>: It is the alias for running commands for the figma plugin target from the root. Available sub-commands: dev, build.
-pnpm lint: Runs the linter.
-pnpm format: Runs formatters
-pnpm typecheck: Runs typechecking
-
-# Store
-The application's state management is built on the Spred reactive library and its React bingings. All the domain logic are written using signals or derivations and can be found in packages/core/src/stores directory.
-
-# Color Calculation in Web Workers
-To ensure a smooth user experience, the color palette calculation logic is performed in a web worker. This prevents the main thread from being blocked, especially during complex calculations, resulting in a more responsive UI.
-
-# Main Container and CSS Variables
-The main container element of the application defines a set of CSS variables that control the overall look and feel. Dynamic styles are calculated based on the application's state and applied to these CSS variables, allowing using it everywhere in the app from CSS.
